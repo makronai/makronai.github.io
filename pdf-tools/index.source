@@ -1,0 +1,163 @@
+<div class="pdf-tool-app">
+    <div class="pdf-sidebar">
+        <div class="sidebar-header">
+        </div>
+        <div class="v-tabs">
+            <button class="v-tab active" data-category="convert">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path></svg>
+                Convert
+            </button>
+            <button class="v-tab" data-category="organize">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"></rect><rect x="14" y="3" width="7" height="7"></rect><rect x="14" y="14" width="7" height="7"></rect><rect x="3" y="14" width="7" height="7"></rect></svg>
+                Organize
+            </button>
+            <button class="v-tab" data-category="edit">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"></path><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"></path></svg>
+                Edit & Protect
+            </button>
+            <button class="v-tab" data-category="optimize">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 14.899A7 7 0 1 1 15.71 8h1.79a4.5 4.5 0 0 1 2.5 8.242"></path><path d="M12 12v9"></path><path d="m8 17 4 4 4-4"></path></svg>
+                Optimize
+            </button>
+        </div>
+    </div>
+
+    <div class="pdf-options">
+        <div class="section-title">Select Tool</div>
+        
+        <div class="tool-group active" id="cat-convert">
+            <div class="sub-tool-grid">
+                <label class="sub-tool-btn"><input type="radio" name="activeTool" value="img2pdf" checked><span>Images to PDF</span></label>
+                <label class="sub-tool-btn"><input type="radio" name="activeTool" value="pdf2img"><span>PDF to Images</span></label>
+            </div>
+        </div>
+
+        <div class="tool-group" id="cat-organize" style="display: none;">
+            <div class="sub-tool-grid">
+                <label class="sub-tool-btn"><input type="radio" name="activeTool" value="merge"><span>Merge PDFs</span></label>
+                <label class="sub-tool-btn"><input type="radio" name="activeTool" value="rearrange"><span>Extract / Split</span></label>
+                <label class="sub-tool-btn"><input type="radio" name="activeTool" value="rotate"><span>Rotate Pages</span></label>
+            </div>
+        </div>
+
+        <div class="tool-group" id="cat-edit" style="display: none;">
+            <div class="sub-tool-grid">
+                <label class="sub-tool-btn"><input type="radio" name="activeTool" value="watermark"><span>Watermark</span></label>
+                <label class="sub-tool-btn"><input type="radio" name="activeTool" value="metadata"><span>Metadata</span></label>
+            </div>
+        </div>
+
+        <div class="tool-group" id="cat-optimize" style="display: none;">
+            <div class="sub-tool-grid">
+                <label class="sub-tool-btn"><input type="radio" name="activeTool" value="compress"><span>Compress</span></label>
+            </div>
+        </div>
+
+        <hr class="divider">
+
+        <div class="options-container">
+            <div class="section-title">Configuration</div>
+            
+            <div id="opts-default" class="opt-panel active">
+                <p class="helper-text">Select a tool and upload your files to begin.</p>
+            </div>
+
+            <div id="opts-rearrange" class="opt-panel">
+                <div class="input-group">
+                    <label>Pages to Keep/Extract</label>
+                    <input type="text" id="pageRange" placeholder="e.g. 1, 3, 4-6" oninput="invalidateResult()">
+                    <span class="helper-text">Keep empty to process all pages. Use commas and dashes.</span>
+                </div>
+            </div>
+
+            <div id="opts-rotate" class="opt-panel">
+                <div class="input-group">
+                    <label>Rotation Angle</label>
+                    <select id="rotAngle" onchange="invalidateResult()">
+                        <option value="90">90° Clockwise</option>
+                        <option value="180">180° (Upside Down)</option>
+                        <option value="270">90° Counter-Clockwise</option>
+                    </select>
+                </div>
+            </div>
+
+            <div id="opts-watermark" class="opt-panel">
+                <div class="input-group">
+                    <label>Watermark Text</label>
+                    <input type="text" id="wmText" placeholder="e.g., CONFIDENTIAL" oninput="invalidateResult()">
+                </div>
+                <div class="input-group">
+                    <label>Or Upload Image</label>
+                    <input type="file" id="wmImage" accept="image/png,image/jpeg" class="file-input-styled" onchange="invalidateResult()">
+                </div>
+                <div class="input-grid">
+                    <div class="input-group">
+                        <label>Size</label>
+                        <input type="number" id="wmSize" value="48" oninput="invalidateResult()">
+                    </div>
+                    <div class="input-group">
+                        <label>Position</label>
+                        <div class="coord-box">X: <span id="lblX">50</span>, Y: <span id="lblY">50</span></div>
+                    </div>
+                </div>
+                <span class="helper-text">Click on the document preview to set exact coordinates.</span>
+            </div>
+
+            <div id="opts-metadata" class="opt-panel">
+                <div class="input-group"><label>Title</label><input type="text" id="metaTitle" oninput="invalidateResult()"></div>
+                <div class="input-group"><label>Author</label><input type="text" id="metaAuthor" oninput="invalidateResult()"></div>
+                <div class="input-group"><label>Subject</label><input type="text" id="metaSubject" oninput="invalidateResult()"></div>
+            </div>
+
+            <div id="opts-compress" class="opt-panel">
+                <div class="input-group">
+                    <div class="filter-header">
+                        <label>Output Quality</label>
+                        <span id="compValDisplay" class="val-display">60%</span>
+                    </div>
+                    <input type="range" id="compQuality" min="0.1" max="1.0" step="0.1" value="0.6" oninput="updateRangeLabel(this.value); invalidateResult()">
+                    <span class="helper-text">Lower quality reduces file size but rasterizes pages.</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="action-footer">
+            <button class="btn-primary" onclick="processPDF()" id="execBtn">Execute Task</button>
+            <div class="status-area">
+                <progress id="progressBar" value="0" max="100"></progress>
+                <div id="statusText">Ready</div>
+            </div>
+            <a id="downloadLink" class="btn-success">Download Output File</a>
+        </div>
+    </div>
+
+    <div class="pdf-preview-panel">
+        <div class="upload-header">
+            <label class="btn-outline upload-btn">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path><polyline points="17 8 12 3 7 8"></polyline><line x1="12" y1="3" x2="12" y2="15"></line></svg>
+                Upload File(s)
+                <input type="file" id="pdfInput" accept="image/*,application/pdf" multiple style="display: none;">
+            </label>
+            <span id="fileCountBadge" class="badge">0 Files</span>
+        </div>
+        
+        <div id="fileQueue" class="file-queue"></div>
+
+        <div class="preview-box" id="previewBox">
+            <div class="preview-placeholder" id="previewPlaceholder">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="var(--border)" stroke-width="1"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                <p>No document loaded</p>
+            </div>
+            <canvas id="pdfPreviewCanvas"></canvas>
+            <div id="watermarkDot" class="overlay-dot"></div>
+        </div>
+    </div>
+</div>
+
+<script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+<script>pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';</script>
+
+<link rel="stylesheet" href="/pdf-tools/pdf.css">
+<script src="/pdf-tools/pdf.js" defer></script>

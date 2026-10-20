@@ -1,0 +1,129 @@
+<div id="dmca-deter-form" class="dmca-deter-container">
+
+    <div class="legal-sections">
+        
+        <!-- Section 1: US DMCA Law -->
+        <section class="legal-block">
+            <h2>1. United States Law - 17 U.S.C. § 512(f) (DMCA Misrepresentation)</h2>
+            <div class="quote-box">
+                <blockquote>
+                    “Any person who knowingly materially misrepresents under this section- (1) that material or activity is infringing, or (2) that material or activity was removed or disabled by mistake or misidentification, shall be liable for any damages, including costs and attorneys’ fees, incurred by the alleged infringer… as the result of the service provider relying upon such misrepresentation.”
+                </blockquote>
+                <cite>- 17 U.S.C. § 512(f), U.S. Copyright Law</cite>
+            </div>
+            <label class="checkbox-label">
+                <input type="checkbox" class="deter-cb" data-required="true">
+                <span>I have read and fully understand the exact text of 17 U.S.C. § 512(f) above. I acknowledge that if my claim is later found to be a <strong>knowing material misrepresentation</strong>, I can be sued and held personally liable for damages, legal costs, and attorneys’ fees.</span>
+            </label>
+        </section>
+
+        <!-- Section 2: Perjury Warning -->
+        <section class="legal-block">
+            <h2>2. Penalty of Perjury</h2>
+            <div class="quote-box">
+                <blockquote>
+                    “A statement that the information in the notification is accurate, and <strong>under penalty of perjury</strong>, that the complaining party is authorized to act on behalf of the owner of an exclusive right that is allegedly infringed.”
+                </blockquote>
+                <cite>- 17 U.S.C. § 512(c)(3)(A)(vi)</cite>
+            </div>
+            <label class="checkbox-label">
+                <input type="checkbox" class="deter-cb" data-required="true">
+                <span>I understand that every DMCA notice I submit contains a sworn statement <strong>under penalty of perjury</strong>. A false claim can trigger criminal perjury charges, fines, probation, or imprisonment in severe cases.</span>
+            </label>
+        </section>
+
+        <!-- Section 3: Real-World Civil Liability -->
+        <section class="legal-block">
+            <h2>3. Real Financial Consequences of False Claims</h2>
+            <ul class="consequence-list">
+                <li>Damages for lost revenue, reputational harm, and business interruption (no statutory cap)</li>
+                <li>Payment of the other party’s attorneys’ fees and court costs</li>
+                <li>Possible additional claims for tortious interference with contract or malicious falsehood</li>
+            </ul>
+            <label class="checkbox-label">
+                <input type="checkbox" class="deter-cb" data-required="true">
+                <span>I acknowledge that courts have awarded substantial damages against claimants who filed false DMCA notices, including full legal fees for the accused party.</span>
+            </label>
+        </section>
+
+        <!-- Section 4: International Law (EU) -->
+        <section class="legal-block">
+            <h2>4. European Union - Copyright Directive &amp; Digital Services Act</h2>
+            <div class="quote-box">
+                <blockquote>
+                    Platforms operating in the EU “must ensure that infringement notices are substantiated” and can face fines if they repeatedly remove non-infringing content based on “manifestly unfounded” or abusive takedown requests.
+                </blockquote>
+                <cite>- EU Copyright Directive (2019/790) &amp; Digital Services Act implementation</cite>
+            </div>
+            <label class="checkbox-label">
+                <input type="checkbox" class="deter-cb" data-required="true">
+                <span>I understand that in the EU, false or abusive DMCA-style claims can cause the hosting platform to face regulatory fines - and the claimant can still be held civilly liable under national laws of EU member states.</span>
+            </label>
+        </section>
+
+        <!-- Section 5: United Kingdom -->
+        <section class="legal-block">
+            <h2>5. United Kingdom - Copyright, Designs and Patents Act 1988</h2>
+            <div class="quote-box">
+                <blockquote>
+                    Making false representations or pursuing vexatious copyright claims can result in civil liability for damages and, in egregious cases, criminal penalties under sections 107 and 201 of the CDPA 1988.
+                </blockquote>
+                <cite>- UK Intellectual Property Office guidance on copyright offences</cite>
+            </div>
+            <label class="checkbox-label">
+                <input type="checkbox" class="deter-cb" data-required="true">
+                <span>I acknowledge that UK law treats knowingly false copyright claims as potential offences carrying fines and up to 10 years imprisonment in the most serious cases of commercial-scale abuse.</span>
+            </label>
+        </section>
+
+        <!-- Section 6-9: Additional Risk Acknowledgments -->
+        <section class="legal-block">
+            <h2>6. Final Personal Acknowledgments</h2>
+            
+            <label class="checkbox-label">
+                <input type="checkbox" class="deter-cb" data-required="true">
+                <span>I confirm I have a <strong>good-faith belief</strong> that the material is actually infringing and that I have considered fair use, transformative use, or other defenses before filing.</span>
+            </label>
+            
+            <label class="checkbox-label">
+                <input type="checkbox" class="deter-cb" data-required="true">
+                <span>I understand that if my claim is proven false, the content creator may publicly counter-notice and pursue me for defamation or abuse of process in multiple jurisdictions.</span>
+            </label>
+            
+            <label class="checkbox-label">
+                <input type="checkbox" class="deter-cb" data-required="true">
+                <span>I accept that filing this claim may trigger an immediate public counter-notification process, exposing my identity and claim details.</span>
+            </label>
+            
+            <label class="checkbox-label">
+                <input type="checkbox" class="deter-cb" data-required="true">
+                <span>I am proceeding only after careful personal review of all evidence and have attempted (or genuinely considered) direct, good-faith contact with the content owner first.</span>
+            </label>
+        </section>
+    </div>
+
+    <div class="proceed-section">
+        <button id="proceed-btn" class="nav-cta" disabled>
+            ✅ I HAVE READ EVERYTHING AND STILL WISH TO PROCEED
+        </button>
+        <p id="proceed-warning" class="proceed-warning">You must check every box above before the secure contact option appears.</p>
+        
+        <div id="final-contact" class="final-contact hidden">
+            <div class="aeo-bluf success-box">
+                <h3>Thank you for taking this seriously.</h3>
+                <p>Because you have acknowledged all legal risks, we are providing our dedicated DMCA review channel:</p>
+                <div class="email-reveal">
+                    <strong>makron.company@protonmail.com</strong>
+                    <button onclick="copyEmail()" class="copy-btn">Copy Email</button>
+                </div>
+                <p class="final-note">Please send your full claim details (with evidence) to the email address above. We review every submission manually and hope to respond within 48-72 hours.</p>
+                <p class="pathos-note">Advice: Most disputes can be resolved without formal legal escalation. Direct communication often works better for everyone.</p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="/dmca/dmca.js" defer></script>
+<link rel="stylesheet" href="/dmca/dmca.css">
+<img src="https://tracker.makron.workers.dev/?token=dmca"
+     width="1" height="1" style="display:none;" alt="dumb image"></img>

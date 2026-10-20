@@ -1,0 +1,274 @@
+:root {
+  --ait-radius-inner:    var(--radius, 4px);          
+  --ait-radius-card:     8px;
+  --ait-radius-shell:    12px;
+  --ait-border:          var(--border, #d2d2d7);           
+  --ait-bg-shell:        var(--bg-alt, #f5f5f7);           
+  --ait-bg-editor:       var(--bg-light, #ffffff);         
+  --ait-bg-sidebar:      var(--bg-light, #ffffff);
+  --ait-bg-header:       var(--bg-alt, #f5f5f7);
+  --ait-text:            var(--text-main, #1d1d1f);        
+  --ait-text-muted:      var(--text-muted, #6e6e73);       
+  --ait-accent:          var(--primary, #1244c4);          
+  --ait-accent-dark:     var(--primary-dark, #0a318f);     
+
+  /* Semantic status — derived from primary palette */
+  --ait-high:       #c41212;   /* danger — red */
+  --ait-high-bg:    #fdf2f2;
+  --ait-high-border:#f5c2c2;
+  --ait-mid:        #b07200;   /* warning — amber */
+  --ait-mid-bg:     #fdf8ec;
+  --ait-mid-border: #f0dea0;
+  --ait-low:        #0a7c4e;   /* safe — green */
+  --ait-low-bg:     #edfaf3;
+  --ait-low-border: #a4e4c4;
+
+  /* Mono code font */
+  --ait-mono: 'Fira Code', 'Courier New', monospace;
+}
+
+/* ── Shell ─────────────────────────────────────────────────── */
+.ait-root {
+  font-family: var(--font-main, system-ui, sans-serif);
+  border: 1px solid var(--ait-border);
+  border-radius: var(--ait-radius-shell);
+  overflow: hidden;
+  background: var(--ait-bg-shell);
+  box-shadow: 0 4px 20px rgba(0,0,0,0.08);
+  display: flex;
+  flex-direction: column;
+  min-height: 580px;
+}
+
+/* ── Tabs ───────────────────────────────────────────────────── */
+.ait-tabs {
+  display: flex;
+  align-items: stretch;
+  border-bottom: 1px solid var(--ait-border);
+  background: var(--ait-bg-editor);
+  position: relative;
+  gap: 0;
+}
+
+.ait-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  padding: 14px 22px;
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--ait-text-muted);
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  transition: color 0.18s, border-color 0.18s;
+  letter-spacing: 0.01em;
+  margin-bottom: -1px;
+}
+
+.ait-tab svg { transition: stroke 0.18s; }
+
+.ait-tab:hover { color: var(--ait-accent); }
+.ait-tab--active { color: var(--ait-accent); border-bottom-color: var(--ait-accent); }
+
+/* ── Panels ─────────────────────────────────────────────────── */
+.ait-panel { display: none; flex-direction: column; flex: 1; }
+.ait-panel--active { display: flex; }
+
+/* ── Split layout ───────────────────────────────────────────── */
+.ait-split { display: grid; grid-template-columns: 1fr 300px; flex: 1; min-height: 0; }
+.ait-split--equal { grid-template-columns: 1fr 1fr; }
+
+/* ── Editor column ──────────────────────────────────────────── */
+.ait-editor-col {
+  display: flex;
+  flex-direction: column;
+  border-right: 1px solid var(--ait-border);
+  min-height: 0;
+}
+
+.ait-editor-col:last-child { border-right: none; }
+
+.ait-editor-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px;
+  background: var(--ait-bg-header);
+  border-bottom: 1px solid var(--ait-border);
+  flex-shrink: 0;
+}
+
+.ait-label {
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.09em;
+  color: var(--ait-text-muted);
+}
+
+.ait-editor-actions { display: flex; gap: 8px; }
+
+/* Textarea */
+.ait-textarea {
+  flex: 1;
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1.7;
+  color: var(--ait-text);
+  background: var(--ait-bg-editor);
+  border: none;
+  outline: none;
+  resize: none;
+  padding: 18px 20px;
+  min-height: 220px;
+}
+
+.ait-textarea::placeholder { color: var(--ait-text-muted); opacity: 0.7; }
+
+.ait-editor-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 9px 14px;
+  border-top: 1px solid var(--ait-border);
+  background: var(--ait-bg-header);
+  flex-shrink: 0;
+  gap: 10px;
+}
+
+.ait-editor-footer--controls { flex-direction: row; justify-content: space-between; align-items: center; }
+
+/* ── Buttons ────────────────────────────────────────────────── */
+.ait-btn-ghost {
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--ait-text-muted);
+  background: transparent;
+  border: 1px solid var(--ait-border);
+  border-radius: var(--ait-radius-inner);
+  padding: 5px 12px;
+  cursor: pointer;
+  transition: all 0.15s;
+  line-height: 1.4;
+}
+
+.ait-btn-ghost:hover {
+  color: var(--ait-accent);
+  border-color: var(--ait-accent);
+  background: rgba(18, 68, 196, 0.04);
+}
+
+.ait-btn-primary {
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 8px 20px;
+  border-radius: var(--ait-radius-inner);
+  white-space: nowrap;
+  background: var(--ait-accent);
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.ait-btn-primary:disabled { opacity: 0.45; cursor: not-allowed; }
+
+/* ── Word count ─────────────────────────────────────────────── */
+.ait-wordcount { font-family: var(--ait-mono); font-size: 11px; color: var(--ait-text-muted); }
+
+/* ── Sidebar ────────────────────────────────────────────────── */
+.ait-sidebar {
+  background: var(--ait-bg-sidebar);
+  border-left: 1px solid var(--ait-border);
+  overflow-y: auto;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.ait-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  gap: 12px;
+  padding: 40px 16px;
+  flex: 1;
+  color: var(--ait-text-muted);
+}
+.ait-empty svg { opacity: 0.3; stroke: var(--ait-text-muted); }
+.ait-empty p { font-size: 13px; margin: 0; }
+
+/* ── Score ring block ───────────────────────────────────────── */
+.ait-score-block { display: flex; flex-direction: column; align-items: center; gap: 10px; padding: 16px 0 8px; }
+.ait-ring-wrap { position: relative; width: 96px; height: 96px; }
+.ait-ring-wrap svg { transform: rotate(-90deg); }
+.ait-ring-label { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 1px; }
+.ait-ring-pct { font-size: 22px; font-weight: 800; line-height: 1; color: var(--ait-text); }
+.ait-ring-sub { font-size: 10px; text-transform: uppercase; letter-spacing: 0.08em; color: var(--ait-text-muted); }
+.ait-verdict { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; padding: 4px 14px; border-radius: 20px; border: 1px solid; }
+
+.ait-verdict--high  { color: var(--ait-high);  background: var(--ait-high-bg);  border-color: var(--ait-high-border); }
+.ait-verdict--mid   { color: var(--ait-mid);   background: var(--ait-mid-bg);   border-color: var(--ait-mid-border); }
+.ait-verdict--low   { color: var(--ait-low);   background: var(--ait-low-bg);   border-color: var(--ait-low-border); }
+
+/* ── Section cards ────────────────────────── */
+.ait-card { background: var(--ait-bg-shell); border: 1px solid var(--ait-border); border-radius: var(--ait-radius-card); padding: 12px; }
+.ait-section-label { font-family: var(--ait-mono); font-size: 10px; text-transform: uppercase; letter-spacing: 0.1em; color: var(--ait-text-muted); margin-bottom: 8px; }
+.ait-metric-row { display: flex; justify-content: space-between; align-items: center; padding: 5px 0; border-bottom: 1px solid var(--ait-border); font-size: 12px; gap: 8px; }
+.ait-metric-row:last-child { border-bottom: none; }
+.ait-metric-name { color: var(--ait-text-muted); flex-shrink: 0; }
+.ait-metric-val { font-family: var(--ait-mono); font-size: 11px; }
+.ait-metric-val--high { color: var(--ait-high); }
+.ait-metric-val--mid  { color: var(--ait-mid); }
+.ait-metric-val--low  { color: var(--ait-low); }
+.ait-bar-wrap { height: 3px; background: var(--ait-border); border-radius: 2px; margin-top: 4px; overflow: hidden; }
+.ait-bar-fill { height: 100%; border-radius: 2px; transition: width 0.45s ease; }
+.ait-bar-fill--high { background: var(--ait-high); }
+.ait-bar-fill--mid  { background: var(--ait-mid); }
+.ait-bar-fill--low  { background: var(--ait-low); }
+
+/* ── Token chips ────────────────────────────────────────────── */
+.ait-token-list { display: flex; flex-wrap: wrap; gap: 5px; max-height: 110px; overflow-y: auto; }
+.ait-token { font-family: var(--ait-mono); font-size: 10px; padding: 2px 7px; border-radius: var(--ait-radius-inner); border: 1px solid; }
+.ait-token--signal { background: var(--ait-high-bg); border-color: var(--ait-high-border); color: var(--ait-high); }
+.ait-token--neutral { background: var(--ait-bg-shell); border-color: var(--ait-border); color: var(--ait-text-muted); }
+
+/* ── AST tree & Highlights ──────────────────────────────────── */
+.ait-ast { font-family: var(--ait-mono); font-size: 11px; line-height: 1.85; color: var(--ait-text-muted); max-height: 150px; overflow-y: auto; white-space: pre; }
+.ait-ast-sent { color: var(--ait-accent); }
+.ait-ast-phrase { color: var(--ait-low); }
+.ait-ast-token { color: var(--ait-text); }
+.ait-highlight-box { font-size: 13px; line-height: 1.8; max-height: 150px; overflow-y: auto; padding: 10px; background: var(--ait-bg-editor); border: 1px solid var(--ait-border); border-radius: var(--ait-radius-card); }
+.ait-hl-signal { background: var(--ait-high-bg); color: var(--ait-high); border-radius: 2px; padding: 0 1px; border-bottom: 1px solid var(--ait-high-border); }
+
+/* ── Phase bar ──────────────────────────────────────────────── */
+.ait-phase-bar { display: flex; align-items: center; gap: 8px; padding: 7px 16px; border-top: 1px solid var(--ait-border); background: var(--ait-bg-header); font-family: var(--ait-mono); font-size: 11px; color: var(--ait-text-muted); flex-shrink: 0; }
+.ait-phase-dot { width: 6px; height: 6px; border-radius: 50%; background: var(--ait-accent); flex-shrink: 0; animation: ait-pulse 2s ease-in-out infinite; }
+@keyframes ait-pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.3; } }
+
+/* ── Humanizer output area ──────────────────────────────────── */
+.ait-output { flex: 1; padding: 18px 20px; font-size: 14px; line-height: 1.75; overflow-y: auto; color: var(--ait-text); background: var(--ait-bg-editor); white-space: pre-wrap; min-height: 220px; }
+.ait-output-placeholder { color: var(--ait-text-muted); font-style: italic; font-size: 13px; }
+.ait-diff-add { color: var(--ait-low); font-weight: bold; background: var(--ait-low-bg); padding: 0 2px; border-radius: 2px; }
+.ait-diff-del { color: var(--ait-high); text-decoration: line-through; opacity: 0.6; background: var(--ait-high-bg); padding: 0 2px; border-radius: 2px; }
+
+/* ── Spinner ────────────────────────────────────────────────── */
+.ait-spin { display: inline-block; width: 11px; height: 11px; border: 2px solid rgba(255,255,255,0.3); border-top-color: #fff; border-radius: 50%; animation: ait-spin 0.65s linear infinite; vertical-align: middle; margin-right: 6px; }
+@keyframes ait-spin { to { transform: rotate(360deg); } }
+
+/* ── Stats footer card ──────────────────────────────────────── */
+.ait-stats-card { font-family: var(--ait-mono); font-size: 11px; color: var(--ait-text-muted); line-height: 1.9; }
+
+/* ── Responsive ─────────────────────────────────────────────── */
+@media (max-width: 768px) {
+  .ait-split, .ait-split--equal { grid-template-columns: 1fr; }
+  .ait-editor-col { border-right: none; border-bottom: 1px solid var(--ait-border); }
+  .ait-sidebar { border-left: none; border-top: 1px solid var(--ait-border); max-height: 400px; }
+}

@@ -1,0 +1,256 @@
+<div class="container">
+    <main>
+        <div class="aeo-bluf">
+            <h2>Submit a Service Request</h2>
+            <p>Please fill out the details below. Our team will review your project and get back to you shortly.</p>
+        </div>
+
+        <form id="serviceForm" style="max-width: 800px; margin: 0 auto;">
+            
+            <section style="padding: 20px 0;">
+                <label style="display: block; font-weight: 600; margin-bottom: 8px;">Select Service Needed</label>
+                <select id="serviceType" required style="width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: var(--radius); font-family: var(--font-main);">
+                    <option value="" disabled selected>Choose a service...</option>
+                    <optgroup label="Writing Services">
+                        <option>Essay writing/review</option>
+                        <option>Resume writing/review</option>
+                        <option>Novels/stories/poetry</option>
+                    </optgroup>
+                    <optgroup label="Website Services">
+                        <option>Website UI/UX design</option>
+                        <option>Website scripting/renovation</option>
+                        <option>Full website development</option>
+                    </optgroup>
+                    <optgroup label="Marketing Services">
+                        <option>Social media strategy</option>
+                        <option>Social media post design</option>
+                        <option>Advertisement/poster design</option>
+                    </optgroup>
+                    <optgroup label="Video Services">
+                        <option>Adding subtitles</option>
+                        <option>Adding voiceovers</option>
+                        <option>Color grading</option>
+                        <option>Memes/Gaming edits</option>
+                        <option>Full video editing</option>
+                        <option>Intros/Outros</option>
+                        <option>Custom soundtracks</option>
+                        <option>Custom footage</option>
+                    </optgroup>
+                    <optgroup label="Visual Services">
+                        <option>Product mockups</option>
+                        <option>Logo design</option>
+                        <option>Thumbnail/banner design</option>
+                        <option>Brand identity design</option>
+                        <option>Book cover design</option>
+                        <option>Custom icons</option>
+                        <option>Character art</option>
+                    </optgroup>
+                    <optgroup label="Academic Services">
+                        <option>Online tutoring</option>
+                        <option>Textbook publication/editing</option>
+                        <option>Novel publication/editing</option>
+                        <option>Assignment/project help</option>
+                        <option>Thesis/research paper</option>
+                    </optgroup>
+                </select>
+            </section>
+
+            <section style="padding: 20px 0;">
+                <label style="display: block; font-weight: 600; margin-bottom: 8px;">Project Deadline</label>
+                <select id="deadline" required style="width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: var(--radius); font-family: var(--font-main);">
+                    <option value="" disabled selected>Select a timeframe...</option>
+                    <option>As soon as possible</option>
+                    <option>within 2-3 days</option>
+                    <option>within 1 week</option>
+                    <option>within 2 weeks</option>
+                    <option>within 1 month</option>
+                    <option>within 3 months</option>
+                    <option>within 6 months</option>
+                    <option>within 1 year</option>
+                    <option>> 1 year</option>
+                </select>
+            </section>
+
+            <section style="padding: 20px 0;">
+                <label style="display: block; font-weight: 600; margin-bottom: 8px;">Expected Budget (USD)</label>
+                <div style="position: relative; display: flex; align-items: center;">
+                    <span style="position: absolute; left: 15px; color: var(--text-main); font-weight: 700;">$</span>
+                    <input type="number" id="budget" required min="1" placeholder="Enter amount" 
+                           style="width: 100%; padding: 12px 12px 12px 30px; border: 1px solid var(--border); border-radius: var(--radius); font-family: var(--font-main);">
+                </div>
+            </section>
+
+            <section style="padding: 20px 0; background: var(--bg-alt); padding: 20px; border-radius: var(--radius);">
+                <h3 style="font-size: 1rem; margin-bottom: 10px;">We currently only accept the following payment methods:</h3>
+                <div style="display: flex; gap: 10px; margin-bottom: 15px;">
+                    <input type="radio" name="payment" value="PayPal" id="pay-paypal" required style="display:none;">
+                    <label for="pay-paypal" class="payment-btn">PayPal</label>
+
+                    <input type="radio" name="payment" value="Xoom" id="pay-xoom" style="display:none;">
+                    <label for="pay-xoom" class="payment-btn">Xoom</label>
+
+                    <input type="radio" name="payment" value="bKash" id="pay-bkash" style="display:none;">
+                    <label for="pay-bkash" class="payment-btn">bKash</label>
+                </div>
+                <p style="font-size: 0.85rem; color: #b33939; margin: 0;">
+                    <strong>Note:</strong> No direct payments through bank cards are allowed at the moment due to their high risks of purchase decline rates.
+                </p>
+            </section>
+
+            <section style="padding: 20px 0;">
+                <label style="display: block; font-weight: 600; margin-bottom: 8px;">Email Address</label>
+                <input type="email" id="email" required placeholder="yourname@example.com"
+                       style="width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: var(--radius); margin-bottom: 20px;">
+
+                <label style="display: block; font-weight: 600; margin-bottom: 8px;">Social Media (At least one required)</label>
+                <div class="social-input-group">
+                    <div class="social-field"><span class="icon">FB</span><input type="text" id="fb" placeholder="Facebook Profile Link" class="social-in"></div>
+                    <div class="social-field"><span class="icon">IG</span><input type="text" id="ig" placeholder="Instagram Username" class="social-in"></div>
+                    <div class="social-field"><span class="icon">TW</span><input type="text" id="tw" placeholder="Twitter/X Handle" class="social-in"></div>
+                    <div class="social-field"><span class="icon">DC</span><input type="text" id="dc" placeholder="Discord Username" class="social-in"></div>
+                    <div class="social-field"><span class="icon">LI</span><input type="text" id="li" placeholder="LinkedIn Profile" class="social-in"></div>
+                </div>
+            </section>
+
+            <div id="submit-wrapper" style="display: none; padding-top: 20px; border-top: 1px solid var(--border);">
+                <button type="submit" class="nav-cta" style="width: 100%; border: none; cursor: pointer; font-size: 1.1rem; padding: 15px;">Submit Request</button>
+            </div>
+
+            <div id="progress-container" style="display: none; margin-top: 20px;">
+                <div style="width: 100%; background: var(--bg-alt); height: 8px; border-radius: 10px; overflow: hidden;">
+                    <div id="progress-bar" style="width: 0%; height: 100%; background: var(--primary); transition: width 0.4s;"></div>
+                </div>
+                <p style="text-align: center; font-size: 0.85rem; margin-top: 8px;">Sending details to Makron...</p>
+            </div>
+        </form>
+
+        <div id="success-message" style="display: none; text-align: center; padding: 40px; border: 2px solid var(--primary); border-radius: var(--radius); margin-top: 40px;">
+            <h2 style="color: var(--primary);">Thank you!</h2>
+            <p style="color: var(--text-main);">Your project details have been delivered to the Makron team. Expect to be contacted within 24-48 hours for further discussions about what you need to be done. Meanwhile, you can also directly contact us if your request is very urgent.</p>
+        </div>
+    </main>
+</div>
+
+<style>
+    /* Internal styles for elements not covered in theme.css */
+    .payment-btn {
+        flex: 1;
+        text-align: center;
+        padding: 10px;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        cursor: pointer;
+        background: #fff;
+        font-weight: 600;
+        transition: 0.2s;
+    }
+    input[type="radio"]:checked + .payment-btn {
+        background: var(--primary);
+        color: white;
+        border-color: var(--primary);
+    }
+    .social-field {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        margin-bottom: 10px;
+    }
+    .social-field .icon {
+        width: 40px;
+        height: 40px;
+        background: var(--bg-alt);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 0.7rem;
+        font-weight: 800;
+        border-radius: 4px;
+        border: 1px solid var(--border);
+    }
+    .social-in {
+        flex: 1;
+        padding: 10px;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+    }
+</style>
+
+<script>
+    const form = document.getElementById('serviceForm');
+    const submitWrapper = document.getElementById('submit-wrapper');
+    const progressContainer = document.getElementById('progress-container');
+    const progressBar = document.getElementById('progress-bar');
+    const successMsg = document.getElementById('success-message');
+    
+    const socialInputs = ['fb', 'ig', 'tw', 'dc', 'li'];
+
+    function validateForm() {
+        const isServiceSelected = document.getElementById('serviceType').value !== "";
+        const isDeadlineSelected = document.getElementById('deadline').value !== "";
+        const isBudgetSet = document.getElementById('budget').value !== "";
+        const isEmailSet = document.getElementById('email').value.trim() !== "";
+        const isPaymentSelected = document.querySelector('input[name="payment"]:checked') !== null;
+        
+        // At least one social media platform must be filled
+        const isSocialSet = socialInputs.some(id => document.getElementById(id).value.trim() !== "");
+
+        if (isServiceSelected && isDeadlineSelected && isBudgetSet && isEmailSet && isPaymentSelected && isSocialSet) {
+            submitWrapper.style.display = 'block';
+        } else {
+            submitWrapper.style.display = 'none';
+        }
+    }
+
+    // Listen for any input changes
+    form.addEventListener('input', validateForm);
+    form.addEventListener('change', validateForm);
+
+    form.onsubmit = async (e) => {
+        e.preventDefault();
+        
+        // UI Transition
+        submitWrapper.style.display = 'none';
+        progressContainer.style.display = 'block';
+        
+        // Simulated progress steps
+        setTimeout(() => progressBar.style.width = '30%', 200);
+        setTimeout(() => progressBar.style.width = '60%', 600);
+
+        const formData = {
+            service: document.getElementById('serviceType').value,
+            deadline: document.getElementById('deadline').value,
+            budget: document.getElementById('budget').value,
+            payment: document.querySelector('input[name="payment"]:checked').value,
+            email: document.getElementById('email').value,
+            socials: {
+                facebook: document.getElementById('fb').value,
+                instagram: document.getElementById('ig').value,
+                twitter: document.getElementById('tw').value,
+                discord: document.getElementById('dc').value,
+                linkedin: document.getElementById('li').value
+            }
+        };
+
+        try {
+            const response = await fetch('https://service-webhook.makron.workers.dev', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(formData)
+            });
+
+            if (response.ok) {
+                progressBar.style.width = '100%';
+                setTimeout(() => {
+                    form.style.display = 'none';
+                    successMsg.style.display = 'block';
+                }, 500);
+            } else {
+                alert("Submission failed. Please try again or contact us directly.");
+                submitWrapper.style.display = 'block';
+                progressContainer.style.display = 'none';
+            }
+        } catch (error) {
+            console.error("Error:", error);
+        }
+    };
+</script>

@@ -1,0 +1,154 @@
+
+<div class="zigzag-container">
+    
+    <div class="zigzag-row">
+        <div class="zigzag-image">
+            <img src="/files/images/services-writing-and-review.png" alt="Writing and Review">
+        </div>
+        <div class="zigzag-text">
+            <h2>Writing Services</h2>
+            <ul>
+                <li>Essay writing/review</li>
+                <li>Resume writing/review</li>
+                <li>Ghostwriting (novels/stories/poetry)</li>
+            </ul>
+            <div class="pricing-wrapper">
+                <span class="price-amount">$1-$50</span>
+                <div class="price-rate">
+                    <span class="per">per</span>
+                    <span class="unit">1000 words</span>
+                </div>
+            </div>
+            <a href="/services/form" class="nav-cta">Hire Now</a>
+        </div>
+    </div>
+
+    <div class="zigzag-row">
+        <div class="zigzag-image">
+            <img src="/files/images/services-web-dev-and-design.png" alt="Web Dev and Design">
+        </div>
+        <div class="zigzag-text">
+            <h2>Website Services</h2>
+            <ul>
+                <li>Website UI design</li>
+                <li>Website UX design</li>
+                <li>Website scripting (HTML/CSS/JS)</li>
+                <li>Full website development</li>
+            </ul>
+            <div class="pricing-wrapper">
+                <span class="price-amount">$49-$7499</span>
+                <div class="price-rate">
+                    <span class="per">per</span>
+                    <span class="unit">project</span>
+                </div>
+            </div>
+            <a href="/services/form" class="nav-cta">Hire Now</a>
+        </div>
+    </div>
+
+    <div class="zigzag-row">
+        <div class="zigzag-image">
+            <img src="/files/images/services-digital-marketing.png" alt="Digital Marketing">
+        </div>
+        <div class="zigzag-text">
+            <h2>Marketing Services</h2>
+           <ul>
+                <li>Social media strategy</li>
+                <li>Social media post design</li>
+                <li>Advertisement/poster design</li>
+            </ul>
+            <div class="pricing-wrapper">
+                <span class="price-amount">$1-$99</span>
+                <div class="price-rate">
+                    <span class="per">per</span>
+                    <span class="unit">image</span>
+                </div>
+            </div>
+            <a href="/services/form" class="nav-cta">Hire Now</a>
+        </div>
+    </div>
+
+    <div class="zigzag-row">
+        <div class="zigzag-image">
+            <img src="/files/images/services-video-editing.png" alt="Video Editing">
+        </div>
+        <div class="zigzag-text">
+            <h2>Video Services</h2>
+             <ul>
+                <li>Adding subtitles</li>
+                <li>Adding voiceovers (English)</li>
+                <li>Color grading</li>
+                <li>Memes/Gaming edits</li>
+                <li>Social media post design</li>
+                <li>Full video editing</li>
+                <li>Intros/Outros</li>
+                <li>Custom soundtracks</li>
+                <li>Custom footage</li>
+            </ul>
+            <div class="pricing-wrapper">
+                <span class="price-amount">$1-$20</span>
+                <div class="price-rate">
+                    <span class="per">per</span>
+                    <span class="unit">minute</span>
+                </div>
+            </div>
+            <a href="/services/form" class="nav-cta">Hire Now</a>
+        </div>
+    </div>
+
+    <div class="zigzag-row">
+        <div class="zigzag-image">
+            <img src="/files/images/services-graphics-design.png" alt="Graphics Design">
+        </div>
+        <div class="zigzag-text">
+            <h2>Visual Services</h2>
+            <ul>
+                <li>Product mockups (realistic/stylish)</li>
+                <li>Logo design</li>
+                <li>Thumbnail/banner design</li>
+                <li>Brand identity design</li>
+                <li>Book cover design</li>
+                <li>Custom icons</li>
+                <li>Character art</li>
+            </ul>
+            <div class="pricing-wrapper">
+                <span class="price-amount">$0.1-$99</span>
+                <div class="price-rate">
+                    <span class="per">per</span>
+                    <span class="unit">service</span>
+                </div>
+            </div>
+            <a href="/services/form" class="nav-cta">Hire Now</a>
+        </div>
+    </div>
+
+    <div class="zigzag-row">
+        <div class="zigzag-image">
+            <img src="/files/images/services-courses-and-guides.png" alt="Courses and Guides">
+        </div>
+        <div class="zigzag-text">
+            <h2>Academic Services</h2>
+            <ul>
+                <li>Online tutoring (1-on-1/group)</li>
+                <li>Textbook publication/editing</li>
+                <li>Novel publication/editing</li>
+                <li>Assignment/project help</li>
+                <li>Thesis/research paper writing/editing</li>
+            </ul>            
+            <div class="pricing-wrapper">
+                <span class="price-amount">$20-$5000</span>
+                <div class="price-rate">
+                    <span class="per">per</span>
+                    <span class="unit">service</span>
+                </div>
+            </div>
+            <a href="/services/form" class="nav-cta">Hire Now</a>
+        </div>
+    </div>
+
+</div>
+
+<p>
+We also offer corporate-level long-term business growth projects starting from <b>$200,000 per year</b>, to compensate for hiring our entire team of experts across all domains (academic, business, creative, scientific, technical). For that purpose, we would require a full business report and documentation to assess the level of labor force required. In case you do not have the papers ready, we can also send some of our analysts and sales representatives to your location for collecting the info ourselves.</p>
+
+<p>Any form of harm or disrespect upon our employees will be dealt with severe responses.</p>

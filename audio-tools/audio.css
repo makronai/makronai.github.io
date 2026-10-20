@@ -1,0 +1,605 @@
+/* audio.css - Corporate Brutalist UI for Audio Tools */
+
+.audio-tool-app {
+    display: flex;
+    flex-direction: column;
+    gap: 30px;
+    margin: 20px 0;
+    background: var(--bg-light);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.04);
+}
+
+@media (min-width: 992px) {
+    .audio-tool-app {
+        flex-direction: row;
+        align-items: stretch;
+        min-height: 550px;
+    }
+}
+
+/* Left Panel: Preview & Upload */
+.app-left {
+    flex: 1 1 50%;
+    background: var(--bg-alt);
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    border-right: 1px solid var(--border);
+}
+
+.preview-container {
+    flex-grow: 1;
+    min-height: 250px;
+    border: 2px dashed var(--border);
+    border-radius: var(--radius);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: relative;
+    background-color: #fff;
+    padding: 20px;
+    transition: 0.2s ease;
+}
+
+.preview-container.dragover {
+    border-color: var(--primary);
+    background-color: rgba(0, 82, 204, 0.05);
+}
+
+.upload-placeholder {
+    text-align: center;
+    color: var(--text-muted);
+}
+
+.upload-placeholder h3 { margin-bottom: 8px; color: var(--text-main); font-size: 1.2rem;}
+.upload-placeholder p { font-size: 0.9rem; margin-bottom: 15px; }
+
+.file-input-wrapper input[type="file"] { display: none; }
+
+#playerContainer {
+    width: 100%;
+    text-align: center;
+}
+
+.audio-icon {
+    font-size: 48px;
+    margin-bottom: 20px;
+    color: var(--primary);
+}
+
+#fileDetails {
+    font-size: 0.9rem;
+    font-weight: 600;
+    color: var(--text-main);
+    margin-bottom: 20px;
+    word-break: break-all;
+}
+
+#audioPlayer {
+    width: 100%;
+    height: 40px;
+    outline: none;
+}
+
+/* Right Panel: Controls */
+.app-right {
+    flex: 1 1 50%;
+    display: flex;
+    flex-direction: column;
+    background: var(--bg-light);
+}
+
+/* Tabs */
+.tabs {
+    display: flex;
+    border-bottom: 1px solid var(--border);
+    background: var(--bg-alt);
+}
+
+.tab-btn {
+    flex: 1;
+    padding: 16px 10px;
+    background: transparent;
+    border: none;
+    border-right: 1px solid var(--border);
+    font-family: inherit;
+    font-weight: 600;
+    font-size: 14px;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.tab-btn:last-child { border-right: none; }
+.tab-btn:hover { color: var(--text-main); background: #eaeaea; }
+.tab-btn.active { background: var(--bg-light); color: var(--primary); box-shadow: inset 0 3px 0 var(--primary); }
+
+.tab-content-wrapper {
+    flex-grow: 1;
+    padding: 24px;
+    overflow-y: auto;
+}
+
+.tab-content { display: none; }
+.tab-content.active { display: block; animation: fadeIn 0.3s ease; }
+
+@keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+
+/* Form Controls */
+.panel-section { margin-bottom: 24px; }
+.section-title { font-size: 12px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-muted); margin-bottom: 12px; font-weight: 700; }
+
+.input-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+
+.input-group { display: flex; flex-direction: column; gap: 8px; margin-bottom: 16px;}
+.input-group label { font-size: 13px; font-weight: 600; color: var(--text-main); }
+
+input[type="number"], select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    font-family: inherit;
+    font-size: 14px;
+    color: var(--text-main);
+    background: var(--bg-light);
+    transition: 0.2s;
+}
+
+input[type="number"]:focus, select:focus {
+    outline: none;
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(0, 82, 204, 0.1);
+}
+
+.help-text { font-size: 12px; color: var(--text-muted); margin-top: 4px; }
+
+/* Action Footer */
+.action-footer {
+    padding: 24px;
+    background: var(--bg-alt);
+    border-top: 1px solid var(--border);
+}
+
+.btn-primary, .btn-success, .btn-outline {
+    display: inline-block;
+    padding: 12px 20px;
+    font-family: inherit;
+    font-weight: 600;
+    font-size: 14px;
+    text-align: center;
+    border-radius: var(--radius);
+    cursor: pointer;
+    transition: 0.2s;
+    border: none;
+    width: 100%;
+}
+
+.btn-primary { background: var(--primary); color: #fff; }
+.btn-primary:hover:not(:disabled) { background: var(--primary-dark); }
+.btn-primary:disabled { background: var(--border); color: var(--text-muted); cursor: not-allowed; }
+
+.btn-success { background: #0b875b; color: #fff; text-decoration: none; margin-top: 15px; display: none; }
+.btn-success:hover { background: #096a47; color: #fff; }
+
+.btn-outline { background: transparent; color: var(--text-main); border: 1px solid var(--border); width: auto;}
+.btn-outline:hover { border-color: var(--primary); color: var(--primary); background: var(--bg-alt); }
+
+.status-bar { margin-bottom: 15px; }
+progress {
+    width: 100%;
+    height: 6px;
+    border-radius: 4px;
+    border: none;
+    background: var(--border);
+    margin-bottom: 8px;
+}
+progress::-webkit-progress-bar { background: var(--border); border-radius: 4px; }
+progress::-webkit-progress-value { background: var(--primary); border-radius: 4px; transition: width 0.3s; }
+#statusText { font-size: 13px; color: var(--text-muted); font-weight: 500; display: block; text-align: center;}
+
+/* ============================================================
+   WAVEFORM CANVAS (left panel, shown after file load)
+   ============================================================ */
+#waveformCanvas {
+    width: 100%;
+    height: 120px;
+    background: #fff;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    display: block;
+    cursor: ew-resize; 
+    user-select: none;
+}
+
+/* upload glyph shown inside dropzone placeholder */
+.upload-icon-glyph {
+    font-size: 36px;
+    margin-bottom: 10px;
+    opacity: 0.45;
+}
+
+
+/* ============================================================
+   FX RACK & EQ TAB — shared header row
+   ============================================================ */
+.fx-rack-header,
+.eq-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--border);
+}
+
+.fx-rack-title {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.07em;
+    color: var(--text-main);
+}
+
+.fx-bypass-label {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-muted);
+    cursor: pointer;
+    user-select: none;
+}
+
+
+/* ============================================================
+   FX SLOT
+   ============================================================ */
+.fx-slot {
+    background: var(--bg-alt);
+    border: 1px solid var(--border);
+    border-left: 3px solid var(--border);
+    border-radius: var(--radius);
+    padding: 14px 16px;
+    margin-bottom: 10px;
+    transition: border-left-color 0.2s ease;
+}
+
+.fx-slot.enabled {
+    border-left-color: var(--primary);
+}
+
+.fx-slot-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 14px;
+}
+
+.fx-slot-name {
+    font-size: 12px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-main);
+}
+
+/* "ALWAYS ON" badge for pitch/speed slot */
+.fx-slot-badge {
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.05em;
+    color: var(--primary);
+    background: rgba(0, 82, 204, 0.08);
+    border: 1px solid rgba(0, 82, 204, 0.25);
+    border-radius: 3px;
+    padding: 2px 7px;
+}
+
+
+/* ============================================================
+   FX TOGGLE  (pill switch)
+   ============================================================ */
+.fx-toggle {
+    width: 36px;
+    height: 18px;
+    background: var(--border);
+    border-radius: 9px;
+    cursor: pointer;
+    position: relative;
+    flex-shrink: 0;
+    transition: background 0.2s ease;
+    border: 1px solid var(--border);
+}
+
+.fx-toggle::after {
+    content: '';
+    position: absolute;
+    width: 12px;
+    height: 12px;
+    background: #fff;
+    border-radius: 50%;
+    top: 2px;
+    left: 2px;
+    transition: left 0.2s ease, background 0.2s ease;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+.fx-toggle.on {
+    background: var(--primary);
+    border-color: var(--primary);
+}
+
+.fx-toggle.on::after {
+    left: 20px;
+}
+
+
+/* ============================================================
+   KNOB ROW
+   ============================================================ */
+.fx-knobs {
+    display: flex;
+    gap: 16px;
+    flex-wrap: wrap;
+    align-items: flex-end;
+}
+
+.knob-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    position: relative;
+}
+
+/* Subtle arc track ring behind each knob */
+.knob-ring {
+    position: absolute;
+    top: -5px;
+    left: -5px;
+    width: 54px;
+    height: 54px;
+    border-radius: 50%;
+    border: 2px solid transparent;
+    border-top-color: rgba(0, 82, 204, 0.18);
+    border-right-color: rgba(0, 82, 204, 0.18);
+    border-bottom-color: rgba(0, 82, 204, 0.18);
+    pointer-events: none;
+    transform: rotate(-45deg);
+}
+
+/* Standard knob */
+.knob {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background: radial-gradient(circle at 38% 32%, #f5f7fa, #dde2ea);
+    border: 2px solid var(--border);
+    position: relative;
+    cursor: ns-resize;
+    box-shadow:
+        0 2px 6px rgba(0,0,0,0.12),
+        inset 0 1px 0 rgba(255,255,255,0.8),
+        inset 0 -2px 4px rgba(0,0,0,0.08);
+    transition: border-color 0.15s ease, box-shadow 0.15s ease;
+    user-select: none;
+    touch-action: none;
+}
+
+.knob:hover {
+    border-color: var(--primary);
+}
+
+.knob.active {
+    border-color: var(--primary);
+    box-shadow:
+        0 0 0 3px rgba(0, 82, 204, 0.15),
+        0 2px 6px rgba(0,0,0,0.12),
+        inset 0 1px 0 rgba(255,255,255,0.8);
+}
+
+/* Small variant used in EQ bands */
+.knob.knob-small {
+    width: 36px;
+    height: 36px;
+}
+
+.knob.knob-small ~ .knob-ring,
+.knob-wrap:has(.knob-small) .knob-ring {
+    width: 46px;
+    height: 46px;
+    top: -5px;
+    left: -5px;
+}
+
+/* Accent knob (pitch / speed) — slightly tinted */
+.knob.knob-accent {
+    background: radial-gradient(circle at 38% 32%, #eef2ff, #d0d9f5);
+    border-color: rgba(0, 82, 204, 0.35);
+}
+
+/* Indicator dot */
+.knob-dot {
+    position: absolute;
+    width: 3px;
+    height: 12px;
+    background: var(--primary);
+    border-radius: 2px;
+    top: 5px;
+    left: 50%;
+    transform: translateX(-50%) rotate(0deg);
+    transform-origin: 50% calc(100% + 8px);
+    transition: none;
+}
+
+.knob-label {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text-muted);
+}
+
+.knob-value {
+    font-size: 10px;
+    font-weight: 600;
+    color: var(--primary);
+    min-width: 32px;
+    text-align: center;
+    font-variant-numeric: tabular-nums;
+}
+
+
+/* ============================================================
+   EQ CANVAS
+   ============================================================ */
+.eq-canvas-wrap {
+    background: var(--bg-alt);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    padding: 6px;
+    margin-bottom: 20px;
+}
+
+#eqCanvas {
+    width: 100%;
+    display: block;
+    border-radius: 2px;
+}
+
+/* EQ band column grid */
+.eq-bands {
+    display: flex;
+    justify-content: space-between;
+    gap: 4px;
+}
+
+.eq-band {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    flex: 1;
+    min-width: 0;
+}
+
+.eq-band-label {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text-main);
+}
+
+.eq-band-freq {
+    font-size: 9px;
+    color: var(--text-muted);
+    white-space: nowrap;
+}
+
+/* Reset EQ button — uses existing .btn-outline style but auto-width */
+.eq-reset-btn {
+    display: block;
+    margin: 16px auto 0;
+    padding: 8px 20px;
+    background: transparent;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-muted);
+    cursor: pointer;
+    transition: 0.2s;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+}
+
+.eq-reset-btn:hover {
+    border-color: var(--primary);
+    color: var(--primary);
+    background: var(--bg-alt);
+}
+
+/* ============================================================
+   CUSTOM LIVE PLAYER CONTROLS
+   ============================================================ */
+.custom-player-controls {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    width: 100%;
+    margin-top: 15px;
+}
+
+.btn-play {
+    min-width: 140px;
+    padding: 8px 15px;
+    font-size: 13px;
+    background: var(--bg-alt);
+}
+
+.btn-play.playing {
+    background: var(--primary);
+    color: #fff;
+    border-color: var(--primary);
+}
+
+.seek-bar-container {
+    display: flex;
+    flex-grow: 1;
+    align-items: center;
+    gap: 10px;
+    font-size: 12px;
+    font-family: 'IBM Plex Mono', monospace;
+    color: var(--text-muted);
+}
+
+#seekSlider {
+    flex-grow: 1;
+    cursor: pointer;
+    accent-color: var(--primary);
+    height: 4px;
+}
+
+
+/* Checkbox label */
+.checkbox-label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--text-main);
+    cursor: pointer;
+}
+
+.checkbox-label input[type="checkbox"] {
+    width: 15px;
+    height: 15px;
+    accent-color: var(--primary);
+    cursor: pointer;
+    flex-shrink: 0;
+}
+
+/* Keyboard shortcut badge in seek bar */
+.shortcut-hint {
+    font-size: 9px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    color: var(--text-muted);
+    background: var(--bg-alt);
+    border: 1px solid var(--border);
+    border-radius: 3px;
+    padding: 2px 5px;
+    opacity: 0.6;
+    margin-left: 4px;
+    font-family: 'IBM Plex Mono', monospace;
+}

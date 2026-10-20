@@ -1,0 +1,9 @@
+User-agent: *
+Allow: /
+
+# Block any private folders (add more as needed)
+Disallow: /files/
+Disallow: /drafts/
+Disallow: /admin/
+
+Sitemap: https://makron.app/sitemap.xml

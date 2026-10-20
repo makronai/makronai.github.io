@@ -1,0 +1,447 @@
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,600;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/audio-tools/audio.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/lamejs/1.2.1/lame.min.js"></script>
+<script src="/audio-tools/audio.js" defer></script>
+
+<div class="audio-tool-app">
+    <!-- LEFT PANEL: Preview & Upload -->
+    <div class="app-left">
+        <div class="preview-container" id="dropzone">
+            <div class="upload-placeholder" id="uploadUI">
+                <div class="upload-icon-glyph">🎵</div>
+                <h3>Drop Audio File</h3>
+                <p>Drag & drop or click to browse</p>
+                <div class="file-input-wrapper">
+                    <button class="btn-outline" onclick="document.getElementById('audioInput').click()">Select File</button>
+                    <input type="file" id="audioInput" accept="audio/*,video/*">
+                </div>
+            </div>
+
+            <div id="playerContainer" style="display:none;">
+                <div class="audio-icon">🎵</div>
+                <div id="fileDetails">No file selected</div>
+                <!-- Waveform canvas — explicit pixel size set; JS syncs on load & resize -->
+                <canvas id="waveformCanvas" width="500" height="120"></canvas>
+                <div class="custom-player-controls" id="livePlayerControls" style="display: none;">
+                    <button id="playPauseBtn" class="btn-outline btn-play" onclick="togglePlayback()">▶ Play Preview</button>
+                    <div class="seek-bar-container">
+                        <span id="currentTimeDisplay">0:00</span>
+                        <span style="color: var(--border); opacity: 0.3;">/</span>
+                        <span id="durationDisplay">0:00</span>
+                        <span class="shortcut-hint" title="Spacebar to play/pause">SPACE</span>
+                    </div>
+                </div>
+                <button class="btn-outline" style="margin-top: 16px; font-size: 12px; padding: 7px 14px;" onclick="resetUploader()">↩ Upload Different File</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- RIGHT PANEL: Tabs -->
+    <div class="app-right">
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('convert', event)">Format</button>
+            <button class="tab-btn" onclick="switchTab('edit', event)">Trim</button>
+            <button class="tab-btn" onclick="switchTab('fx', event)">FX Rack</button>
+            <button class="tab-btn" onclick="switchTab('eq', event)">EQ</button>
+        </div>
+
+        <div class="tab-content-wrapper">
+
+            <!-- TAB: FORMAT & QUALITY -->
+            <div id="tab-convert" class="tab-content active">
+                <div class="panel-section">
+                    <div class="section-title">Output Format</div>
+                    <div class="input-grid">
+                        <div class="input-group">
+                            <label>Format</label>
+                            <select id="formatSelect" onchange="toggleFormatOptions()">
+                                <option value="mp3">MP3 (MPEG Layer III)</option>
+                                <option value="wav">WAV (Lossless)</option>
+                            </select>
+                        </div>
+                        <div class="input-group">
+                            <label>Channels</label>
+                            <select id="channelSelect">
+                                <option value="original">Keep Original</option>
+                                <option value="2">Stereo (2.0)</option>
+                                <option value="1">Mono (1.0)</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-section" id="mp3Options">
+                    <div class="section-title">MP3 Encoding Options</div>
+                    <div class="input-group">
+                        <label>Bitrate Quality</label>
+                        <select id="bitrateSelect">
+                            <option value="128">128 kbps (Standard)</option>
+                            <option value="192">192 kbps (High Quality)</option>
+                            <option value="256">256 kbps (Excellent)</option>
+                            <option value="320" selected>320 kbps (Best/Studio)</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="panel-section">
+                    <div class="section-title">Export Options</div>
+                    <div class="input-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="normalizeCheck">
+                            Normalize output (peak to –0.1 dBFS)
+                        </label>
+                        <p class="help-text">Boosts quiet files; prevents digital clipping.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB: TRIM & ADJUST -->
+            <div id="tab-edit" class="tab-content">
+                <div class="panel-section">
+                    <div class="section-title">Trim Audio</div>
+                    <p class="help-text" style="margin-bottom: 12px;">Leave blank to process the entire file.</p>
+                    <div class="input-grid">
+                        <div class="input-group">
+                            <label>Start Time (s)</label>
+                            <input type="number" id="startTime" placeholder="0" min="0" step="0.1">
+                        </div>
+                        <div class="input-group">
+                            <label>End Time (s)</label>
+                            <input type="number" id="endTime" placeholder="e.g. 30" min="0" step="0.1">
+                        </div>
+                    </div>
+                </div>
+                <div class="panel-section">
+                    <div class="section-title">Quick Adjustments</div>
+                    <div class="input-group">
+                        <label>Volume Level (%)</label>
+                        <input type="number" id="volumeSelect" value="100" min="0" max="300">
+                        <p class="help-text">100% = original. Over 100% boosts, under reduces.</p>
+                    </div>
+                    <div class="input-grid">
+                        <div class="input-group">
+                            <label>Pitch Shift (semitones)</label>
+                            <input type="number" id="pitchShift" value="0" min="-24" max="24" step="1">
+                            <p class="help-text">±24 semitones (2 octaves)</p>
+                        </div>
+                        <div class="input-group">
+                            <label>Speed / BPM Scale</label>
+                            <input type="number" id="speedRate" value="1.0" min="0.25" max="4.0" step="0.05">
+                            <p class="help-text">1.0 = original. 0.5 = half speed.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- TAB: FX RACK -->
+            <div id="tab-fx" class="tab-content">
+                <div class="fx-rack-header">
+                    <span class="fx-rack-title">FX CHAIN</span>
+                    <label class="fx-bypass-label">
+                        <input type="checkbox" id="fxBypass"> BYPASS ALL
+                    </label>
+                </div>
+
+                <!-- REVERB -->
+                <div class="fx-slot" id="slot-reverb">
+                    <div class="fx-slot-header">
+                        <span class="fx-slot-name">REVERB</span>
+                        <div class="fx-toggle" id="toggle-reverb" onclick="toggleFX('reverb')"></div>
+                    </div>
+                    <div class="fx-knobs">
+                        <div class="knob-wrap">
+                            <div class="knob-ring"></div>
+                            <div class="knob" data-fx="reverb" data-param="wet" data-val="25" title="Wet/Dry Mix">
+                                <div class="knob-dot"></div>
+                            </div>
+                            <div class="knob-label">WET</div>
+                            <div class="knob-value" id="val-reverb-wet">25%</div>
+                        </div>
+                        <div class="knob-wrap">
+                            <div class="knob-ring"></div>
+                            <div class="knob" data-fx="reverb" data-param="decay" data-val="45" title="Decay Time">
+                                <div class="knob-dot"></div>
+                            </div>
+                            <div class="knob-label">DECAY</div>
+                            <div class="knob-value" id="val-reverb-decay">1.8s</div>
+                        </div>
+                        <div class="knob-wrap">
+                            <div class="knob-ring"></div>
+                            <div class="knob" data-fx="reverb" data-param="pre" data-val="25" title="Pre-delay">
+                                <div class="knob-dot"></div>
+                            </div>
+                            <div class="knob-label">PRE</div>
+                            <div class="knob-value" id="val-reverb-pre">20ms</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- DELAY -->
+                <div class="fx-slot" id="slot-delay">
+                    <div class="fx-slot-header">
+                        <span class="fx-slot-name">DELAY</span>
+                        <div class="fx-toggle" id="toggle-delay" onclick="toggleFX('delay')"></div>
+                    </div>
+                    <div class="fx-knobs">
+                        <div class="knob-wrap">
+                            <div class="knob-ring"></div>
+                            <div class="knob" data-fx="delay" data-param="time" data-val="25" title="Delay Time">
+                                <div class="knob-dot"></div>
+                            </div>
+                            <div class="knob-label">TIME</div>
+                            <div class="knob-value" id="val-delay-time">375ms</div>
+                        </div>
+                        <div class="knob-wrap">
+                            <div class="knob-ring"></div>
+                            <div class="knob" data-fx="delay" data-param="fb" data-val="40" title="Feedback">
+                                <div class="knob-dot"></div>
+                            </div>
+                            <div class="knob-label">FB</div>
+                            <div class="knob-value" id="val-delay-fb">40%</div>
+                        </div>
+                        <div class="knob-wrap">
+                            <div class="knob-ring"></div>
+                            <div class="knob" data-fx="delay" data-param="wet" data-val="30" title="Wet Mix">
+                                <div class="knob-dot"></div>
+                            </div>
+                            <div class="knob-label">WET</div>
+                            <div class="knob-value" id="val-delay-wet">30%</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- DISTORTION -->
+                <div class="fx-slot" id="slot-dist">
+                    <div class="fx-slot-header">
+                        <span class="fx-slot-name">DISTORTION</span>
+                        <div class="fx-toggle" id="toggle-dist" onclick="toggleFX('dist')"></div>
+                    </div>
+                    <div class="fx-knobs">
+                        <div class="knob-wrap">
+                            <div class="knob-ring"></div>
+                            <div class="knob" data-fx="dist" data-param="drive" data-val="40" title="Drive Amount">
+                                <div class="knob-dot"></div>
+                            </div>
+                            <div class="knob-label">DRIVE</div>
+                            <div class="knob-value" id="val-dist-drive">40</div>
+                        </div>
+                        <div class="knob-wrap">
+                            <div class="knob-ring"></div>
+                            <div class="knob" data-fx="dist" data-param="tone" data-val="60" title="Tone / High-pass">
+                                <div class="knob-dot"></div>
+                            </div>
+                            <div class="knob-label">TONE</div>
+                            <div class="knob-value" id="val-dist-tone">60%</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CHORUS -->
+                <div class="fx-slot" id="slot-chorus">
+                    <div class="fx-slot-header">
+                        <span class="fx-slot-name">CHORUS</span>
+                        <div class="fx-toggle" id="toggle-chorus" onclick="toggleFX('chorus')"></div>
+                    </div>
+                    <div class="fx-knobs">
+                        <div class="knob-wrap">
+                            <div class="knob-ring"></div>
+                            <div class="knob" data-fx="chorus" data-param="rate" data-val="13" title="LFO Rate">
+                                <div class="knob-dot"></div>
+                            </div>
+                            <div class="knob-label">RATE</div>
+                            <div class="knob-value" id="val-chorus-rate">0.50Hz</div>
+                        </div>
+                        <div class="knob-wrap">
+                            <div class="knob-ring"></div>
+                            <div class="knob" data-fx="chorus" data-param="depth" data-val="40" title="Modulation Depth">
+                                <div class="knob-dot"></div>
+                            </div>
+                            <div class="knob-label">DEPTH</div>
+                            <div class="knob-value" id="val-chorus-depth">40%</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- COMPRESSOR -->
+                <div class="fx-slot enabled" id="slot-comp">
+                    <div class="fx-slot-header">
+                        <span class="fx-slot-name">COMP</span>
+                        <div class="fx-toggle on" id="toggle-comp" onclick="toggleFX('comp')"></div>
+                    </div>
+                    <div class="fx-knobs">
+                        <div class="knob-wrap">
+                            <div class="knob-ring"></div>
+                            <!-- thresh: fxState default -20dB → n = 20/50 = 0.4 → val=40 -->
+                            <div class="knob" data-fx="comp" data-param="thresh" data-val="40" title="Threshold">
+                                <div class="knob-dot"></div>
+                            </div>
+                            <div class="knob-label">THRSH</div>
+                            <div class="knob-value" id="val-comp-thresh">-20dB</div>
+                        </div>
+                        <div class="knob-wrap">
+                            <div class="knob-ring"></div>
+                            <!-- ratio: default 4:1 → (4-1)/19 = 0.158 → val=15.8 ≈ 16 -->
+                            <div class="knob" data-fx="comp" data-param="ratio" data-val="16" title="Compression Ratio">
+                                <div class="knob-dot"></div>
+                            </div>
+                            <div class="knob-label">RATIO</div>
+                            <div class="knob-value" id="val-comp-ratio">4.0:1</div>
+                        </div>
+                        <div class="knob-wrap">
+                            <div class="knob-ring"></div>
+                            <!-- attack: default 10ms → 10/200 = 0.05 → val=5 -->
+                            <div class="knob" data-fx="comp" data-param="attack" data-val="5" title="Attack Time">
+                                <div class="knob-dot"></div>
+                            </div>
+                            <div class="knob-label">ATK</div>
+                            <div class="knob-value" id="val-comp-attack">10ms</div>
+                        </div>
+                        <div class="knob-wrap">
+                            <div class="knob-ring"></div>
+                            <!-- release: default 120ms → 120/800 = 0.15 → val=15 -->
+                            <div class="knob" data-fx="comp" data-param="release" data-val="15" title="Release Time">
+                                <div class="knob-dot"></div>
+                            </div>
+                            <div class="knob-label">REL</div>
+                            <div class="knob-value" id="val-comp-release">120ms</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- PITCH & SPEED (live knob section) -->
+                <div class="fx-slot enabled" id="slot-pitch">
+                    <div class="fx-slot-header">
+                        <span class="fx-slot-name">PITCH / SPEED</span>
+                        <span class="fx-slot-badge">ALWAYS ON</span>
+                    </div>
+                    <div class="fx-knobs">
+                        <div class="knob-wrap">
+                            <div class="knob-ring"></div>
+                            <!-- pitch centre = 0 ST → data-val=50 -->
+                            <div class="knob knob-accent" data-fx="pitch" data-param="semitones" data-val="50" title="Pitch (±24 semitones)">
+                                <div class="knob-dot"></div>
+                            </div>
+                            <div class="knob-label">PITCH</div>
+                            <div class="knob-value" id="val-pitch-semitones">0 ST</div>
+                        </div>
+                        <div class="knob-wrap">
+                            <div class="knob-ring"></div>
+                            <!-- speed 1.0x → (1.0-0.25)/3.75 = 0.2 → data-val=20 -->
+                            <div class="knob knob-accent" data-fx="pitch" data-param="speed" data-val="20" title="Playback Speed">
+                                <div class="knob-dot"></div>
+                            </div>
+                            <div class="knob-label">SPEED</div>
+                            <div class="knob-value" id="val-pitch-speed">1.00x</div>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- TAB: EQ -->
+            <div id="tab-eq" class="tab-content">
+                <div class="eq-header">
+                    <span class="fx-rack-title">PARAMETRIC EQ</span>
+                    <label class="fx-bypass-label">
+                        <input type="checkbox" id="eqEnabled" checked> ENABLED
+                    </label>
+                </div>
+                <!-- EQ Curve Canvas -->
+                <div class="eq-canvas-wrap">
+                    <canvas id="eqCanvas" height="140"></canvas>
+                </div>
+                <!-- EQ Band Controls -->
+                <div class="eq-bands">
+                    <div class="eq-band" data-band="0">
+                        <div class="eq-band-label">SUB</div>
+                        <div class="eq-band-freq">60 Hz</div>
+                        <div class="knob-wrap">
+                            <div class="knob-ring"></div>
+                            <div class="knob knob-small" data-fx="eq" data-param="band0" data-val="50" title="Sub 60Hz">
+                                <div class="knob-dot"></div>
+                            </div>
+                        </div>
+                        <div class="knob-value" id="val-eq-band0">0.0dB</div>
+                    </div>
+                    <div class="eq-band" data-band="1">
+                        <div class="eq-band-label">BASS</div>
+                        <div class="eq-band-freq">250 Hz</div>
+                        <div class="knob-wrap">
+                            <div class="knob-ring"></div>
+                            <div class="knob knob-small" data-fx="eq" data-param="band1" data-val="50" title="Bass 250Hz">
+                                <div class="knob-dot"></div>
+                            </div>
+                        </div>
+                        <div class="knob-value" id="val-eq-band1">0.0dB</div>
+                    </div>
+                    <div class="eq-band" data-band="2">
+                        <div class="eq-band-label">LOW-M</div>
+                        <div class="eq-band-freq">500 Hz</div>
+                        <div class="knob-wrap">
+                            <div class="knob-ring"></div>
+                            <div class="knob knob-small" data-fx="eq" data-param="band2" data-val="50" title="Low-Mid 500Hz">
+                                <div class="knob-dot"></div>
+                            </div>
+                        </div>
+                        <div class="knob-value" id="val-eq-band2">0.0dB</div>
+                    </div>
+                    <div class="eq-band" data-band="3">
+                        <div class="eq-band-label">MID</div>
+                        <div class="eq-band-freq">1 kHz</div>
+                        <div class="knob-wrap">
+                            <div class="knob-ring"></div>
+                            <div class="knob knob-small" data-fx="eq" data-param="band3" data-val="50" title="Mid 1kHz">
+                                <div class="knob-dot"></div>
+                            </div>
+                        </div>
+                        <div class="knob-value" id="val-eq-band3">0.0dB</div>
+                    </div>
+                    <div class="eq-band" data-band="4">
+                        <div class="eq-band-label">HI-M</div>
+                        <div class="eq-band-freq">3.5 kHz</div>
+                        <div class="knob-wrap">
+                            <div class="knob-ring"></div>
+                            <div class="knob knob-small" data-fx="eq" data-param="band4" data-val="50" title="Hi-Mid 3.5kHz">
+                                <div class="knob-dot"></div>
+                            </div>
+                        </div>
+                        <div class="knob-value" id="val-eq-band4">0.0dB</div>
+                    </div>
+                    <div class="eq-band" data-band="5">
+                        <div class="eq-band-label">PRES</div>
+                        <div class="eq-band-freq">7 kHz</div>
+                        <div class="knob-wrap">
+                            <div class="knob-ring"></div>
+                            <div class="knob knob-small" data-fx="eq" data-param="band5" data-val="50" title="Presence 7kHz">
+                                <div class="knob-dot"></div>
+                            </div>
+                        </div>
+                        <div class="knob-value" id="val-eq-band5">0.0dB</div>
+                    </div>
+                    <div class="eq-band" data-band="6">
+                        <div class="eq-band-label">AIR</div>
+                        <div class="eq-band-freq">16 kHz</div>
+                        <div class="knob-wrap">
+                            <div class="knob-ring"></div>
+                            <div class="knob knob-small" data-fx="eq" data-param="band6" data-val="50" title="Air 16kHz">
+                                <div class="knob-dot"></div>
+                            </div>
+                        </div>
+                        <div class="knob-value" id="val-eq-band6">0.0dB</div>
+                    </div>
+                </div>
+                <button class="eq-reset-btn" onclick="resetEQ()">RESET EQ</button>
+            </div>
+
+        </div><!-- /.tab-content-wrapper -->
+
+        <!-- ACTION FOOTER -->
+        <div class="action-footer">
+            <div class="status-bar">
+                <progress id="progressBar" value="0" max="100"></progress>
+                <span id="statusText">Ready to process</span>
+            </div>
+            <button id="convertBtn" class="btn-primary" onclick="processAndConvert()" disabled>▶ PROCESS & EXPORT</button>
+            <a id="downloadLink" class="btn-success">⬇ DOWNLOAD PROCESSED FILE</a>
+        </div>
+    </div>
+</div>

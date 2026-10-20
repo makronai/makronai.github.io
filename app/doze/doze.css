@@ -1,0 +1,68 @@
+:root {
+    --bg: #000;
+    --fg: #fff;
+    --acc: #00ff66; /* Neon Green */
+    --border: 2px solid #222;
+    --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, monospace;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { background: var(--bg); color: var(--fg); font-family: var(--font); line-height: 1.5; overflow-x: hidden; }
+
+/* Brutalist Layout */
+#app { display: grid; grid-template-columns: 1fr; min-height: 100vh; padding-bottom: 60px; }
+
+.view { padding: 20px; max-width: 800px; margin: 0 auto; width: 100%; }
+
+.hidden { display: none !important; }
+
+/* Desktop Media Query */
+@media (min-width: 1024px) {
+    #view-chat { display: grid; grid-template-columns: 300px 1fr; gap: 0; height: 80vh; border: var(--border); }
+}
+
+/* UI Elements */
+.btn-primary { background: var(--fg); color: var(--bg); border: none; padding: 10px 20px; font-weight: 900; cursor: pointer; text-transform: uppercase; }
+.btn-primary:hover { background: var(--acc); }
+
+.card { border: var(--border); padding: 15px; margin-bottom: 10px; transition: border-color 0.2s; }
+.card:hover { border-color: var(--acc); }
+
+/* Message States */
+.msg { margin-bottom: 8px; padding: 10px; max-width: 80%; border: var(--border); }
+.msg.sending { opacity: 0.5; border-style: dashed; }
+.msg.sent { opacity: 1; }
+.msg.seen { border-color: var(--acc); background: rgba(0, 255, 102, 0.05); }
+
+/* Progress Bar */
+#upload-progress { height: 4px; background: #222; width: 100%; margin: 10px 0; }
+#upload-progress .bar { height: 100%; background: var(--acc); width: 0%; transition: width 0.1s; }
+
+#mobile-menu { position: fixed; bottom: 0; width: 100%; background: #000; border-top: var(--border); display: flex; justify-content: space-around; padding: 10px; }
+
+/* Additions for Auth and Forms */
+.brutal-input {
+    width: 100%;
+    background: var(--bg);
+    color: var(--fg);
+    border: var(--border);
+    padding: 12px;
+    margin-bottom: 15px;
+    font-family: var(--font);
+    font-size: 1rem;
+    outline: none;
+}
+.brutal-input:focus { border-color: var(--acc); }
+
+.btn-secondary, .btn-ghost {
+    background: var(--bg); color: var(--fg); border: var(--border);
+    padding: 10px 20px; font-weight: bold; cursor: pointer; text-transform: uppercase;
+}
+.btn-secondary:hover, .btn-ghost:hover { background: #222; }
+
+.btn-group { display: flex; gap: 10px; margin-top: 10px; }
+.auth-card { max-width: 400px; margin: 10vh auto; border-width: 4px; }
+.auth-card h2 { margin-bottom: 20px; border-bottom: var(--border); padding-bottom: 10px; }
+
+.error-text { color: #ff3333; margin-top: 10px; font-size: 0.85rem; }
+.file-label { display: inline-flex; align-items: center; justify-content: center; padding: 10px; }

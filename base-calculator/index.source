@@ -1,0 +1,113 @@
+<div class="base-tool-wrapper">
+    <div class="tabs">
+        <button class="tab-btn active" onclick="switchTab('conversion')">Universal Conversion</button>
+        <button class="tab-btn" onclick="switchTab('calculation')">Base Arithmetic</button>
+    </div>
+
+    <div id="tab-conversion" class="tab-panel active">
+        <div class="input-group">
+            <div class="field">
+                <label for="conv-input">Input Value</label>
+                <input type="text" id="conv-input" placeholder="Enter value..." oninput="calculateConversion()">
+            </div>
+            <div class="field">
+                <label for="conv-from">From Format</label>
+                <select id="conv-from" onchange="toggleCustomBase('conv-from'); calculateConversion()">
+                    <optgroup label="Standard Bases">
+                        <option value="10">Decimal (Base 10)</option>
+                        <option value="2">Binary (Base 2)</option>
+                        <option value="8">Octal (Base 8)</option>
+                        <option value="16">Hexadecimal (Base 16)</option>
+                    </optgroup>
+                    <optgroup label="Computer Formats">
+                        <option value="ascii">ASCII Text</option>
+                        <option value="bcd">BCD (Binary Coded Decimal)</option>
+                        <option value="signed8">8-bit Signed (2's Complement)</option>
+                        <option value="unsigned8">8-bit Unsigned</option>
+                        <option value="onescomp">1's Complement</option>
+                    </optgroup>
+                    <optgroup label="Custom">
+                        <option value="custom">Custom Base (N)</option>
+                    </optgroup>
+                </select>
+                <input type="number" id="conv-from-custom" class="custom-base-input hidden" placeholder="Enter Base (2-36)" min="2" max="36" oninput="calculateConversion()">
+            </div>
+        </div>
+
+        <div class="input-group">
+            <div class="field">
+                <label for="conv-to">To Format</label>
+                <select id="conv-to" onchange="toggleCustomBase('conv-to'); calculateConversion()">
+                    <option value="2">Binary (Base 2)</option>
+                    <option value="8">Octal (Base 8)</option>
+                    <option value="10">Decimal (Base 10)</option>
+                    <option value="16" selected>Hexadecimal (Base 16)</option>
+                    <option value="ascii">ASCII Text</option>
+                    <option value="bcd">BCD (Binary Coded Decimal)</option>
+                    <option value="custom">Custom Base (N)</option>
+                </select>
+                <input type="number" id="conv-to-custom" class="custom-base-input hidden" placeholder="Enter Base (2-36)" min="2" max="36" oninput="calculateConversion()">
+            </div>
+        </div>
+
+        <div class="result-box">
+            <span class="result-label">Result:</span>
+            <div id="conv-output" class="result-value">0</div>
+        </div>
+    </div>
+
+    <div id="tab-calculation" class="tab-panel">
+        <div class="calc-row">
+            <div class="field">
+                <label>Operand 1</label>
+                <input type="text" id="calc-val1" placeholder="Value 1" oninput="calculateArithmetic()">
+                <select id="calc-base1" onchange="calculateArithmetic()" class="mt-2">
+                    <option value="10">Base 10</option>
+                    <option value="2">Base 2</option>
+                    <option value="16">Base 16</option>
+                </select>
+            </div>
+            
+            <div class="field operator-field">
+                <label>Operator</label>
+                <select id="calc-operator" onchange="calculateArithmetic()">
+                    <option value="+">Addition (+)</option>
+                    <option value="-">Subtraction (-)</option>
+                    <option value="*">Multiplication (*)</option>
+                    <option value="/">Division (/)</option>
+                </select>
+            </div>
+
+            <div class="field">
+                <label>Operand 2</label>
+                <input type="text" id="calc-val2" placeholder="Value 2" oninput="calculateArithmetic()">
+                <select id="calc-base2" onchange="calculateArithmetic()" class="mt-2">
+                    <option value="10">Base 10</option>
+                    <option value="2">Base 2</option>
+                    <option value="16">Base 16</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="input-group mt-4">
+            <div class="field">
+                <label>Output Base</label>
+                <select id="calc-base-out" onchange="calculateArithmetic()">
+                    <option value="10">Decimal (Base 10)</option>
+                    <option value="2">Binary (Base 2)</option>
+                    <option value="8">Octal (Base 8)</option>
+                    <option value="16">Hexadecimal (Base 16)</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="result-box">
+            <span class="result-label">Calculated Result:</span>
+            <div id="calc-output" class="result-value">0</div>
+        </div>
+    </div>
+</div>
+
+<link rel="stylesheet" href="/theme.css">
+<link rel="stylesheet" href="/base-calculator/base.css">
+<script src="/base-calculator/base.js" defer></script>

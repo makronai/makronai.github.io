@@ -1,0 +1,459 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Classeeker | Makron</title>
+
+    <link rel="stylesheet" href="/theme.css">
+
+    <style>
+        table { width: 100%; border-collapse: collapse; margin-top: 15px; border: 1px solid var(--border); }
+        th, td { border: 1px solid var(--border); padding: 8px; text-align: left; }
+        th { background-color: #222; }
+        select, input, button { background-color: var(--dark-bg); color: var(--primary); border: 1px solid var(--border); padding: 2px 5px; font-family: "Times New Roman", Times, serif; }
+        button { cursor: pointer; }
+        button:hover { background-color: var(--secondary); color: var(--dark-bg); }
+        .controls-wrapper { border: 1px dashed var(--border); padding: 10px; margin-bottom: 15px; }
+    </style>
+</head>
+<body>
+    <header id="top-module"></header>
+    
+    <main id="main-content">
+        <center>
+            <h1>Classeeker</h1>
+            <p><i>Find active / unused classes & labs</i></p>
+        </center>
+        
+        <hr>
+
+        <center>
+            <b>[</b> <a href="#" class="nav-tab" data-tab="active-classes" style="font-weight:bold; color:var(--primary);">Active Classes</a> <b>]</b> &nbsp;|&nbsp;
+            <b>[</b> <a href="#" class="nav-tab" data-tab="empty-classes">Unused Classes</a> <b>]</b> &nbsp;|&nbsp;
+            <b>[</b> <a href="#" class="nav-tab" data-tab="active-labs">Active Labs</a> <b>]</b> &nbsp;|&nbsp;
+            <b>[</b> <a href="#" class="nav-tab" data-tab="empty-labs">Unused Labs</a> <b>]</b>
+        </center>
+
+        <hr>
+
+        <marquee id="statusMarquee" scrollamount="4">Loading application data...</marquee>
+
+        <div class="controls-wrapper">
+            <label for="day"><b>Day:</b></label>
+            <select id="day">
+                <option>SUNDAY</option>
+                <option>MONDAY</option>
+                <option>TUESDAY</option>
+                <option>WEDNESDAY</option>
+                <option>THURSDAY</option>
+                <option>SATURDAY</option>
+                <option>FRIDAY</option>
+            </select>
+            
+            &nbsp;&nbsp;
+            
+            <span id="timeslotWrap">
+                <label for="timeslot"><b>Timeslot:</b></label>
+                <select id="timeslot"></select>
+            </span>
+
+            &nbsp;&nbsp;
+
+            <button id="searchToggle">[ Toggle Search ]</button>
+            
+            <div id="searchOverlay" style="display:none; margin-top:10px; border-top: 1px dotted var(--border); padding-top: 10px;">
+                <label for="searchInput"><b>Filter:</b></label>
+                <input type="text" id="searchInput" size="30" placeholder="Course, instructor, room...">
+                <button id="clearSearch">[ Clear ]</button>
+            </div>
+        </div>
+
+        <table id="resultsTable">
+            <thead id="tableHead">
+                <tr>
+                    <th class="col-course"><a href="#" class="sort-btn" data-sort="courseCode">Course <span id="arrow-courseCode"></span></a></th>
+                    <th class="col-section"><a href="#" class="sort-btn" data-sort="sectionName">Section <span id="arrow-sectionName"></span></a></th>
+                    <th class="col-instructor"><a href="#" class="sort-btn" data-sort="faculties">Instructor <span id="arrow-faculties"></span></a></th>
+                    <th class="col-room"><a href="#" class="sort-btn" data-sort="roomName">Room <span id="arrow-roomName"></span></a></th>
+                    <th class="col-timeslot"><a href="#" class="sort-btn" data-sort="timeslot">Timeslot <span id="arrow-timeslot"></span></a></th>
+                </tr>
+            </thead>
+            <tbody id="resultsBody">
+                </tbody>
+        </table>
+
+    </main>
+
+    <footer id="bottom-module"></footer>
+
+<script>
+// Hide intro splash screen
+setTimeout(() => {
+    document.getElementById("intro").style.display = "none";
+}, 1200);
+
+// App Logic (Ported from couffet.html)
+const REMOTE_JSON = 'https://usis-cdn.eniamza.com/connect.json';
+
+const STANDARD_TIMESLOTS = [
+  {label:'8:00 AM - 9:20 AM', start:'08:00:00', end:'09:20:00'},
+  {label:'9:30 AM - 10:50 AM', start:'09:30:00', end:'10:50:00'},
+  {label:'11:00 AM - 12:20 PM', start:'11:00:00', end:'12:20:00'},
+  {label:'12:30 PM - 1:50 PM', start:'12:30:00', end:'13:50:00'},
+  {label:'2:00 PM - 3:20 PM', start:'14:00:00', end:'15:20:00'},
+  {label:'3:30 PM - 4:50 PM', start:'15:30:00', end:'16:50:00'},
+  {label:'5:00 PM - 6:20 PM', start:'17:00:00', end:'18:20:00'}
+];
+
+let DATA = [];
+let activeTab = 'active-classes';
+let sortState = {key:'courseCode',dir:'asc'};
+let searchVisible = false;
+let currentFilter = '';
+
+const daySelect = document.getElementById('day');
+const timeslotSelect = document.getElementById('timeslot');
+const timeslotWrap = document.getElementById('timeslotWrap');
+const resultsBody = document.getElementById('resultsBody');
+const statusMarquee = document.getElementById('statusMarquee');
+const searchToggle = document.getElementById('searchToggle');
+const searchOverlay = document.getElementById('searchOverlay');
+const searchInput = document.getElementById('searchInput');
+const clearSearch = document.getElementById('clearSearch');
+const tabs = document.querySelectorAll('.nav-tab');
+
+function populateTimeslots(){
+  timeslotSelect.innerHTML = '';
+  STANDARD_TIMESLOTS.forEach((t,i)=>{
+    const opt = document.createElement('option');
+    opt.value = i;
+    opt.textContent = t.label;
+    timeslotSelect.appendChild(opt);
+  });
+}
+populateTimeslots();
+
+// Tabs click handler
+tabs.forEach(tab=>{
+  tab.addEventListener('click', (e)=>{
+    e.preventDefault();
+    tabs.forEach(t => { t.style.fontWeight = 'normal'; t.style.color = 'var(--border)'; });
+    tab.style.fontWeight = 'bold';
+    tab.style.color = 'var(--primary)';
+    
+    activeTab = tab.dataset.tab;
+    if(activeTab === 'empty-classes' || activeTab === 'empty-labs'){
+      timeslotWrap.style.display = 'none';
+    } else {
+      timeslotWrap.style.display = 'inline';
+    }
+    render();
+  });
+});
+
+// Search overlay handler
+searchToggle.addEventListener('click', ()=>{
+  searchVisible = !searchVisible;
+  searchOverlay.style.display = searchVisible ? 'block' : 'none';
+  if(searchVisible){ 
+    searchInput.focus(); 
+  } else { 
+    searchInput.value=''; 
+    currentFilter=''; 
+    render(); 
+  }
+});
+
+clearSearch.addEventListener('click', ()=>{
+  searchInput.value=''; 
+  currentFilter=''; 
+  render();
+});
+
+searchInput.addEventListener('input', (e)=>{
+  currentFilter = e.target.value.trim().toLowerCase();
+  render();
+});
+
+// Sorting handler
+document.querySelectorAll('.sort-btn').forEach(btn=>{
+  btn.addEventListener('click', (e)=>{
+    e.preventDefault();
+    const key = btn.dataset.sort;
+    if(sortState.key === key){
+      sortState.dir = sortState.dir === 'asc' ? 'desc' : 'asc';
+    } else {
+      sortState.key = key;
+      sortState.dir = 'asc';
+    }
+    render();
+  });
+});
+
+function timeToLabel(tt){
+  if(!tt) return '';
+  const [hh,mm] = tt.split(':').map(Number);
+  const ampm = hh>=12 ? 'PM' : 'AM';
+  const h = ((hh+11)%12)+1;
+  const min = mm.toString().padStart(2,'0');
+  return `${h}:${min} ${ampm}`;
+}
+function capitalize(s){ return s.charAt(0)+s.slice(1).toLowerCase(); }
+
+function schedulesContain(schedules, day, timeslotIdx){
+  if(!schedules || !schedules.length) return false;
+  const t = STANDARD_TIMESLOTS[timeslotIdx];
+  return schedules.some(s=>{
+    return s.day === day && intervalsOverlap(s.startTime, s.endTime, t.start, t.end);
+  });
+}
+function intervalsOverlap(aStart,aEnd,bStart,bEnd){
+  return !(aEnd <= bStart || bEnd <= aStart);
+}
+
+function buildActiveRows(day, timeslotIdx, type){
+  let rows = [];
+  DATA.forEach(item=>{
+    if(type === 'class'){
+      if(String(item.sectionType).toUpperCase() === 'LAB') return;
+      const schedules = (item.sectionSchedule && item.sectionSchedule.classSchedules) || [];
+      if(schedulesContain(schedules, day, timeslotIdx)){
+        rows.push({
+          courseCode: item.courseCode || '',
+          sectionName: item.sectionName || '',
+          faculties: item.faculties || '',
+          roomName: item.roomName || item.roomNumber || '',
+          timeslot: STANDARD_TIMESLOTS[timeslotIdx].label,
+          raw: item
+        });
+      }
+    } else {
+      let labSchedules = [];
+      if(String(item.sectionType).toUpperCase() === 'LAB'){
+        labSchedules = (item.sectionSchedule && item.sectionSchedule.classSchedules) || [];
+        if(schedulesContain(labSchedules, day, timeslotIdx)){
+          rows.push({
+            courseCode: item.courseCode || item.labCourseCode || '',
+            sectionName: item.sectionName || '',
+            faculties: item.faculties || '',
+            roomName: item.roomName || item.labRoomName || '',
+            timeslot: STANDARD_TIMESLOTS[timeslotIdx].label,
+            raw: item
+          });
+        }
+      } else {
+        const ls = item.labSchedules || [];
+        if(ls && ls.length){
+          if(schedulesContain(ls, day, timeslotIdx)){
+            rows.push({
+              courseCode: item.labCourseCode || item.courseCode || '',
+              sectionName: item.labSectionId ? String(item.labSectionId) : (item.sectionName||''),
+              faculties: item.labFaculties || item.faculties || '',
+              roomName: item.labRoomName || '',
+              timeslot: STANDARD_TIMESLOTS[timeslotIdx].label,
+              raw: item
+            });
+          }
+        }
+      }
+    }
+  });
+  return rows;
+}
+
+function buildEmptyRows(day, isLab){
+  const rooms = new Map();
+  DATA.forEach(item=>{
+    if(isLab){
+      if(item.labRoomName) {
+        if(!rooms.has(item.labRoomName)) rooms.set(item.labRoomName, new Set());
+        const s = (item.labSchedules || []);
+        s.forEach(sc=> { if(sc.day===day) markStandardSlots(rooms.get(item.labRoomName), sc); });
+      }
+      if(String(item.sectionType).toUpperCase() === 'LAB'){
+        const rn = item.roomName || item.roomNumber;
+        if(rn){
+          if(!rooms.has(rn)) rooms.set(rn, new Set());
+          const s = (item.sectionSchedule && item.sectionSchedule.classSchedules) || [];
+          s.forEach(sc=> { if(sc.day===day) markStandardSlots(rooms.get(rn), sc); });
+        }
+      }
+    } else {
+      const rn = item.roomName || item.roomNumber;
+      if(rn){
+        if(!rooms.has(rn)) rooms.set(rn, new Set());
+        const s = (item.sectionSchedule && item.sectionSchedule.classSchedules) || [];
+        s.forEach(sc=> { if(sc.day===day) markStandardSlots(rooms.get(rn), sc); });
+      }
+    }
+  });
+
+  const rows = [];
+  rooms.forEach((usedSet, roomName)=>{
+    const free = [];
+    STANDARD_TIMESLOTS.forEach((ts, idx)=>{
+      if(!usedSet.has(idx)) free.push(ts.label);
+    });
+    if(free.length === 0) return;
+    rows.push({ courseCode: '-', sectionName: '-', faculties: '-', roomName, timeslot: free.join(' • ') });
+  });
+
+  rows.sort((a,b)=> a.roomName.localeCompare(b.roomName));
+  return rows;
+}
+
+function markStandardSlots(setObj, sched){
+  STANDARD_TIMESLOTS.forEach((ts, idx)=>{
+    if(intervalsOverlap(sched.startTime, sched.endTime, ts.start, ts.end)){
+      setObj.add(idx);
+    }
+  });
+}
+
+function sortRows(rows){
+  const key = sortState.key;
+  const dir = sortState.dir === 'asc' ? 1 : -1;
+  rows.sort((a,b)=>{
+    let av = (a[key] ?? '').toString().toLowerCase();
+    let bv = (b[key] ?? '').toString().toLowerCase();
+    if(av < bv) return -1 * dir;
+    if(av > bv) return 1 * dir;
+    return 0;
+  });
+}
+
+function filterRowsByQuery(rows, q){
+  if(!q) return rows;
+  return rows.filter(r=>{
+    return (r.courseCode && r.courseCode.toLowerCase().includes(q)) ||
+           (r.faculties && r.faculties.toLowerCase().includes(q)) ||
+           (r.roomName && r.roomName.toLowerCase().includes(q)) ||
+           (r.sectionName && r.sectionName.toLowerCase().includes(q));
+  });
+}
+
+function refreshArrows(){
+  const keys = ['courseCode','sectionName','faculties','roomName','timeslot'];
+  keys.forEach(k=>{
+    const el = document.getElementById('arrow-'+k);
+    if(!el) return;
+    el.innerHTML = '';
+    if(sortState.key === k){
+      el.innerHTML = sortState.dir === 'asc' ? '&#9650;' : '&#9660;';
+    }
+  });
+}
+  
+function updateTableHeaderVisibility(){
+  const head = document.getElementById('tableHead');
+  if(!head) return;
+  head.querySelectorAll('th').forEach(th => th.style.display = '');
+  
+  if(activeTab === 'active-classes' || activeTab === 'active-labs'){
+    head.querySelectorAll('.col-timeslot').forEach(th => th.style.display = 'none');
+  } else if(activeTab === 'empty-classes' || activeTab === 'empty-labs'){
+    head.querySelectorAll('.col-course, .col-section, .col-instructor').forEach(th => th.style.display = 'none');
+    head.querySelectorAll('.col-room, .col-timeslot').forEach(th => th.style.display = '');
+  }
+}
+
+function render(){
+  statusMarquee.textContent = 'Rendering...';
+  const day = daySelect.value || 'SUNDAY';
+  const timeslotIdx = parseInt(timeslotSelect.value,10);
+  let rows = [];
+  
+  updateTableHeaderVisibility();
+  
+  if(activeTab === 'active-classes'){
+    rows = buildActiveRows(day, timeslotIdx, 'class');
+  } else if(activeTab === 'active-labs'){
+    rows = buildActiveRows(day, timeslotIdx, 'lab');
+  } else if(activeTab === 'empty-classes'){
+    rows = buildEmptyRows(day, false);
+  } else if(activeTab === 'empty-labs'){
+    rows = buildEmptyRows(day, true);
+  }
+  
+  if(activeTab === 'empty-classes' || activeTab === 'empty-labs'){
+    sortState.key = 'timeslot';
+    sortState.dir = 'asc';
+  } else {
+    sortState.key = sortState.key || 'courseCode';
+  }
+
+  rows = filterRowsByQuery(rows, currentFilter ? currentFilter.toLowerCase() : '');
+  sortRows(rows);
+
+  resultsBody.innerHTML = '';
+  if(rows.length === 0){
+    const tr = document.createElement('tr');
+    const td = document.createElement('td');
+    td.colSpan = (activeTab === 'active-classes' || activeTab === 'active-labs') ? 4 : 2;
+    td.textContent = 'No results found.';
+    tr.appendChild(td);
+    resultsBody.appendChild(tr);
+  } else {
+    rows.forEach(r=>{
+      const tr = document.createElement('tr');
+
+      if(activeTab === 'active-classes' || activeTab === 'active-labs'){
+        const tCourse = document.createElement('td'); tCourse.textContent = r.courseCode || '-';
+        const tSection = document.createElement('td'); tSection.textContent = r.sectionName || '-';
+        const tFac = document.createElement('td'); tFac.textContent = r.faculties || '-';
+        const tRoom = document.createElement('td'); tRoom.textContent = r.roomName || '-';
+        tr.appendChild(tCourse); tr.appendChild(tSection); tr.appendChild(tFac); tr.appendChild(tRoom);
+      } else {
+        const tRoom = document.createElement('td'); tRoom.textContent = r.roomName || '-';
+        const tTime = document.createElement('td'); tTime.textContent = r.timeslot || '-';
+        tr.appendChild(tRoom); tr.appendChild(tTime);
+      }
+      resultsBody.appendChild(tr);
+    });
+  }
+  refreshArrows();
+  statusMarquee.textContent = `Status: Showing ${rows.length} records for ${activeTab.replace('-',' ')}`;
+}
+
+async function loadData(){
+  statusMarquee.textContent = 'Fetching remote schedule data... Please wait...';
+  try {
+    const resp = await fetch(REMOTE_JSON, {cache:'no-store'});
+    if(!resp.ok) throw new Error('Fetch failed');
+    const json = await resp.json();
+    DATA = normalize(json);
+    statusMarquee.textContent = 'System ready. Data loaded from remote.';
+  } catch (err){
+    statusMarquee.textContent = 'Warning: Remote fetch failed. Application may not function correctly.';
+  }
+  if(!timeslotSelect.value) timeslotSelect.value = '0';
+  render();
+}
+
+function normalize(arr){
+  if(!Array.isArray(arr)) return [];
+  return arr.map(item=>{
+    const clone = JSON.parse(JSON.stringify(item));
+    if(clone.sectionSchedule && Array.isArray(clone.sectionSchedule.classSchedules)){
+      clone.sectionSchedule.classSchedules = clone.sectionSchedule.classSchedules.map(s=>{
+        return { day: (s.day||'').toUpperCase(), startTime: s.startTime, endTime: s.endTime };
+      });
+    }
+    if(clone.labSchedules && Array.isArray(clone.labSchedules)){
+      clone.labSchedules = clone.labSchedules.map(s=>{
+        return { day: (s.day||'').toUpperCase(), startTime: s.startTime, endTime: s.endTime };
+      });
+    }
+    if(clone.sectionType) clone.sectionType = clone.sectionType.toUpperCase();
+    return clone;
+  });
+}
+
+daySelect.addEventListener('change', render);
+timeslotSelect.addEventListener('change', render);
+
+loadData();
+</script>
+</body>
+</html>

@@ -1,0 +1,158 @@
+/* video.css — Makron Video Tools
+   Mirrors the structure of pdf.css exactly, re-uses all shared
+   variables from theme.css, and adds video-specific additions.
+*/
+
+/* ── 1. APP SHELL ──────────────────────────────────────────── */
+.video-tool-app {
+    display: flex;
+    flex-direction: column;
+    background: var(--bg-light);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    margin: 20px 0;
+    min-height: 700px;
+}
+
+@media (min-width: 992px) {
+    .video-tool-app { flex-direction: row; align-items: stretch; }
+}
+
+/* ── 2. VIDEO INFO BAR ─────────────────────────────────────── */
+.video-info-bar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px 16px;
+    padding: 10px 4px 0;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-muted);
+}
+
+.video-info-bar span {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.video-info-bar span::before {
+    content: '';
+    display: inline-block;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: var(--primary);
+    opacity: 0.5;
+}
+
+/* ── 3. FORMAT BADGE (Convert panel) ──────────────────────── */
+#selectedFmtDisplay {
+    font-family: 'Fira Code', 'Courier New', monospace;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--primary);
+    letter-spacing: 0.02em;
+}
+
+/* ── 4. CONVERT FORMAT GRID ───────────────────────────────── */
+/* Reuse sub-tool-grid but allow 3 cols for format buttons */
+#cat-convert .sub-tool-grid {
+    grid-template-columns: repeat(3, 1fr);
+}
+
+/* ── 5. ASPECT RATIO LOCK CHECKBOX ───────────────────────── */
+#lockAspect {
+    width: auto !important;
+    padding: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+    accent-color: var(--primary);
+    cursor: pointer;
+}
+
+/* ── 6. FFmpeg note strip ─────────────────────────────────── */
+.ffmpeg-note {
+    margin-top: 12px;
+    padding: 10px 12px;
+    background: #fff8e1;
+    border: 1px solid #ffe082;
+    border-radius: var(--radius);
+    font-size: 12px;
+    color: #795548;
+    display: flex;
+    align-items: flex-start;
+    gap: 8px;
+    line-height: 1.5;
+}
+
+.ffmpeg-note svg {
+    flex-shrink: 0;
+    margin-top: 1px;
+    stroke: #f59e0b;
+}
+
+/* ── 7. VIDEO PREVIEW ELEMENT ─────────────────────────────── */
+#videoPreview {
+    max-width: 100%;
+    max-height: 100%;
+    display: none;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    border-radius: 2px;
+    background: #000;
+}
+
+/* ── 8. PROGRESS OVERRIDE (wider track for video) ─────────── */
+progress {
+    height: 8px !important;
+}
+
+/* ── 9. UPLOAD BUTTON HOVER ───────────────────────────────── */
+label.upload-btn:hover {
+    background: var(--primary-dark) !important;
+}
+
+/* ── 10. ACTIVE TAB INDICATOR (vertical on desktop) ──────── */
+@media (min-width: 992px) {
+    .v-tab.active {
+        border-right: 2px solid var(--primary) !important;
+        box-shadow: -2px 0 0 inset var(--primary);
+    }
+}
+
+/* ── 11. QUALITY/VOLUME SLIDER LABELS ─────────────────────── */
+.val-display {
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--primary);
+    background: rgba(18, 68, 196, 0.08);
+    padding: 2px 8px;
+    border-radius: 20px;
+}
+
+/* ── 12. RESIZE PRESET SELECT ICON ───────────────────────── */
+select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236e6e73' stroke-width='2'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    -webkit-appearance: none;
+    appearance: none;
+    padding-right: 30px;
+}
+
+/* ── 13. MOBILE TWEAKS ────────────────────────────────────── */
+@media (max-width: 991px) {
+    .video-info-bar {
+        gap: 4px 12px;
+    }
+    #cat-convert .sub-tool-grid {
+        grid-template-columns: repeat(3, 1fr);
+    }
+}
+
+@media (max-width: 480px) {
+    #cat-convert .sub-tool-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}

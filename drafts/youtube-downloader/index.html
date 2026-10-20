@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <title>YouTube Real-time Recorder</title>
+    <style>
+        body { font-family: monospace; padding: 30px; max-width: 800px; margin: 0 auto; line-height: 1.6; }
+        #player { width: 640px; height: 360px; margin: 20px 0; }
+        button { padding: 15px 25px; margin: 10px 5px; font-size: 16px; cursor: pointer; }
+        #status { margin-top: 20px; font-size: 15px; min-height: 50px; }
+        progress { width: 100%; height: 20px; }
+    </style>
+</head>
+<body>
+    <h1>YouTube Real-time Recorder → MP4 Blob</h1>
+    
+    <input id="urlInput" placeholder="Paste YouTube URL or video ID" style="width:100%;padding:12px;font-size:17px;border:2px solid #000;margin-bottom:20px" required>
+    
+    <button onclick="loadVideo()">Load Video</button>
+    <button id="recordBtn" onclick="toggleRecord()" disabled>▶️ Start Recording</button>
+    <button onclick="stopAndDownload()" disabled id="stopBtn">⏹️ Stop & Download</button>
+
+    <div id="player"></div>
+    
+    <div id="status"></div>
+    <progress id="progress" value="0" max="100" style="display:none;"></progress>
+
+    <!-- Legal statements -->
+    <p style="margin-top:40px;font-size:13px;color:#444">
+        <strong>DISCLAIMER &amp; Legal Usage</strong><br>
+        This tool is for personal, non-commercial, fair-use purposes only.<br>
+        It records what plays in your browser. Usage must comply with YouTube’s Terms and your local copyright laws.
+    </p>
+
+    <p style="font-size:13px;color:#444;margin-top:10px">
+        <strong>1. United States – Sony Corp. v. Universal (1984)</strong><br>
+        Personal time-shifting / private copies are fair use.
+    </p>
+
+    <p style="font-size:13px;color:#444;margin-top:10px">
+        <strong>2. Bangladesh Copyright Act 2000 §36 &amp; §72</strong><br>
+        Private or personal use is permitted.
+    </p>
+
+    <p style="font-size:13px;color:#444;margin-top:10px">
+        <strong>3. EU InfoSoc Directive Art. 5(2)(b)</strong><br>
+        Private copying exception for non-commercial personal use.
+    </p>
+
+    <script src="https://www.youtube.com/iframe_api"></script>
+    <script>
+        let player;
+        let mediaRecorder;
+        let recordedChunks = [];
+        let isRecording = false;
+        let videoId = '';
+        let duration = 0;
+        let startTime = 0;
+
+        function extractVideoId(url) {
+            const match = url.match(/(?:v=|youtu\.be\/|embed\/)([a-zA-Z0-9_-]{11})/);
+            return match ? match[1] : url.trim();
+        }
+
+        window.onYouTubeIframeAPIReady = function() {
+            // Player will be created when user clicks Load
+        };
+
+        function loadVideo() {
+            const input = document.getElementById('urlInput').value.trim();
+            videoId = extractVideoId(input);
+            if (!videoId || videoId.length !== 11) {
+                document.getElementById('status').innerHTML = '❌ Invalid YouTube ID';
+                return;
+            }
+
+            document.getElementById('status').innerHTML = 'Loading video...';
+
+            // Create or recreate player
+            if (player) player.destroy();
+            player = new YT.Player('player', {
+                height: '360',
+                width: '640',
+                videoId: videoId,
+                playerVars: {
+                    'autoplay': 0,
+                    'controls': 1,
+                    'rel': 0
+                },
+                events: {
+                    'onReady': onPlayerReady,
+                    'onStateChange': onPlayerStateChange
+                }
+            });
+        }
+
+        function onPlayerReady(event) {
+            document.getElementById('recordBtn').disabled = false;
+            document.getElementById('status').innerHTML = '✅ Video loaded. Play the video then click Start Recording.<br>Tip: Record while the video is playing at normal speed.';
+        }
+
+        function onPlayerStateChange(event) {
+            if (event.data === YT.PlayerState.PLAYING) {
+                duration = player.getDuration();
+            }
+        }
+
+        async function toggleRecord() {
+            const recordBtn = document.getElementById('recordBtn');
+            const stopBtn = document.getElementById('stopBtn');
+
+            if (!isRecording) {
+                // Start recording
+                if (!player || player.getPlayerState() !== YT.PlayerState.PLAYING) {
+                    document.getElementById('status').innerHTML = '❌ Play the video first!';
+                    return;
+                }
+
+                recordedChunks = [];
+                const stream = document.getElementById('player').querySelector('iframe').contentWindow.document.querySelector('video');
+                if (!stream) {
+                    document.getElementById('status').innerHTML = '❌ Could not capture video element';
+                    return;
+                }
+
+                // Use the video element's stream for capture (best quality possible in browser)
+                const videoStream = stream.captureStream ? stream.captureStream() : null;
+                if (!videoStream) {
+                    document.getElementById('status').innerHTML = '❌ Browser does not support captureStream';
+                    return;
+                }
+
+                mediaRecorder = new MediaRecorder(videoStream, { mimeType: 'video/webm;codecs=vp9' });
+
+                mediaRecorder.ondataavailable = (e) => {
+                    if (e.data.size > 0) recordedChunks.push(e.data);
+                };
+
+                mediaRecorder.onstop = () => {
+                    const blob = new Blob(recordedChunks, { type: 'video/webm' });
+                    const url = URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `youtube-recording-${videoId}.webm`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                    URL.revokeObjectURL(url);
+                    document.getElementById('status').innerHTML = '✅ Recording saved as .webm (you can rename to .mp4 or convert later)';
+                };
+
+                mediaRecorder.start();
+                isRecording = true;
+                startTime = Date.now();
+                recordBtn.textContent = '⏸️ Recording...';
+                stopBtn.disabled = false;
+                document.getElementById('status').innerHTML = 'Recording in progress... Do not close the tab.';
+                document.getElementById('progress').style.display = 'block';
+
+                // Update progress bar (approximate)
+                setInterval(() => {
+                    if (!isRecording) return;
+                    const elapsed = (Date.now() - startTime) / 1000;
+                    const percent = duration ? Math.min((elapsed / duration) * 100, 100) : 0;
+                    document.getElementById('progress').value = percent;
+                }, 1000);
+
+            } else {
+                // Pause (but we usually stop at the end)
+                mediaRecorder.pause();
+            }
+        }
+
+        function stopAndDownload() {
+            if (mediaRecorder && isRecording) {
+                mediaRecorder.stop();
+                isRecording = false;
+                document.getElementById('recordBtn').textContent = '▶️ Start Recording';
+                document.getElementById('stopBtn').disabled = true;
+                document.getElementById('progress').style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>

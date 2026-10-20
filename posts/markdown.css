@@ -1,0 +1,32 @@
+pre {
+    background: #282c34 !important; 
+    padding: 1.5rem;
+    border-radius: 8px;
+    overflow-x: auto;
+    white-space: pre-wrap;
+    word-break: break-all;
+    border: 1px solid #181a1f;
+}
+
+code {
+    font-family: 'Fira Code', 'Courier New', monospace;
+    font-size: 0.9rem;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 2rem 0;
+    display: block;
+    overflow-x: auto;
+}
+
+th, td {
+    border: 1px solid #ddd;
+    padding: 12px;
+    text-align: left;
+    max-width: 300px;
+    word-wrap: break-word;
+}
+
+th { background-color: #f4f4f4; }

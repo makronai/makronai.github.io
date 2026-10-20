@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Makron YouTube Player</title>
+<style>
+  :root{--bg:#111}
+  *{margin:0;padding:0;box-sizing:border-box}
+  html,body{
+    height:100%;
+    background:var(--bg);
+    color:#fff;
+    font-family:system-ui,-apple-system,sans-serif;
+    overflow:hidden;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    position:relative;
+  }
+  #player{
+    width:100vw;
+    height:100vh;
+    border:none;
+    display:none;
+  }
+  #error{
+    position:absolute;
+    inset:0;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+    padding:20px;
+    max-width:520px;
+    margin:auto;
+    display:none;
+    z-index:10;
+    background:rgba(17,17,17,.95);
+  }
+  h1{
+    font-size:2.2rem;
+    margin-bottom:8px;
+    color:#f00;
+  }
+  p{
+    font-size:1.1rem;
+    line-height:1.4;
+    margin-bottom:20px;
+    opacity:.9;
+  }
+  input{
+    width:100%;
+    max-width:420px;
+    padding:14px 18px;
+    font-size:1rem;
+    border:2px solid #333;
+    border-radius:8px;
+    background:#222;
+    color:#fff;
+    margin-bottom:12px;
+  }
+  button{
+    padding:14px 32px;
+    font-size:1.1rem;
+    font-weight:600;
+    background:#f00;
+    color:#fff;
+    border:none;
+    border-radius:8px;
+    cursor:pointer;
+  }
+  .tip{
+    font-size:0.85rem;
+    opacity:.6;
+    margin-top:30px;
+    line-height:1.3;
+  }
+  a{color:#ff0;text-decoration:none}
+</style>
+</head>
+<body>
+
+<iframe id="player" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" title="YouTube"></iframe>
+
+<div id="error">
+  <h1>makron</h1>
+  <p id="msg"></p>
+  <input id="url-input" type="text" placeholder="paste any youtube url" autocomplete="off">
+  <button onclick="loadCustom()">OPEN IN FULLSCREEN</button>
+  <div class="tip">
+    Pro tip: on youtube.com just type <strong>.makron</strong> before <strong>.com</strong><br>
+    Example: youtube<span style="color:#f00">.makron</span>.com/watch?v=...
+  </div>
+</div>
+
+<script>
+function parseYouTube(urlStr) {
+  try {
+    const u = new URL(urlStr)
+    const host = u.hostname.toLowerCase()
+    let path = u.pathname
+    let p = new URLSearchParams(u.search)
+    let id = p.get('v')
+
+    if (host.includes('youtu.be')) {
+      id = path.split('/').filter(Boolean)[0] || id
+    }
+    else if (path.includes('/embed/')) {
+      id = path.split('/').filter(Boolean)[1] || id
+    }
+    else if (path.includes('/shorts/')) {
+      id = path.split('/').filter(Boolean)[1] || id
+    }
+    else if (path.includes('/watch')) {
+      id = p.get('v') || id
+    }
+
+    if (!id) id = p.get('v')
+
+    if (id) {
+      p.delete('v')
+      return {id, params: p}
+    }
+    return null
+  } catch(e) { return null }
+}
+
+function showPlayer(id, params) {
+  const q = params || new URLSearchParams()
+  q.set('autoplay', '1')
+  q.set('modestbranding', '1')
+  q.set('rel', '0')
+  q.set('fs', '1')
+  q.set('iv_load_policy', '3')
+  q.set('playsinline', '1')
+
+  const src = `https://www.youtube.com/embed/${encodeURIComponent(id)}?${q.toString()}`
+  const iframe = document.getElementById('player')
+  iframe.src = src
+  iframe.style.display = 'block'
+  document.getElementById('error').style.display = 'none'
+}
+
+function loadCustom() {
+  const input = document.getElementById('url-input').value.trim()
+  if (!input) return
+  const data = parseYouTube(input)
+  if (data) {
+    showPlayer(data.id, data.params)
+  } else {
+    document.getElementById('msg').innerHTML = '❌ Not a valid YouTube video URL<br><small>Try watch?v=, shorts/, youtu.be/, or embed/</small>'
+  }
+}
+
+window.onload = () => {
+  const data = parseYouTube(window.location.href)
+  if (data && data.id) {
+    showPlayer(data.id, data.params)
+    return
+  }
+
+  const err = document.getElementById('error')
+  const msg = document.getElementById('msg')
+  const path = window.location.pathname
+
+  if (path === '/' || path === '' || path === '/index.html') {
+    msg.innerHTML = `👋 <strong>makron.web.app</strong><br><br>Full-screen autofit YouTube player.<br><br>Just replace <strong>youtube.com</strong> with <strong>makron.web.app</strong> in any video URL.`
+  } else {
+    msg.innerHTML = `❌ No video ID found in this URL<br><br>Supported formats:<br><strong>youtube.com/watch?v=ID</strong><br><strong>youtu.be/ID</strong><br><strong>youtube.com/shorts/ID</strong><br><strong>youtube.com/embed/ID</strong>`
+  }
+  err.style.display = 'flex'
+}
+</script>
+</body>
+</html>

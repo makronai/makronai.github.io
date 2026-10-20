@@ -1,0 +1,105 @@
+<div class="image-tool-app teleprompter-app">
+    <div class="app-left">
+        <div class="prompter-viewport" id="prompterViewport">
+            <video id="cameraPreview" autoplay playsinline muted></video>
+            <div class="script-overlay" id="scriptOverlay">
+                <div id="scrollContent">Your script will appear here. Start by importing a file or typing in the Script tab.</div>
+            </div>
+            <div class="guide-line"></div>
+        </div>
+        
+        <div class="video-status-bar">
+            <span id="recordingIndicator" class="indicator">● REC</span>
+            <span id="timerDisplay">00:00</span>
+        </div>
+    </div>
+
+    <div class="app-right">
+        <div class="tabs">
+            <button class="tab-btn active" onclick="switchTab('tab-script', this)">Script</button>
+            <button class="tab-btn" onclick="switchTab('tab-settings', this)">Settings</button>
+            <button class="tab-btn" onclick="switchTab('tab-record', this)">Record</button>
+            <button class="tab-btn" onclick="switchTab('tab-timer', this)">Alarms</button>
+        </div>
+
+        <div class="tab-content-wrapper">
+            <div id="tab-script" class="tab-content active">
+                <div class="panel-section">
+                    <h4 class="section-title">Script Content</h4>
+                    <textarea id="scriptInput" placeholder="Paste script here..."></textarea>
+                    <div class="button-grid" style="margin-top:10px;">
+                        <input type="file" id="importScript" hidden accept=".txt,.md,.doc">
+                        <button class="btn-outline" onclick="document.getElementById('importScript').click()">Import File</button>
+                        <button class="btn-outline" onclick="exportScript()">Export .txt</button>
+                    </div>
+                </div>
+            </div>
+
+            <div id="tab-settings" class="tab-content">
+                <div class="panel-section">
+                    <h4 class="section-title">Visuals</h4>
+                    <div class="filter-row">
+                        <div class="filter-header"><span>Scroll Speed</span></div>
+                        <input type="range" id="scrollSpeed" min="1" max="30" value="15">
+                    </div>
+                    <div class="filter-row">
+                        <div class="filter-header"><span>Font Size</span></div>
+                        <input type="range" id="fontSize" min="16" max="80" value="40">
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="mirrorCamera" checked>
+                        <label for="mirrorCamera">Mirror Camera</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="flipScript">
+                        <label for="flipScript">Flip Text (for physical mirrors)</label>
+                    </div>
+                </div>
+                <div class="panel-section">
+                    <h4 class="section-title">Camera Source</h4>
+                    <select id="cameraSelect"></select>
+                </div>
+            </div>
+
+            <div id="tab-record" class="tab-content">
+                <div class="panel-section">
+                    <h4 class="section-title">Session Control</h4>
+                    <div class="button-grid">
+                        <button class="btn-primary" id="btnRecord" onclick="toggleRecording()">Start Recording</button>
+                        <button class="btn-secondary" id="btnPause" onclick="togglePause()" disabled>Pause</button>
+                    </div>
+                    <button class="btn-success" id="btnDownloadVideo" style="display:none;" onclick="downloadVideo()">Download Recording</button>
+                </div>
+            </div>
+
+            <div id="tab-timer" class="tab-content">
+                <div class="panel-section">
+                    <h4 class="section-title">Timer & Beeps</h4>
+                    <div class="input-group">
+                        <label>Target Duration (Minutes)</label>
+                        <input type="number" id="targetTime" value="5">
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="beepWarning" checked>
+                        <label for="beepWarning">1 Beep at 1m remaining</label>
+                    </div>
+                    <div class="checkbox-group">
+                        <input type="checkbox" id="beepFinal" checked>
+                        <label for="beepFinal">2 Beeps when time over</label>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="action-footer">
+            <button class="btn-primary" id="btnStartScroll" onclick="toggleScroll()">Start Teleprompter</button>
+            <p id="statusText" style="font-size:12px; margin-top:10px; color:var(--text-muted);">Ready to roll.</p>
+        </div>
+    </div>
+</div>
+
+<canvas id="exportCanvas" style="display:none;"></canvas>
+
+<script src="/teleprompter/teleprompter.js" defer></script>
+<link rel="stylesheet" href="/image-tools/image.css">
+<link rel="stylesheet" href="/teleprompter/teleprompter.css">

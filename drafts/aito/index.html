@@ -1,0 +1,1718 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aito — AI Automation Engineering</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://code.iconify.design/3/3.1.1/iconify.min.js"></script>
+<style>
+:root {
+  --bg: #0a0a0a;
+  --bg2: #111111;
+  --bg3: #161616;
+  --bg4: #1c1c1c;
+  --border: rgba(255,255,255,0.08);
+  --border2: rgba(255,255,255,0.14);
+  --text: #f0f0f0;
+  --text2: #999;
+  --text3: #666;
+  --accent: #e8e8e8;
+  --accent2: #c8c8c8;
+  --gold: #d4a843;
+  --gold2: #f0c96a;
+  --blue: #4a9eff;
+  --blue2: #2563eb;
+  --glow: rgba(212,168,67,0.15);
+  --glow2: rgba(74,158,255,0.1);
+  --radius: 12px;
+  --radius2: 8px;
+  --font: 'DM Sans', sans-serif;
+  --serif: 'Instrument Serif', serif;
+  --mono: 'JetBrains Mono', monospace;
+  --max: 1200px;
+  --transition: 0.25s cubic-bezier(0.4,0,0.2,1);
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html { scroll-behavior: smooth; font-size: 16px; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font);
+  line-height: 1.6;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ─── NOISE OVERLAY ─── */
+body::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.035'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.4;
+}
+
+/* ─── NAV ─── */
+nav {
+  position: fixed;
+  top: 0; left: 0; right: 0;
+  z-index: 100;
+  padding: 0 2rem;
+  height: 60px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: rgba(10,10,10,0.7);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  transition: border-color var(--transition);
+}
+nav:hover { border-bottom-color: var(--border2); }
+
+.nav-logo {
+  font-family: var(--mono);
+  font-size: 1.1rem;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  color: var(--text);
+  text-decoration: none;
+  display: flex; align-items: center; gap: 8px;
+}
+.nav-logo-dot {
+  width: 7px; height: 7px;
+  border-radius: 50%;
+  background: var(--gold);
+  display: inline-block;
+  animation: pulse-dot 2.5s ease-in-out infinite;
+}
+@keyframes pulse-dot {
+  0%,100% { opacity:1; transform:scale(1); box-shadow:0 0 0 0 rgba(212,168,67,0.4); }
+  50% { opacity:0.8; transform:scale(1.2); box-shadow:0 0 0 5px rgba(212,168,67,0); }
+}
+
+.nav-links { display: flex; align-items: center; gap: 2rem; }
+.nav-links a {
+  font-size: 0.85rem;
+  color: var(--text2);
+  text-decoration: none;
+  letter-spacing: 0.02em;
+  transition: color var(--transition);
+}
+.nav-links a:hover { color: var(--text); }
+
+.nav-cta {
+  font-size: 0.82rem;
+  font-family: var(--font);
+  padding: 7px 18px;
+  border-radius: var(--radius2);
+  border: 1px solid var(--border2);
+  background: transparent;
+  color: var(--text);
+  cursor: pointer;
+  transition: all var(--transition);
+  text-decoration: none;
+  white-space: nowrap;
+}
+.nav-cta:hover {
+  background: rgba(255,255,255,0.06);
+  border-color: rgba(255,255,255,0.25);
+}
+
+.mobile-menu-btn {
+  display: none;
+  flex-direction: column;
+  gap: 5px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 4px;
+}
+.mobile-menu-btn span {
+  display: block; width: 22px; height: 1.5px;
+  background: var(--text2);
+  border-radius: 2px;
+  transition: all var(--transition);
+}
+
+/* ─── HERO ─── */
+.hero {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 100px 2rem 80px;
+  overflow: hidden;
+}
+
+.hero-grid {
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(255,255,255,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.025) 1px, transparent 1px);
+  background-size: 60px 60px;
+  mask-image: radial-gradient(ellipse 80% 60% at 50% 50%, black, transparent);
+}
+
+.hero-glow {
+  position: absolute;
+  top: 20%;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 600px;
+  height: 300px;
+  background: radial-gradient(ellipse, rgba(212,168,67,0.12) 0%, transparent 70%);
+  pointer-events: none;
+}
+.hero-glow2 {
+  position: absolute;
+  bottom: 10%;
+  left: 30%;
+  width: 400px;
+  height: 200px;
+  background: radial-gradient(ellipse, rgba(74,158,255,0.07) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.75rem;
+  font-family: var(--mono);
+  letter-spacing: 0.08em;
+  color: var(--gold);
+  padding: 6px 16px;
+  border: 1px solid rgba(212,168,67,0.3);
+  border-radius: 100px;
+  margin-bottom: 2rem;
+  background: rgba(212,168,67,0.06);
+  animation: fadeInUp 0.8s ease both;
+}
+.hero-badge iconify-icon { font-size: 14px; }
+
+.hero-title {
+  font-size: clamp(3rem, 8vw, 7rem);
+  font-weight: 300;
+  line-height: 1.02;
+  letter-spacing: -0.04em;
+  margin-bottom: 0.5rem;
+  animation: fadeInUp 0.9s ease 0.1s both;
+}
+.hero-title em {
+  font-family: var(--serif);
+  font-style: italic;
+  font-weight: 400;
+  color: var(--gold2);
+}
+
+.hero-sub {
+  font-size: clamp(1rem, 2vw, 1.2rem);
+  color: var(--text2);
+  max-width: 520px;
+  margin: 1.5rem auto 0;
+  line-height: 1.7;
+  font-weight: 300;
+  animation: fadeInUp 1s ease 0.2s both;
+}
+
+/* ─── COUNTDOWN ─── */
+.countdown-wrap {
+  margin-top: 3.5rem;
+  animation: fadeInUp 1s ease 0.3s both;
+  position: relative; z-index: 1;
+}
+.countdown-label {
+  font-size: 0.72rem;
+  font-family: var(--mono);
+  letter-spacing: 0.12em;
+  color: var(--text3);
+  text-transform: uppercase;
+  margin-bottom: 1.2rem;
+}
+.countdown {
+  display: flex;
+  gap: 1px;
+  justify-content: center;
+  align-items: stretch;
+}
+.cd-unit {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 80px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  padding: 1.2rem 1rem 1rem;
+  position: relative;
+  transition: border-color var(--transition);
+}
+.cd-unit:hover { border-color: var(--border2); }
+.cd-unit:first-child { border-radius: var(--radius) 0 0 var(--radius); }
+.cd-unit:last-child { border-radius: 0 var(--radius) var(--radius) 0; }
+.cd-num {
+  font-family: var(--mono);
+  font-size: clamp(1.8rem, 4vw, 2.8rem);
+  font-weight: 500;
+  line-height: 1;
+  color: var(--text);
+  letter-spacing: -0.04em;
+  transition: all 0.2s ease;
+}
+.cd-num.flip {
+  animation: flipNum 0.3s ease;
+}
+@keyframes flipNum {
+  0% { transform: translateY(-4px); opacity: 0.4; }
+  100% { transform: translateY(0); opacity: 1; }
+}
+.cd-lbl {
+  font-size: 0.65rem;
+  font-family: var(--mono);
+  letter-spacing: 0.1em;
+  color: var(--text3);
+  margin-top: 6px;
+  text-transform: uppercase;
+}
+.cd-sep {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+  color: var(--text3);
+  font-family: var(--mono);
+  font-size: 1.4rem;
+  font-weight: 300;
+  letter-spacing: -0.05em;
+  align-self: center;
+  padding-bottom: 1rem;
+}
+
+.scroll-hint {
+  position: absolute;
+  bottom: 2.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  color: var(--text3);
+  font-size: 0.7rem;
+  letter-spacing: 0.1em;
+  font-family: var(--mono);
+  animation: fadeInUp 1s ease 0.6s both;
+}
+.scroll-hint-line {
+  width: 1px;
+  height: 36px;
+  background: linear-gradient(to bottom, transparent, var(--border2));
+  animation: scrollLine 2s ease-in-out infinite;
+}
+@keyframes scrollLine {
+  0%,100% { transform: scaleY(1); opacity: 0.5; }
+  50% { transform: scaleY(1.4); opacity: 1; }
+}
+
+/* ─── SECTION COMMON ─── */
+section { position: relative; z-index: 1; }
+.container { max-width: var(--max); margin: 0 auto; padding: 0 2rem; }
+
+.section-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.7rem;
+  font-family: var(--mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text3);
+  margin-bottom: 1rem;
+}
+.section-tag::before {
+  content: '';
+  width: 18px; height: 1px;
+  background: var(--text3);
+}
+
+.section-title {
+  font-size: clamp(2rem, 4vw, 3.2rem);
+  font-weight: 300;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+}
+.section-title em {
+  font-family: var(--serif);
+  font-style: italic;
+  color: var(--gold2);
+}
+.section-subtitle {
+  font-size: 1rem;
+  color: var(--text2);
+  font-weight: 300;
+  margin-top: 0.75rem;
+  max-width: 560px;
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ─── DIVIDER ─── */
+.divider {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--border2), transparent);
+  margin: 0 2rem;
+}
+
+/* ─── PRICING ─── */
+#pricing { padding: 100px 0; }
+
+.pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  margin-top: 3.5rem;
+}
+
+.pricing-card {
+  background: var(--bg2);
+  padding: 2rem 1.75rem 1.75rem;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  transition: background var(--transition);
+}
+.pricing-card:hover { background: var(--bg3); }
+.pricing-card.featured {
+  background: var(--bg3);
+}
+.pricing-card.featured::before {
+  content: 'Most Popular';
+  position: absolute;
+  top: 0; left: 50%;
+  transform: translate(-50%, -1px);
+  font-size: 0.65rem;
+  font-family: var(--mono);
+  letter-spacing: 0.1em;
+  color: var(--gold);
+  background: var(--bg3);
+  border: 1px solid rgba(212,168,67,0.3);
+  border-top: none;
+  padding: 4px 12px 5px;
+  border-radius: 0 0 8px 8px;
+}
+
+.pricing-price {
+  font-size: 2.8rem;
+  font-weight: 300;
+  letter-spacing: -0.04em;
+  font-family: var(--mono);
+  color: var(--text);
+  line-height: 1;
+}
+.pricing-price span {
+  font-size: 1.1rem;
+  color: var(--text3);
+  font-weight: 400;
+}
+
+.pricing-name {
+  font-size: 0.75rem;
+  font-family: var(--mono);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--gold);
+  margin-top: 0.6rem;
+}
+
+.pricing-tier {
+  font-size: 0.85rem;
+  color: var(--text2);
+  margin-top: 0.25rem;
+  font-weight: 300;
+}
+
+.pricing-divider {
+  height: 1px;
+  background: var(--border);
+  margin: 1.5rem 0;
+}
+
+.pricing-features {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.7rem;
+  flex: 1;
+}
+.pricing-features li {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  font-size: 0.83rem;
+  color: var(--text2);
+  line-height: 1.5;
+}
+.pricing-features li iconify-icon {
+  font-size: 14px;
+  color: var(--gold);
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.pricing-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  margin-top: 1.75rem;
+  padding: 11px 20px;
+  border-radius: var(--radius2);
+  border: 1px solid var(--border);
+  background: var(--bg4);
+  color: var(--text3);
+  font-family: var(--font);
+  font-size: 0.82rem;
+  letter-spacing: 0.02em;
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+.pricing-btn iconify-icon { font-size: 14px; }
+
+/* ─── MAKRON BANNER ─── */
+.makron-banner {
+  padding: 100px 0 60px;
+}
+.makron-inner {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg2);
+  padding: 3rem;
+  display: flex;
+  gap: 3rem;
+  align-items: center;
+  position: relative;
+  overflow: hidden;
+  transition: border-color var(--transition);
+}
+.makron-inner:hover { border-color: var(--border2); }
+.makron-inner::before {
+  content: '';
+  position: absolute;
+  right: -100px; top: -100px;
+  width: 350px; height: 350px;
+  background: radial-gradient(circle, rgba(74,158,255,0.07) 0%, transparent 70%);
+  pointer-events: none;
+}
+.makron-label {
+  font-size: 0.65rem;
+  font-family: var(--mono);
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  color: var(--blue);
+  margin-bottom: 0.75rem;
+  display: flex; align-items: center; gap: 8px;
+}
+.makron-label iconify-icon { font-size: 14px; }
+.makron-heading {
+  font-size: clamp(1.6rem, 3vw, 2.2rem);
+  font-weight: 300;
+  letter-spacing: -0.03em;
+  line-height: 1.15;
+}
+.makron-heading em { font-family: var(--serif); font-style: italic; color: var(--gold2); }
+.makron-desc { font-size: 0.9rem; color: var(--text2); margin-top: 1rem; line-height: 1.7; font-weight: 300; }
+.makron-stat {
+  flex-shrink: 0;
+  text-align: center;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 2rem 2.5rem;
+  transition: all var(--transition);
+}
+.makron-stat:hover { border-color: var(--border2); transform: translateY(-2px); }
+.makron-stat-num {
+  font-size: 3rem;
+  font-weight: 300;
+  letter-spacing: -0.06em;
+  font-family: var(--mono);
+  color: var(--gold2);
+  line-height: 1;
+}
+.makron-stat-label {
+  font-size: 0.7rem;
+  font-family: var(--mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text3);
+  margin-top: 0.5rem;
+}
+
+/* ─── EXPERIENCE SELECTOR ─── */
+#training { padding: 80px 0 60px; }
+
+.experience-header { margin-bottom: 3rem; }
+
+.exp-options {
+  display: flex;
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  margin-top: 2rem;
+  flex-wrap: wrap;
+}
+.exp-btn {
+  flex: 1;
+  min-width: 200px;
+  padding: 1.1rem 1.5rem;
+  background: var(--bg2);
+  border: none;
+  color: var(--text2);
+  font-family: var(--font);
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all var(--transition);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: center;
+}
+.exp-btn iconify-icon { font-size: 18px; transition: color var(--transition); }
+.exp-btn:hover { background: var(--bg3); color: var(--text); }
+.exp-btn.active {
+  background: var(--bg3);
+  color: var(--text);
+}
+.exp-btn.active iconify-icon { color: var(--gold); }
+
+/* ─── CARDS GRID ─── */
+.cards-section { padding: 0 0 80px; }
+
+.cards-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  opacity: 0;
+  transform: translateY(16px);
+  transition: all 0.5s cubic-bezier(0.4,0,0.2,1);
+  pointer-events: none;
+}
+.cards-grid.visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: all;
+}
+.cards-grid.hidden { display: none; }
+
+.service-card {
+  background: var(--bg2);
+  padding: 2rem;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  overflow: hidden;
+  transition: background var(--transition);
+  cursor: default;
+}
+.service-card:hover { background: var(--bg3); }
+.service-card::after {
+  content: '';
+  position: absolute;
+  bottom: 0; left: 0; right: 0;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  opacity: 0;
+  transition: opacity var(--transition);
+}
+.service-card:hover::after { opacity: 0.4; }
+
+.card-icon {
+  width: 42px; height: 42px;
+  border-radius: var(--radius2);
+  background: var(--bg4);
+  border: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 1.25rem;
+  transition: all var(--transition);
+}
+.service-card:hover .card-icon {
+  border-color: rgba(212,168,67,0.3);
+  background: rgba(212,168,67,0.08);
+}
+.card-icon iconify-icon { font-size: 20px; color: var(--gold); }
+
+.card-title {
+  font-size: 1rem;
+  font-weight: 500;
+  color: var(--text);
+  letter-spacing: -0.01em;
+  line-height: 1.3;
+}
+.card-pro {
+  font-size: 0.65rem;
+  font-family: var(--mono);
+  letter-spacing: 0.1em;
+  color: var(--gold);
+  margin-bottom: 0.2rem;
+}
+.card-desc {
+  font-size: 0.84rem;
+  color: var(--text2);
+  margin-top: 0.75rem;
+  line-height: 1.65;
+  font-weight: 300;
+  flex: 1;
+}
+.card-bonus {
+  font-size: 0.78rem;
+  color: var(--blue);
+  margin-top: 0.5rem;
+  font-style: italic;
+  display: flex; align-items: flex-start; gap: 6px;
+}
+.card-bonus iconify-icon { font-size: 13px; flex-shrink: 0; margin-top: 2px; }
+
+.card-learn-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  margin-top: 1.5rem;
+  padding: 9px 18px;
+  border-radius: var(--radius2);
+  border: 1px solid var(--border2);
+  background: transparent;
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all var(--transition);
+  align-self: flex-start;
+  text-decoration: none;
+}
+.card-learn-btn:hover {
+  background: rgba(255,255,255,0.05);
+  border-color: rgba(255,255,255,0.25);
+  gap: 12px;
+}
+.card-learn-btn iconify-icon { font-size: 14px; transition: transform var(--transition); }
+.card-learn-btn:hover iconify-icon { transform: translateX(3px); }
+
+/* ─── CTA SECTION ─── */
+#cta { padding: 80px 0; }
+.cta-inner {
+  text-align: center;
+  padding: 5rem 2rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--bg2);
+  position: relative;
+  overflow: hidden;
+}
+.cta-inner::before {
+  content: '';
+  position: absolute;
+  top: -150px; left: 50%;
+  transform: translateX(-50%);
+  width: 500px; height: 300px;
+  background: radial-gradient(ellipse, rgba(212,168,67,0.08) 0%, transparent 70%);
+  pointer-events: none;
+}
+.cta-inner::after {
+  content: '';
+  position: absolute;
+  bottom: -100px; right: -50px;
+  width: 300px; height: 200px;
+  background: radial-gradient(ellipse, rgba(74,158,255,0.06) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.cta-title {
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 300;
+  letter-spacing: -0.03em;
+  position: relative; z-index: 1;
+}
+.cta-title em { font-family: var(--serif); font-style: italic; color: var(--gold2); }
+.cta-sub {
+  font-size: 0.95rem;
+  color: var(--text2);
+  font-weight: 300;
+  margin-top: 0.75rem;
+  position: relative; z-index: 1;
+}
+
+/* ─── CONTACT FORM ─── */
+#contact { padding: 80px 0 100px; }
+
+.contact-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.4fr;
+  gap: 4rem;
+  align-items: start;
+  margin-top: 3rem;
+}
+.contact-left { }
+.contact-spark {
+  font-size: clamp(2rem, 3.5vw, 2.8rem);
+  font-weight: 300;
+  letter-spacing: -0.03em;
+  line-height: 1.1;
+}
+.contact-spark em { font-family: var(--serif); font-style: italic; color: var(--gold2); }
+.contact-spark strong {
+  font-weight: 500;
+}
+.contact-desc { font-size: 0.9rem; color: var(--text2); margin-top: 1rem; line-height: 1.7; font-weight: 300; }
+
+.contact-meta {
+  margin-top: 2.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+.contact-meta-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 0.85rem;
+  color: var(--text2);
+}
+.contact-meta-item iconify-icon { font-size: 18px; color: var(--gold); }
+
+/* ─── FORM ─── */
+.form-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 2.5rem;
+  transition: border-color var(--transition);
+}
+.form-card:hover { border-color: var(--border2); }
+
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-bottom: 1.25rem;
+}
+.form-group:last-of-type { margin-bottom: 0; }
+
+.form-label {
+  font-size: 0.78rem;
+  font-family: var(--mono);
+  letter-spacing: 0.06em;
+  color: var(--text3);
+  text-transform: uppercase;
+}
+.form-label span { color: var(--text3); font-size: 0.7rem; }
+
+.form-input, .form-select, .form-textarea {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius2);
+  padding: 10px 14px;
+  color: var(--text);
+  font-family: var(--font);
+  font-size: 0.9rem;
+  outline: none;
+  transition: all var(--transition);
+  width: 100%;
+  -webkit-appearance: none;
+  appearance: none;
+}
+.form-input:focus, .form-select:focus, .form-textarea:focus {
+  border-color: rgba(212,168,67,0.5);
+  box-shadow: 0 0 0 3px rgba(212,168,67,0.08);
+}
+.form-input::placeholder, .form-textarea::placeholder { color: var(--text3); }
+.form-textarea { resize: vertical; min-height: 120px; line-height: 1.6; }
+.form-select { cursor: pointer; }
+.form-select option { background: var(--bg3); }
+
+.radio-group {
+  display: flex;
+  gap: 1px;
+  background: var(--border);
+  border: 1px solid var(--border);
+  border-radius: var(--radius2);
+  overflow: hidden;
+}
+.radio-opt {
+  flex: 1;
+  position: relative;
+}
+.radio-opt input {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+.radio-opt label {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 9px 12px;
+  font-size: 0.82rem;
+  color: var(--text2);
+  background: var(--bg3);
+  cursor: pointer;
+  transition: all var(--transition);
+  text-align: center;
+}
+.radio-opt input:checked + label {
+  background: var(--bg4);
+  color: var(--text);
+}
+.radio-opt label:hover { color: var(--text); background: var(--bg4); }
+
+.form-submit {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+  padding: 13px 24px;
+  border-radius: var(--radius2);
+  border: 1px solid rgba(212,168,67,0.35);
+  background: rgba(212,168,67,0.08);
+  color: var(--gold2);
+  font-family: var(--font);
+  font-size: 0.9rem;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition);
+  margin-top: 1.75rem;
+  letter-spacing: 0.01em;
+}
+.form-submit:hover {
+  background: rgba(212,168,67,0.14);
+  border-color: rgba(212,168,67,0.6);
+  transform: translateY(-1px);
+  box-shadow: 0 8px 24px rgba(212,168,67,0.1);
+}
+.form-submit:active { transform: translateY(0); }
+.form-submit iconify-icon { font-size: 16px; }
+
+.form-status {
+  display: none;
+  padding: 12px 16px;
+  border-radius: var(--radius2);
+  font-size: 0.85rem;
+  margin-top: 1rem;
+  text-align: center;
+}
+.form-status.success {
+  display: block;
+  background: rgba(74,158,255,0.08);
+  border: 1px solid rgba(74,158,255,0.2);
+  color: var(--blue);
+}
+.form-status.error {
+  display: block;
+  background: rgba(220,50,50,0.08);
+  border: 1px solid rgba(220,50,50,0.2);
+  color: #f07070;
+}
+
+/* ─── FOOTER ─── */
+footer {
+  border-top: 1px solid var(--border);
+  padding: 4rem 0 2rem;
+}
+.footer-grid {
+  display: grid;
+  grid-template-columns: 1.8fr repeat(3, 1fr);
+  gap: 3rem;
+  padding-bottom: 3rem;
+  border-bottom: 1px solid var(--border);
+}
+.footer-brand-logo {
+  font-family: var(--mono);
+  font-size: 1.1rem;
+  font-weight: 500;
+  letter-spacing: -0.02em;
+  display: flex; align-items: center; gap: 8px;
+  margin-bottom: 0.75rem;
+}
+.footer-brand-dot { width: 7px; height: 7px; border-radius: 50%; background: var(--gold); }
+.footer-brand-desc {
+  font-size: 0.82rem;
+  color: var(--text3);
+  line-height: 1.6;
+  font-weight: 300;
+  max-width: 240px;
+}
+.footer-col-title {
+  font-size: 0.72rem;
+  font-family: var(--mono);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--text3);
+  margin-bottom: 1.2rem;
+}
+.footer-links { list-style: none; display: flex; flex-direction: column; gap: 0.7rem; }
+.footer-links a {
+  font-size: 0.84rem;
+  color: var(--text2);
+  text-decoration: none;
+  transition: color var(--transition);
+  display: flex; align-items: center; gap: 6px;
+}
+.footer-links a:hover { color: var(--text); }
+.footer-links a iconify-icon { font-size: 12px; opacity: 0.5; }
+
+.footer-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: 1.75rem;
+  font-size: 0.78rem;
+  color: var(--text3);
+}
+.footer-social { display: flex; gap: 1rem; }
+.footer-social a {
+  color: var(--text3);
+  transition: color var(--transition);
+  font-size: 1.1rem;
+  display: flex;
+}
+.footer-social a:hover { color: var(--text); }
+
+/* ─── SCROLL ANIMATIONS ─── */
+.reveal {
+  opacity: 0;
+  transform: translateY(24px);
+  transition: all 0.7s cubic-bezier(0.4,0,0.2,1);
+}
+.reveal.visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+.reveal-delay-1 { transition-delay: 0.1s; }
+.reveal-delay-2 { transition-delay: 0.2s; }
+.reveal-delay-3 { transition-delay: 0.3s; }
+.reveal-delay-4 { transition-delay: 0.4s; }
+
+/* ─── RESPONSIVE ─── */
+@media (max-width: 900px) {
+  .contact-grid { grid-template-columns: 1fr; gap: 2.5rem; }
+  .footer-grid { grid-template-columns: 1fr 1fr; gap: 2rem; }
+  .makron-inner { flex-direction: column; }
+  .makron-stat { width: 100%; }
+  .nav-links { display: none; }
+  .mobile-menu-btn { display: flex; }
+  .cd-unit { min-width: 60px; }
+}
+@media (max-width: 600px) {
+  .pricing-grid { grid-template-columns: 1fr; }
+  .cards-grid { grid-template-columns: 1fr; }
+  .footer-grid { grid-template-columns: 1fr; gap: 1.5rem; }
+  .footer-bottom { flex-direction: column; gap: 1rem; text-align: center; }
+  .form-row { grid-template-columns: 1fr; }
+  .exp-options { flex-direction: column; }
+  .exp-btn { min-width: unset; }
+  .countdown { gap: 1px; }
+  .cd-unit { min-width: 50px; padding: 1rem 0.5rem; }
+  .cd-sep { display: none; }
+}
+
+/* ─── MOBILE NAV ─── */
+.mobile-nav {
+  display: none;
+  position: fixed;
+  top: 60px; left: 0; right: 0;
+  background: rgba(10,10,10,0.95);
+  backdrop-filter: blur(20px);
+  border-bottom: 1px solid var(--border);
+  padding: 1.5rem 2rem;
+  z-index: 99;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+.mobile-nav.open { display: flex; }
+.mobile-nav a {
+  font-size: 1rem;
+  color: var(--text2);
+  text-decoration: none;
+  transition: color var(--transition);
+}
+.mobile-nav a:hover { color: var(--text); }
+
+/* ─── CURSOR GLOW ─── */
+.cursor-glow {
+  position: fixed;
+  width: 300px; height: 300px;
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(212,168,67,0.04) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 9999;
+  transform: translate(-50%, -50%);
+  transition: opacity 0.3s ease;
+  opacity: 0;
+}
+</style>
+</head>
+<body>
+
+<div class="cursor-glow" id="cursorGlow"></div>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">
+    <span class="nav-logo-dot"></span>
+    Aito
+  </a>
+  <div class="nav-links">
+    <a href="#pricing">Pricing</a>
+    <a href="#training">Training</a>
+    <a href="#contact">Contact</a>
+    <a href="https://makron.app" target="_blank">Makron</a>
+  </div>
+  <a href="#contact" class="nav-cta">Join Aito Spark →</a>
+  <button class="mobile-menu-btn" id="mobileBtn" aria-label="Menu">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+<div class="mobile-nav" id="mobileNav">
+  <a href="#pricing" onclick="closeMobileNav()">Pricing</a>
+  <a href="#training" onclick="closeMobileNav()">Training</a>
+  <a href="#contact" onclick="closeMobileNav()">Contact</a>
+  <a href="https://makron.app" target="_blank">Makron</a>
+  <a href="#contact" onclick="closeMobileNav()" style="color:var(--gold)">Join Aito Spark →</a>
+</div>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-grid"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-glow2"></div>
+  <div style="position:relative; z-index:1;">
+    <div class="hero-badge">
+      <iconify-icon icon="solar:rocket-bold-duotone"></iconify-icon>
+      Coming Soon — Custom AI Automation
+    </div>
+    <h1 class="hero-title">
+      The future of<br><em>automation</em><br>is here.
+    </h1>
+    <p class="hero-sub">Aito is an AI automation engineering platform built for teams who need intelligent, scalable, and relentless workflow automation.</p>
+
+    <div class="countdown-wrap">
+      <p class="countdown-label">Launching in</p>
+      <div class="countdown" id="countdown">
+        <div class="cd-unit"><span class="cd-num" id="cd-months">00</span><span class="cd-lbl">Months</span></div>
+        <div class="cd-sep">:</div>
+        <div class="cd-unit"><span class="cd-num" id="cd-days">00</span><span class="cd-lbl">Days</span></div>
+        <div class="cd-sep">:</div>
+        <div class="cd-unit"><span class="cd-num" id="cd-hours">00</span><span class="cd-lbl">Hours</span></div>
+        <div class="cd-sep">:</div>
+        <div class="cd-unit"><span class="cd-num" id="cd-mins">00</span><span class="cd-lbl">Mins</span></div>
+        <div class="cd-sep">:</div>
+        <div class="cd-unit"><span class="cd-num" id="cd-secs">00</span><span class="cd-lbl">Secs</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-hint">
+    <span>Scroll</span>
+    <div class="scroll-hint-line"></div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<div class="divider"></div>
+<section id="pricing">
+  <div class="container">
+    <div class="reveal">
+      <p class="section-tag"><iconify-icon icon="solar:tag-price-bold-duotone"></iconify-icon> Pricing</p>
+      <h2 class="section-title">Choose your <em>power level</em></h2>
+      <p class="section-subtitle">Every tier includes lifetime access to updates. Start free, scale when ready.</p>
+    </div>
+
+    <div class="pricing-grid reveal">
+      <!-- FREE -->
+      <div class="pricing-card">
+        <div class="pricing-name">Free</div>
+        <div class="pricing-price">$0</div>
+        <div class="pricing-tier">Forever, on us.</div>
+        <div class="pricing-divider"></div>
+        <ul class="pricing-features">
+          <li><iconify-icon icon="solar:check-circle-bold-duotone"></iconify-icon> Access to Lite versions of Aito</li>
+          <li><iconify-icon icon="solar:check-circle-bold-duotone"></iconify-icon> Self-hosted AI agent pipelines</li>
+          <li><iconify-icon icon="solar:check-circle-bold-duotone"></iconify-icon> Integrations with hundreds of 3rd party platforms</li>
+          <li><iconify-icon icon="solar:check-circle-bold-duotone"></iconify-icon> Automate business activities — lead gen, customer service</li>
+        </ul>
+        <button class="pricing-btn" disabled>
+          <iconify-icon icon="solar:clock-circle-bold-duotone"></iconify-icon>
+          Coming Soon
+        </button>
+      </div>
+
+      <!-- $100 -->
+      <div class="pricing-card">
+        <div class="pricing-name">AI Enthusiast</div>
+        <div class="pricing-price">$100<span>/mo</span></div>
+        <div class="pricing-tier">Get started with power.</div>
+        <div class="pricing-divider"></div>
+        <ul class="pricing-features">
+          <li><iconify-icon icon="solar:check-circle-bold-duotone"></iconify-icon> Access to Standard versions of Aito</li>
+          <li><iconify-icon icon="solar:star-bold-duotone"></iconify-icon> Early access to Demonic versions</li>
+          <li><iconify-icon icon="solar:check-circle-bold-duotone"></iconify-icon> 24/7 VPS hosting on our servers (1 month)</li>
+          <li><iconify-icon icon="solar:check-circle-bold-duotone"></iconify-icon> Integrations with hundreds of 3rd party platforms</li>
+          <li><iconify-icon icon="solar:check-circle-bold-duotone"></iconify-icon> Automate business activities — lead gen, customer service</li>
+        </ul>
+        <button class="pricing-btn" disabled>
+          <iconify-icon icon="solar:clock-circle-bold-duotone"></iconify-icon>
+          Coming Soon
+        </button>
+      </div>
+
+      <!-- $490 -->
+      <div class="pricing-card featured">
+        <div class="pricing-name">AI Wizard</div>
+        <div class="pricing-price">$490<span>/mo</span></div>
+        <div class="pricing-tier">For serious builders.</div>
+        <div class="pricing-divider"></div>
+        <ul class="pricing-features">
+          <li><iconify-icon icon="solar:check-circle-bold-duotone"></iconify-icon> Access to Demonic versions of Aito</li>
+          <li><iconify-icon icon="solar:star-bold-duotone"></iconify-icon> Early access to Angelic versions</li>
+          <li><iconify-icon icon="solar:check-circle-bold-duotone"></iconify-icon> 24/7 VPS hosting on our servers (6 months)</li>
+          <li><iconify-icon icon="solar:check-circle-bold-duotone"></iconify-icon> Integrations with thousands of platforms</li>
+          <li><iconify-icon icon="solar:check-circle-bold-duotone"></iconify-icon> Custom platform with CMS dashboards</li>
+          <li><iconify-icon icon="solar:check-circle-bold-duotone"></iconify-icon> Automate business activities — lead gen, customer service</li>
+          <li><iconify-icon icon="solar:check-circle-bold-duotone"></iconify-icon> Automate cybersecurity and IT protection</li>
+          <li><iconify-icon icon="solar:check-circle-bold-duotone"></iconify-icon> Automate full-scale business management</li>
+        </ul>
+        <button class="pricing-btn" disabled>
+          <iconify-icon icon="solar:clock-circle-bold-duotone"></iconify-icon>
+          Coming Soon
+        </button>
+      </div>
+
+      <!-- $790 -->
+      <div class="pricing-card">
+        <div class="pricing-name">AI Conqueror</div>
+        <div class="pricing-price">$790<span>/mo</span></div>
+        <div class="pricing-tier">Dominate every frontier.</div>
+        <div class="pricing-divider"></div>
+        <ul class="pricing-features">
+          <li><iconify-icon icon="solar:check-circle-bold-duotone"></iconify-icon> Access to Angelic versions of Aito</li>
+          <li><iconify-icon icon="solar:star-bold-duotone"></iconify-icon> Early access to AGI versions</li>
+          <li><iconify-icon icon="solar:check-circle-bold-duotone"></iconify-icon> 24/7 VPS hosting on our servers (12 months)</li>
+          <li><iconify-icon icon="solar:check-circle-bold-duotone"></iconify-icon> Integrations with any platform</li>
+          <li><iconify-icon icon="solar:check-circle-bold-duotone"></iconify-icon> Custom platform with CMS dashboards</li>
+          <li><iconify-icon icon="solar:check-circle-bold-duotone"></iconify-icon> Automate business activities — lead gen, customer service</li>
+          <li><iconify-icon icon="solar:check-circle-bold-duotone"></iconify-icon> Automate cybersecurity and IT protection</li>
+          <li><iconify-icon icon="solar:check-circle-bold-duotone"></iconify-icon> Automate full-scale business management</li>
+          <li><iconify-icon icon="solar:atom-bold-duotone"></iconify-icon> Agent factory that creates its own AI agents</li>
+        </ul>
+        <button class="pricing-btn" disabled>
+          <iconify-icon icon="solar:clock-circle-bold-duotone"></iconify-icon>
+          Coming Soon
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- MAKRON BANNER -->
+<div class="divider"></div>
+<div class="makron-banner">
+  <div class="container">
+    <div class="makron-inner reveal">
+      <div>
+        <div class="makron-label">
+          <iconify-icon icon="solar:lightning-bold-duotone"></iconify-icon>
+          While You Wait — From Makron
+        </div>
+        <h2 class="makron-heading">Your workflow, powered<br>by <em>AI</em></h2>
+        <p class="makron-desc">Learn from an industry-level expert consultant about the current atmosphere of AI systems and tools, while training your employees and yourself on how to be faster and more productive than you ever imagined.</p>
+      </div>
+      <div class="makron-stat">
+        <div class="makron-stat-num">1×</div>
+        <div class="makron-stat-label">1 month's tasks<br>finished in 1 day</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TRAINING / EXPERIENCE SELECTOR -->
+<div class="divider"></div>
+<section id="training">
+  <div class="container">
+    <div class="experience-header reveal">
+      <p class="section-tag"><iconify-icon icon="solar:graduation-cap-bold-duotone"></iconify-icon> Training</p>
+      <h2 class="section-title">Retrain your team with<br><em>essential AI skills</em> for <span id="currentYear"></span></h2>
+      <p class="section-subtitle">But first, tell us about your own level of experience with using AI:</p>
+
+      <div class="exp-options" style="margin-top:2rem;">
+        <button class="exp-btn" id="btn-beginner" onclick="selectExp('beginner')">
+          <iconify-icon icon="solar:leaf-bold-duotone"></iconify-icon>
+          Little to no experience
+        </button>
+        <button class="exp-btn" id="btn-intermediate" onclick="selectExp('intermediate')">
+          <iconify-icon icon="solar:chart-bold-duotone"></iconify-icon>
+          Regular LLM user / freelancer
+        </button>
+        <button class="exp-btn" id="btn-advanced" onclick="selectExp('advanced')">
+          <iconify-icon icon="solar:code-bold-duotone"></iconify-icon>
+          Senior AI developer / researcher
+        </button>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CARDS SECTIONS -->
+<div class="cards-section">
+  <div class="container">
+
+    <!-- BEGINNER CARDS -->
+    <div class="cards-grid hidden" id="cards-beginner">
+      <div class="service-card">
+        <div class="card-icon"><iconify-icon icon="solar:chat-round-dots-bold-duotone"></iconify-icon></div>
+        <div class="card-pro">PRO</div>
+        <h3 class="card-title">LLM Prompting PRO</h3>
+        <p class="card-desc">Understand how large language models like ChatGPT, Gemini, Grok, and Claude work — and learn how to get exactly what you want through specialized instructions.</p>
+        <a class="card-learn-btn" href="#contact">Learn more <iconify-icon icon="solar:arrow-right-bold"></iconify-icon></a>
+      </div>
+      <div class="service-card">
+        <div class="card-icon"><iconify-icon icon="solar:database-bold-duotone"></iconify-icon></div>
+        <div class="card-pro">PRO</div>
+        <h3 class="card-title">Data Literacy PRO</h3>
+        <p class="card-desc">The usage of big data and data science is everywhere. If your company doesn't understand how to leverage those skills, you'd be missing out on customer retention and product value.</p>
+        <a class="card-learn-btn" href="#contact">Learn more <iconify-icon icon="solar:arrow-right-bold"></iconify-icon></a>
+      </div>
+      <div class="service-card">
+        <div class="card-icon"><iconify-icon icon="solar:telescope-bold-duotone"></iconify-icon></div>
+        <div class="card-pro">PRO</div>
+        <h3 class="card-title">Tool Research PRO</h3>
+        <p class="card-desc">Get expert suggestions on the right AI tools to solve your problems, increase sales, or attract more customers — curated specifically for your business needs.</p>
+        <a class="card-learn-btn" href="#contact">Learn more <iconify-icon icon="solar:arrow-right-bold"></iconify-icon></a>
+      </div>
+    </div>
+
+    <!-- INTERMEDIATE CARDS -->
+    <div class="cards-grid hidden" id="cards-intermediate">
+      <div class="service-card">
+        <div class="card-icon"><iconify-icon icon="solar:telescope-bold-duotone"></iconify-icon></div>
+        <div class="card-pro">PRO</div>
+        <h3 class="card-title">Tool Research PRO</h3>
+        <p class="card-desc">Get expert suggestions on the right AI tools to solve your problems, increase sales, or attract more customers — curated specifically for your business needs.</p>
+        <a class="card-learn-btn" href="#contact">Learn more <iconify-icon icon="solar:arrow-right-bold"></iconify-icon></a>
+      </div>
+      <div class="service-card">
+        <div class="card-icon"><iconify-icon icon="solar:cpu-bolt-bold-duotone"></iconify-icon></div>
+        <div class="card-pro">PRO</div>
+        <h3 class="card-title">LLM Efficiency PRO</h3>
+        <p class="card-desc">Know the intricate details behind each model and the best prompts to use for maximum output quality and precision.</p>
+        <div class="card-bonus"><iconify-icon icon="solar:gift-bold-duotone"></iconify-icon> Bonus: Treasure chest of copy-pasteable prompts proven to succeed.</div>
+        <a class="card-learn-btn" href="#contact">Learn more <iconify-icon icon="solar:arrow-right-bold"></iconify-icon></a>
+      </div>
+      <div class="service-card">
+        <div class="card-icon"><iconify-icon icon="solar:routing-bold-duotone"></iconify-icon></div>
+        <div class="card-pro">PRO</div>
+        <h3 class="card-title">AI Automation PRO</h3>
+        <p class="card-desc">The rise of automation agent technologies like N8N has flooded the market. It's time to learn how they work and how to build your own intelligent pipelines.</p>
+        <div class="card-bonus"><iconify-icon icon="solar:gift-bold-duotone"></iconify-icon> Bonus: Early access to Aito automation tool when it's ready.</div>
+        <a class="card-learn-btn" href="#contact">Learn more <iconify-icon icon="solar:arrow-right-bold"></iconify-icon></a>
+      </div>
+    </div>
+
+    <!-- ADVANCED CARDS -->
+    <div class="cards-grid hidden" id="cards-advanced">
+      <div class="service-card">
+        <div class="card-icon"><iconify-icon icon="solar:cpu-bolt-bold-duotone"></iconify-icon></div>
+        <div class="card-pro">PRO</div>
+        <h3 class="card-title">LLM Efficiency PRO</h3>
+        <p class="card-desc">Know the intricate details behind each model and the best prompts to use for maximum output quality and precision.</p>
+        <div class="card-bonus"><iconify-icon icon="solar:gift-bold-duotone"></iconify-icon> Bonus: Treasure chest of copy-pasteable prompts proven to succeed.</div>
+        <a class="card-learn-btn" href="#contact">Learn more <iconify-icon icon="solar:arrow-right-bold"></iconify-icon></a>
+      </div>
+      <div class="service-card">
+        <div class="card-icon"><iconify-icon icon="solar:routing-bold-duotone"></iconify-icon></div>
+        <div class="card-pro">PRO</div>
+        <h3 class="card-title">AI Automation PRO</h3>
+        <p class="card-desc">The rise of automation agent technologies like N8N has flooded the market. It's time to learn how they work and how to build your own intelligent pipelines.</p>
+        <div class="card-bonus"><iconify-icon icon="solar:gift-bold-duotone"></iconify-icon> Bonus: Early access to Aito automation tool when it's ready.</div>
+        <a class="card-learn-btn" href="#contact">Learn more <iconify-icon icon="solar:arrow-right-bold"></iconify-icon></a>
+      </div>
+      <div class="service-card">
+        <div class="card-icon"><iconify-icon icon="solar:planet-bold-duotone"></iconify-icon></div>
+        <div class="card-pro">PRO</div>
+        <h3 class="card-title">AGI Preparations PRO</h3>
+        <p class="card-desc">Get detailed estimations on when a practical AGI will arrive, and learn how to utilize current-day alternatives closest to AGI-level characteristics — before your competitors.</p>
+        <a class="card-learn-btn" href="#contact">Learn more <iconify-icon icon="solar:arrow-right-bold"></iconify-icon></a>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- CTA -->
+<div class="divider"></div>
+<section id="cta">
+  <div class="container">
+    <div class="cta-inner reveal">
+      <p class="section-tag" style="justify-content:center;"><iconify-icon icon="solar:fire-bold-duotone"></iconify-icon> Transform Your Business</p>
+      <h2 class="cta-title">Ready to <em>transform</em><br>your workflow?</h2>
+      <p class="cta-sub" style="margin: 0 auto; max-width:480px;">Book your session today and start experiencing the power of AI-enhanced productivity. Your competitors aren't waiting — why would you?</p>
+      <a href="#contact" class="nav-cta" style="display:inline-flex; margin-top:2.5rem; padding:12px 28px; font-size:0.9rem; align-items:center; gap:8px; text-decoration:none;">
+        <iconify-icon icon="solar:calendar-bold-duotone"></iconify-icon>
+        Book a Session
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT FORM -->
+<div class="divider"></div>
+<section id="contact">
+  <div class="container">
+    <div class="contact-grid">
+      <div class="reveal">
+        <p class="section-tag"><iconify-icon icon="solar:letter-bold-duotone"></iconify-icon> Community</p>
+        <h2 class="contact-spark">Join <em>Aito<br>Spark</em></h2>
+        <p class="contact-desc">Become part of a B2B community aimed at providing enterprise solutions and suggestions to elevate your business to new heights.</p>
+        <div class="contact-meta">
+          <div class="contact-meta-item">
+            <iconify-icon icon="solar:buildings-bold-duotone"></iconify-icon>
+            Enterprise-grade solutions
+          </div>
+          <div class="contact-meta-item">
+            <iconify-icon icon="solar:users-group-two-rounded-bold-duotone"></iconify-icon>
+            B2B community access
+          </div>
+          <div class="contact-meta-item">
+            <iconify-icon icon="solar:shield-keyhole-bold-duotone"></iconify-icon>
+            Private Discord community
+          </div>
+          <div class="contact-meta-item">
+            <iconify-icon icon="solar:rocket-bold-duotone"></iconify-icon>
+            Early access to Aito features
+          </div>
+        </div>
+      </div>
+
+      <div class="reveal reveal-delay-2">
+        <div class="form-card">
+          <form id="sparkForm" onsubmit="submitForm(event)">
+
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label" for="fname">Name</label>
+                <input class="form-input" type="text" id="fname" name="name" placeholder="Your full name" required>
+              </div>
+              <div class="form-group">
+                <label class="form-label" for="femail">Email</label>
+                <input class="form-input" type="email" id="femail" name="email" placeholder="you@company.com" required>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="fphone">Phone <span>(optional)</span></label>
+              <input class="form-input" type="tel" id="fphone" name="phone" placeholder="+1 (000) 000-0000">
+            </div>
+
+            <div class="form-group">
+              <label class="form-label">Business client?</label>
+              <div class="radio-group">
+                <div class="radio-opt">
+                  <input type="radio" name="business" id="biz-yes" value="Yes">
+                  <label for="biz-yes">Yes</label>
+                </div>
+                <div class="radio-opt">
+                  <input type="radio" name="business" id="biz-no" value="No" checked>
+                  <label for="biz-no">No</label>
+                </div>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label class="form-label" for="fservices">What services are you looking for?</label>
+              <textarea class="form-textarea" id="fservices" name="services" placeholder="Tell us about your goals, what you'd like to automate, or what training you need..." required></textarea>
+            </div>
+
+            <button type="submit" class="form-submit">
+              <iconify-icon icon="solar:paper-plane-bold-duotone"></iconify-icon>
+              Enroll in Aito Spark
+            </button>
+          </form>
+
+          <div class="form-status" id="formStatus"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-brand-logo">
+          <span class="footer-brand-dot"></span>
+          Aito
+        </div>
+        <p class="footer-brand-desc">AI automation engineering for teams who demand more. Built by Makron. Coming March 2027.</p>
+      </div>
+      <div>
+        <p class="footer-col-title">Product</p>
+        <ul class="footer-links">
+          <li><a href="#pricing"><iconify-icon icon="solar:arrow-right-up-bold"></iconify-icon> Pricing</a></li>
+          <li><a href="#"><iconify-icon icon="solar:arrow-right-up-bold"></iconify-icon> Docs</a></li>
+          <li><a href="#"><iconify-icon icon="solar:arrow-right-up-bold"></iconify-icon> Changelog</a></li>
+          <li><a href="#"><iconify-icon icon="solar:arrow-right-up-bold"></iconify-icon> Status</a></li>
+        </ul>
+      </div>
+      <div>
+        <p class="footer-col-title">Company</p>
+        <ul class="footer-links">
+          <li><a href="#"><iconify-icon icon="solar:arrow-right-up-bold"></iconify-icon> About</a></li>
+          <li><a href="#"><iconify-icon icon="solar:arrow-right-up-bold"></iconify-icon> Blog</a></li>
+          <li><a href="#"><iconify-icon icon="solar:arrow-right-up-bold"></iconify-icon> Careers</a></li>
+          <li><a href="#"><iconify-icon icon="solar:arrow-right-up-bold"></iconify-icon> Press</a></li>
+        </ul>
+      </div>
+      <div>
+        <p class="footer-col-title">Legal</p>
+        <ul class="footer-links">
+          <li><a href="#"><iconify-icon icon="solar:arrow-right-up-bold"></iconify-icon> Privacy Policy</a></li>
+          <li><a href="#"><iconify-icon icon="solar:arrow-right-up-bold"></iconify-icon> Terms of Service</a></li>
+          <li><a href="#"><iconify-icon icon="solar:arrow-right-up-bold"></iconify-icon> Cookie Policy</a></li>
+          <li><a href="#"><iconify-icon icon="solar:arrow-right-up-bold"></iconify-icon> Security</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© <span id="footerYear"></span> Aito by Makron. All rights reserved.</p>
+      <div class="footer-social">
+        <a href="#" title="X / Twitter"><iconify-icon icon="solar:twitter-bold-duotone"></iconify-icon></a>
+        <a href="#" title="LinkedIn"><iconify-icon icon="solar:linkedin-bold-duotone"></iconify-icon></a>
+        <a href="#" title="Discord"><iconify-icon icon="solar:chat-round-bold-duotone"></iconify-icon></a>
+        <a href="#" title="GitHub"><iconify-icon icon="solar:code-square-bold-duotone"></iconify-icon></a>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<script>
+// ─── CURSOR GLOW ───
+const glow = document.getElementById('cursorGlow');
+let glowVisible = false;
+document.addEventListener('mousemove', e => {
+  glow.style.left = e.clientX + 'px';
+  glow.style.top = e.clientY + 'px';
+  if (!glowVisible) { glow.style.opacity = '1'; glowVisible = true; }
+});
+document.addEventListener('mouseleave', () => { glow.style.opacity = '0'; glowVisible = false; });
+
+// ─── MOBILE NAV ───
+const mobileBtn = document.getElementById('mobileBtn');
+const mobileNav = document.getElementById('mobileNav');
+mobileBtn.addEventListener('click', () => mobileNav.classList.toggle('open'));
+function closeMobileNav() { mobileNav.classList.remove('open'); }
+
+// ─── CURRENT YEAR ───
+const cy = new Date().getFullYear();
+document.getElementById('currentYear').textContent = cy;
+document.getElementById('footerYear').textContent = cy;
+
+// ─── COUNTDOWN ───
+const target = new Date('2027-03-26T00:00:00');
+const prevVals = {};
+
+function updateCountdown() {
+  const now = new Date();
+  let diff = target - now;
+  if (diff <= 0) {
+    ['months','days','hours','mins','secs'].forEach(k => {
+      document.getElementById('cd-' + k).textContent = '00';
+    });
+    return;
+  }
+  const totalSecs = Math.floor(diff / 1000);
+  const secs = totalSecs % 60;
+  const totalMins = Math.floor(totalSecs / 60);
+  const mins = totalMins % 60;
+  const totalHours = Math.floor(totalMins / 60);
+  const hours = totalHours % 24;
+  const totalDays = Math.floor(totalHours / 24);
+
+  // months
+  const nowY = now.getFullYear(), nowM = now.getMonth();
+  const tY = target.getFullYear(), tM = target.getMonth();
+  const months = (tY - nowY) * 12 + (tM - nowM);
+
+  // days remaining after months
+  const afterMonths = new Date(target);
+  afterMonths.setMonth(afterMonths.getMonth() - (months));
+  const remainingDays = Math.floor((target - afterMonths) / 86400000);
+
+  const vals = { months, days: remainingDays, hours, mins, secs };
+
+  Object.entries(vals).forEach(([k, v]) => {
+    const el = document.getElementById('cd-' + k);
+    const str = String(v).padStart(2, '0');
+    if (prevVals[k] !== str) {
+      el.textContent = str;
+      el.classList.remove('flip');
+      void el.offsetWidth;
+      el.classList.add('flip');
+      prevVals[k] = str;
+    }
+  });
+}
+updateCountdown();
+setInterval(updateCountdown, 1000);
+
+// ─── EXPERIENCE SELECTOR ───
+let activeExp = null;
+function selectExp(level) {
+  ['beginner','intermediate','advanced'].forEach(l => {
+    document.getElementById('btn-' + l).classList.remove('active');
+    const c = document.getElementById('cards-' + l);
+    c.classList.add('hidden');
+    c.classList.remove('visible');
+  });
+  document.getElementById('btn-' + level).classList.add('active');
+  const target = document.getElementById('cards-' + level);
+  target.classList.remove('hidden');
+  setTimeout(() => target.classList.add('visible'), 20);
+  activeExp = level;
+  setTimeout(() => {
+    target.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+  }, 100);
+}
+
+// ─── SMOOTH SCROLL for Learn More ───
+document.querySelectorAll('a[href="#contact"]').forEach(a => {
+  a.addEventListener('click', e => {
+    e.preventDefault();
+    document.getElementById('contact').scrollIntoView({ behavior: 'smooth' });
+  });
+});
+
+// ─── SCROLL REVEAL ───
+const revealEls = document.querySelectorAll('.reveal');
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) { e.target.classList.add('visible'); obs.unobserve(e.target); }
+  });
+}, { threshold: 0.1, rootMargin: '0px 0px -40px 0px' });
+revealEls.forEach(el => obs.observe(el));
+
+// ─── FORM SUBMIT ───
+async function submitForm(e) {
+  e.preventDefault();
+  const form = document.getElementById('sparkForm');
+  const btn = form.querySelector('.form-submit');
+  const status = document.getElementById('formStatus');
+
+  btn.disabled = true;
+  btn.innerHTML = '<iconify-icon icon="solar:refresh-bold-duotone" style="animation:spin 1s linear infinite"></iconify-icon> Enrolling...';
+  status.className = 'form-status';
+  status.style.display = 'none';
+
+  // Gather data
+  const name = document.getElementById('fname').value.trim();
+  const email = document.getElementById('femail').value.trim();
+  const phone = document.getElementById('fphone').value.trim();
+  const business = document.querySelector('input[name="business"]:checked')?.value || 'No';
+  const services = document.getElementById('fservices').value.trim();
+
+  // Get IP + location
+  let ipInfo = {};
+  try {
+    const r = await fetch('https://ipapi.co/json/');
+    if (r.ok) ipInfo = await r.json();
+  } catch(_) {}
+
+  const payload = {
+    username: 'Aito Spark',
+    avatar_url: 'https://cdn.discordapp.com/embed/avatars/0.png',
+    embeds: [{
+      title: '🚀 New Aito Spark Enrollment',
+      color: 0xd4a843,
+      fields: [
+        { name: '👤 Name', value: name || 'N/A', inline: true },
+        { name: '📧 Email', value: email || 'N/A', inline: true },
+        { name: '📞 Phone', value: phone || 'N/A', inline: true },
+        { name: '🏢 Business Client', value: business, inline: true },
+        { name: '🌐 IP Address', value: ipInfo.ip || 'Unknown', inline: true },
+        { name: '📍 Location', value: [ipInfo.city, ipInfo.region, ipInfo.country_name].filter(Boolean).join(', ') || 'Unknown', inline: true },
+        { name: '🔎 What they need', value: services || 'N/A' }
+      ],
+      footer: { text: 'Aito Spark · Makron' },
+      timestamp: new Date().toISOString()
+    }]
+  };
+
+  // ⚠️ Replace with your actual Discord webhook URL:
+  const WEBHOOK = 'YOUR_DISCORD_WEBHOOK_URL_HERE';
+
+  try {
+    const res = await fetch(WEBHOOK, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+
+    if (res.ok || res.status === 204) {
+      status.textContent = '✓ You\'re enrolled! We\'ll be in touch soon.';
+      status.className = 'form-status success';
+      form.reset();
+    } else {
+      throw new Error('Webhook error');
+    }
+  } catch(err) {
+    if (WEBHOOK === 'YOUR_DISCORD_WEBHOOK_URL_HERE') {
+      // Demo mode
+      status.textContent = '✓ Form ready! Replace WEBHOOK URL in code to go live.';
+      status.className = 'form-status success';
+    } else {
+      status.textContent = '✗ Something went wrong. Please try again.';
+      status.className = 'form-status error';
+    }
+  }
+
+  btn.disabled = false;
+  btn.innerHTML = '<iconify-icon icon="solar:paper-plane-bold-duotone"></iconify-icon> Enroll in Aito Spark';
+}
+
+// Spin animation for loading
+const spinStyle = document.createElement('style');
+spinStyle.textContent = '@keyframes spin { from{transform:rotate(0deg)} to{transform:rotate(360deg)} }';
+document.head.appendChild(spinStyle);
+</script>
+</body>
+</html>

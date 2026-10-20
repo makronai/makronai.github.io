@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <title>Fluxer Insight | Profile Lookup</title>
+    <link rel="stylesheet" href="fluxer.css">
+    <script src="lookup.js"></script>
+</head>
+<body>
+    <div class="controls">
+        <h1 style="color: var(--flux-accent);">Fluxer Insight</h1>
+        <input type="text" id="targetId" placeholder="Enter Fluxer UUID">
+        <button class="cbutton" onclick="doFluxLookup()" style="background: var(--flux-primary); padding: 12px 24px; border: none; border-radius: 6px; color: white; font-weight: bold; cursor: pointer;">
+            Fetch Fluxer Data
+        </button>
+    </div>
+
+    <div id="profileCard" class="profile-container" style="display:none; margin-top: 30px;">
+        <div class="banner"></div>
+        <div class="avatar-container">
+            <img id="pfp" class="avatar-img" src="">
+        </div>
+ 
+        <div class="profile-body">
+            <div id="displayName" class="username"></div>
+            <div id="genCount" style="color: var(--flux-accent); font-size: 13px; font-weight: bold;"></div>
+            
+            <div class="info-bit">Member Since</div>
+            <div id="createdDate" class="info-val"></div>
+            
+            <div class="info-bit">Primary Model</div>
+            <div class="info-val">Flux.1 [Dev]</div>
+
+            <div class="info-bit">Secret Prompt History</div>
+            <div class="premium-lock">
+                "A cyberpunk cat eating ramen in 8k photorealistic..."
+            </div>
+
+            <div class="info-bit">Estimated GPU Debt</div>
+            <div class="premium-lock">
+                $420.69 USD (Stop generating cats, John Doe)
+            </div>
+        </div>
+    </div>
+</body>
+</html>

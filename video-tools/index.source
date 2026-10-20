@@ -1,0 +1,263 @@
+<div class="video-tool-app" id="videoApp">
+    <div class="pdf-sidebar">
+        <div class="sidebar-header">
+            <h3>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="vertical-align:-2px;margin-right:6px"><polygon points="23 7 16 12 23 17 23 7"/><rect x="1" y="5" width="15" height="14" rx="2" ry="2"/></svg>
+                Video Tools
+            </h3>
+        </div>
+        <div class="v-tabs" role="tablist">
+            <button class="v-tab active" data-category="compress" role="tab" aria-selected="true">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="4 14 10 14 10 20"/><polyline points="20 10 14 10 14 4"/><line x1="10" y1="20" x2="21" y2="9"/><line x1="3" y1="15" x2="14" y2="4"/></svg>
+                Compress
+            </button>
+            <button class="v-tab" data-category="convert" role="tab" aria-selected="false">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="17 1 21 5 17 9"/><path d="M3 11V9a4 4 0 0 1 4-4h14"/><polyline points="7 23 3 19 7 15"/><path d="M21 13v2a4 4 0 0 1-4 4H3"/></svg>
+                Convert
+            </button>
+            <button class="v-tab" data-category="audio" role="tab" aria-selected="false">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>
+                Audio
+            </button>
+            <button class="v-tab" data-category="resize" role="tab" aria-selected="false">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 3H3v7h18V3z"/><path d="M21 14H3v7h18v-7z"/><path d="M12 10v4"/><path d="M8 10v4"/><path d="M16 10v4"/></svg>
+                Resize
+            </button>
+        </div>
+    </div>
+
+    <div class="pdf-options" id="optionsPanel">
+        <div class="tool-group" id="cat-compress">
+            <p class="section-title">Compression Mode</p>
+            <div style="padding: 0 20px 10px;">
+                <div class="sub-tool-grid">
+                    <label class="sub-tool-btn">
+                        <input type="radio" name="activeTool" value="compress-size" checked>
+                        <span>Target Size</span>
+                    </label>
+                    <label class="sub-tool-btn">
+                        <input type="radio" name="activeTool" value="compress-quality">
+                        <span>Quality</span>
+                    </label>
+                </div>
+            </div>
+            <hr class="divider">
+            <div class="options-container">
+                <div class="opt-panel active" id="opts-compress-size">
+                    <div class="input-group">
+                        <label for="targetSizeMB">Target File Size (MB)</label>
+                        <input type="number" id="targetSizeMB" value="10" min="0.5" max="2000" step="0.5">
+                        <span class="helper-text">The tool will iteratively reduce bitrate to approach the target.</span>
+                    </div>
+                    <div class="input-group">
+                        <label for="compResizeW">Resize Width (optional)</label>
+                        <input type="number" id="compResizeW" placeholder="e.g. 1280 (blank = keep original)">
+                    </div>
+                    <div class="input-group">
+                        <label for="compResizeH">Resize Height (optional)</label>
+                        <input type="number" id="compResizeH" placeholder="e.g. 720 (blank = keep original)">
+                    </div>
+                </div>
+                <div class="opt-panel" id="opts-compress-quality">
+                    <div class="input-group">
+                        <div class="filter-header">
+                            <label>Quality Level</label>
+                            <span class="val-display" id="qualValDisplay">75%</span>
+                        </div>
+                        <input type="range" id="qualitySlider" min="10" max="100" value="75" oninput="updateQualLabel(this.value)">
+                        <span class="helper-text">Higher quality = larger output file. Targets ~75% bitrate of original by default.</span>
+                    </div>
+                    <div class="input-group">
+                        <label for="compQResizeW">Resize Width (optional)</label>
+                        <input type="number" id="compQResizeW" placeholder="e.g. 1280 (blank = keep original)">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tool-group" id="cat-convert" style="display:none;">
+            <p class="section-title">Output Format</p>
+            <div style="padding: 0 20px 10px;">
+                <div class="sub-tool-grid">
+                    <label class="sub-tool-btn">
+                        <input type="radio" name="activeTool" value="convert" data-fmt="mp4" checked>
+                        <span>MP4</span>
+                    </label>
+                    <label class="sub-tool-btn">
+                        <input type="radio" name="activeTool" value="convert" data-fmt="webm">
+                        <span>WebM</span>
+                    </label>
+                    <label class="sub-tool-btn">
+                        <input type="radio" name="activeTool" value="convert" data-fmt="mkv">
+                        <span>MKV</span>
+                    </label>
+                    <label class="sub-tool-btn">
+                        <input type="radio" name="activeTool" value="convert" data-fmt="avi">
+                        <span>AVI</span>
+                    </label>
+                    <label class="sub-tool-btn">
+                        <input type="radio" name="activeTool" value="convert" data-fmt="mov">
+                        <span>MOV</span>
+                    </label>
+                    <label class="sub-tool-btn">
+                        <input type="radio" name="activeTool" value="convert" data-fmt="gif">
+                        <span>GIF</span>
+                    </label>
+                </div>
+            </div>
+            <hr class="divider">
+            <div class="options-container">
+                <div class="opt-panel active" id="opts-convert">
+                    <div class="input-group">
+                        <label>Selected Format</label>
+                        <div class="coord-box" id="selectedFmtDisplay">MP4 (H.264 / AAC)</div>
+                        <span class="helper-text">Conversion uses the browser's built-in MediaRecorder. Supported output formats vary by browser. MP4 and WebM have the widest support. MKV, AVI, and MOV are produced as remuxed containers.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tool-group" id="cat-audio" style="display:none;">
+            <p class="section-title">Audio Operation</p>
+            <div style="padding: 0 20px 10px;">
+                <div class="sub-tool-grid">
+                    <label class="sub-tool-btn">
+                        <input type="radio" name="activeTool" value="mute" checked>
+                        <span>Mute Video</span>
+                    </label>
+                    <label class="sub-tool-btn">
+                        <input type="radio" name="activeTool" value="replace-audio">
+                        <span>Replace Audio</span>
+                    </label>
+                </div>
+            </div>
+            <hr class="divider">
+            <div class="options-container">
+                <div class="opt-panel active" id="opts-mute">
+                    <p class="helper-text" style="padding-top:8px;">Removes the audio track entirely from the video. The output file will be silent. The video track remains unchanged.</p>
+                </div>
+                <div class="opt-panel" id="opts-replace-audio">
+                    <div class="input-group">
+                        <label for="audioReplacementFile">Audio Track File</label>
+                        <input type="file" id="audioReplacementFile" class="file-input-styled" accept="audio/*">
+                        <span class="helper-text">Accepted: MP3, WAV, OGG, AAC, FLAC. The video will be muted and this audio will be mixed in as a background track. If the audio is shorter than the video, it will loop.</span>
+                    </div>
+                    <div class="input-group">
+                        <div class="filter-header">
+                            <label>Audio Volume</label>
+                            <span class="val-display" id="audioVolDisplay">100%</span>
+                        </div>
+                        <input type="range" id="audioVolSlider" min="0" max="200" value="100" oninput="updateVolLabel(this.value)">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="tool-group" id="cat-resize" style="display:none;">
+            <p class="section-title">Resize Options</p>
+            <div style="padding: 0 20px 10px;">
+                <div class="sub-tool-grid">
+                    <label class="sub-tool-btn">
+                        <input type="radio" name="activeTool" value="resize-custom" checked>
+                        <span>Custom</span>
+                    </label>
+                    <label class="sub-tool-btn">
+                        <input type="radio" name="activeTool" value="resize-preset">
+                        <span>Presets</span>
+                    </label>
+                </div>
+            </div>
+            <hr class="divider">
+            <div class="options-container">
+                <div class="opt-panel active" id="opts-resize-custom">
+                    <div class="input-grid">
+                        <div class="input-group">
+                            <label for="resizeW">Width (px)</label>
+                            <input type="number" id="resizeW" placeholder="e.g. 1280">
+                        </div>
+                        <div class="input-group">
+                            <label for="resizeH">Height (px)</label>
+                            <input type="number" id="resizeH" placeholder="e.g. 720">
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <label style="display:flex;align-items:center;gap:8px;cursor:pointer;">
+                            <input type="checkbox" id="lockAspect" checked>
+                            Lock Aspect Ratio
+                        </label>
+                        <span class="helper-text">If locked, changing one dimension auto-calculates the other based on the source video's aspect ratio.</span>
+                    </div>
+                </div>
+                <div class="opt-panel" id="opts-resize-preset">
+                    <div class="input-group">
+                        <label for="resizePreset">Resolution Preset</label>
+                        <select id="resizePreset">
+                            <option value="3840x2160">4K UHD — 3840 × 2160</option>
+                            <option value="2560x1440">QHD — 2560 × 1440</option>
+                            <option value="1920x1080" selected>Full HD — 1920 × 1080</option>
+                            <option value="1280x720">HD — 1280 × 720</option>
+                            <option value="854x480">SD — 854 × 480</option>
+                            <option value="640x360">360p — 640 × 360</option>
+                            <option value="426x240">240p — 426 × 240</option>
+                            <option value="1080x1920">Portrait 9:16 — 1080 × 1920</option>
+                            <option value="1080x1080">Square 1:1 — 1080 × 1080</option>
+                        </select>
+                    </div>
+                    <span class="helper-text">Preset uses letterboxing/pillarboxing if the aspect ratio doesn't match.</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="action-footer">
+            <button class="btn-primary" id="executeBtn" onclick="executeTask()">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+                Execute Task
+            </button>
+            <div class="status-area">
+                <progress id="progressBar" value="0" max="100"></progress>
+                <p id="statusText">Upload a video file to get started.</p>
+            </div>
+            <a class="btn-success" id="downloadLink" download="output_video">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                Download Result
+            </a>
+            <div id="ffmpegNote" class="ffmpeg-note" style="display:none;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                This operation uses FFmpeg.wasm for best results. First run requires ~25MB download.
+            </div>
+        </div>
+    </div>
+
+    <div class="pdf-preview-panel">
+        <div class="upload-header">
+            <span class="badge" id="fileCountBadge">No File</span>
+            <label for="videoInput" class="btn-primary upload-btn" style="cursor:pointer;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                Upload Video
+            </label>
+            <input type="file" id="videoInput" style="display:none;" accept="video/*">
+        </div>
+
+        <div class="file-queue" id="fileQueue"></div>
+
+        <div class="preview-box" id="previewBox">
+            <video id="videoPreview" controls></video>
+            <div class="preview-placeholder" id="previewPlaceholder">
+                <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.2"><rect x="2" y="2" width="20" height="20" rx="2.18" ry="2.18"/><line x1="7" y1="2" x2="7" y2="22"/><line x1="17" y1="2" x2="17" y2="22"/><line x1="2" y1="12" x2="22" y2="12"/><line x1="2" y1="7" x2="7" y2="7"/><line x1="2" y1="17" x2="7" y2="17"/><line x1="17" y1="7" x2="22" y2="7"/><line x1="17" y1="17" x2="22" y2="17"/></svg>
+                <p style="margin-top:12px;font-size:14px;">Upload a video to preview it here</p>
+                <p style="font-size:12px;margin-top:4px;">Supported: MP4, WebM, MKV, AVI, MOV, OGV</p>
+            </div>
+        </div>
+
+        <div class="video-info-bar" id="videoInfoBar" style="display:none;">
+            <span id="infoRes">—</span>
+            <span id="infoDur">—</span>
+            <span id="infoSize">—</span>
+            <span id="infoCodec">—</span>
+        </div>
+    </div>
+</div>
+
+<link rel="stylesheet" href="/pdf-tools/pdf.css">
+<link rel="stylesheet" href="/video-tools/video.css">
+<script src="/video-tools/video.js" defer></script>

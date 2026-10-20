@@ -1,0 +1,97 @@
+:root {
+    --glass-bg: rgba(255, 255, 255, 0.4);
+    --primary-blue: #0078d7;
+    --bright-green: #46d246;
+    --sky-gradient: linear-gradient(180deg, #6ebdfc 0%, #ffffff 100%);
+    --glossy-overlay: linear-gradient(rgba(255,255,255,0.5) 0%, rgba(255,255,255,0) 50%);
+    --text-main: #1a1a1a;
+    --accent: #888DA7;
+    --border-glass: rgba(255, 255, 255, 0.6);
+    --dark-bg: #303633;
+    --primary: #0078d7;
+    --secondary: #7EA2AA;
+    --border: #9C7A97;
+}
+
+body { 
+    font-family: "Segoe UI", Tahoma, "Frutiger", "Open Sans", sans-serif; 
+    background: var(--sky-gradient);
+    background-attachment: fixed;
+    color: var(--text-main); 
+    max-width: 900px; 
+    margin: 0 auto; 
+    padding: 20px; 
+    line-height: 1.6; 
+}
+
+.center { text-align: center; }
+
+main, .content-wrapper {
+    background: var(--glass-bg);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border: 1px solid var(--border-glass);
+    border-radius: 25px;
+    padding: 30px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+}
+
+.main-logo { 
+    display: block; 
+    max-width: 100%; 
+    width: 656px; 
+    height: auto; 
+    margin: 20px auto;
+    filter: drop-shadow(0 4px 8px rgba(0,0,0,0.2));
+}
+
+nav a { 
+    margin: 0 10px; 
+    text-decoration: none; 
+    color: var(--primary-blue); 
+    font-weight: 500;
+    border-radius: 50px;
+    transition: all 0.3s ease;
+}
+
+nav a:hover { 
+    background: white;
+    padding: 8px 12px;
+    box-shadow: inset 0 2px 5px rgba(0,0,0,0.1), 0 2px 10px rgba(0,120,215,0.3);
+    color: var(--bright-green);
+}
+
+marquee { color: var(--accent); }
+.stamps img { width: 88px; height: 31px; border: 1px solid var(--border); margin: 2px; vertical-align: middle; }
+.stamps img:hover { outline: 1px solid var(--bright-green); border-color: transparent; }
+
+h1, h3 { 
+    color: var(--primary-blue); 
+    text-shadow: 0 1px 2px rgba(255,255,255,0.8);
+    letter-spacing: -0.5px;
+}
+
+h1 { 
+    font-size: 2.5em;
+    background: linear-gradient(#0078d7, #004a85);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+hr { 
+    border: 0; 
+    height: 2px;
+    background: linear-gradient(90deg, transparent, var(--border-glass), transparent);
+    margin: 30px 0;
+}
+
+footer { 
+    margin-top: 50px; 
+    font-size: 0.9em; 
+    color: #444;
+}
+
+@media (max-width: 480px) {
+    .main-logo { width: 75%; }
+    body { padding: 10px; }
+}

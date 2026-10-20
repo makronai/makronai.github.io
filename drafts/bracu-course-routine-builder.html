@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Couffet | Makron</title>
+
+    <link rel="stylesheet" href="brax.css">
+
+    <script src="brax.js" defer></script>
+</head>
+<body>
+    <header id="top-module"></header>
+    <main id="main-content">
+
+    <header>
+        <h1>BRACU Course-to-Routine Builder</h1>
+        <p class="muted">Select your courses, see their seats, search by teacher or course code and add them to your routine. Saved in your browser so it stays even if you refresh or revisit (until you clear cache/site data). Data fetched from the Connect CDN JSON source (provided by <a href="https://usis-cdn.eniamza.com/connect.json">Tashfeen Azmaine</a>).</p>
+    </header>
+
+      <section id="search-area">
+        <input id="search" placeholder="Search course code (e.g. CSE221) or faculty (e.g. MLR)" />
+        <button id="refresh">Refresh Now</button>
+        <div id="results"></div>
+      </section>
+
+      <section id="timetable-wrap">
+        <div id="legend">
+          <div class="legend-item"><span class="pill class-pill"></span> Class</div>
+          <div class="legend-item"><span class="pill lab-pill"></span> Lab</div>
+          <div class="legend-item"><span class="pill ghost-pill"></span> Hover preview</div>
+        </div>
+
+        <div id="timetable">
+          <!-- Days header -->
+          <div id="days">
+            <div class="day-col day-header">Time</div>
+            <div class="day-col day-header">SUNDAY</div>
+            <div class="day-col day-header">MONDAY</div>
+            <div class="day-col day-header">TUESDAY</div>
+            <div class="day-col day-header">WEDNESDAY</div>
+            <div class="day-col day-header">THURSDAY</div>
+            <div class="day-col day-header">FRIDAY</div>
+            <div class="day-col day-header">SATURDAY</div>
+          </div>
+
+          <!-- time gutter and grid container for absolute-positioned blocks -->
+          <div id="grid-wrap">
+            <div id="time-gutter"></div>
+            <div id="grid"></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="cart-area">
+        <h2>Cart</h2>
+        <div id="cart-controls">
+          <button id="clear-cart">Clear All</button>
+        </div>
+        <div id="cart-list"></div>
+      </section>
+
+    </main>
+    <footer id="bottom-module"></footer>
+
+    </body>
+</html>

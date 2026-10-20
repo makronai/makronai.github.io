@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Flux - Connect</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="/app/flux/flux.css">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2" defer></script>
+  <script src="/app/flux/api.js" defer></script>
+  <script src="/app/flux/auth.js" defer></script>
+  <script src="/app/flux/feed.js" defer></script>
+  <script src="/app/flux/chat.js" defer></script>
+  <script src="/app/flux/profile.js" defer></script>
+</head>
+<body>
+
+<div id="auth-screen" class="hidden">
+  <div class="auth-box">
+    <div class="text-center mb-6">
+      <div class="text-blue text-xl fw-7 mb-2"><i class="fa-solid fa-bolt"></i> Flux</div>
+      <p class="text-muted text-sm">Where everything connects.</p>
+    </div>
+
+    <div id="auth-error" class="badge badge-red w-full justify-center mb-4 hidden p-3 r-3 text-center"></div>
+    <div id="auth-success" class="badge badge-green w-full justify-center mb-4 hidden p-3 r-3 text-center"></div>
+
+    <div id="auth-signin-panel">
+      <div class="flex col gap-3">
+        <input type="email" id="auth-email" class="input" placeholder="Email address" aria-label="Email">
+        <input type="password" id="auth-password" class="input" placeholder="Password" aria-label="Password">
+        <button class="btn btn-blue w-full mt-2" onclick="FluxAuth.signIn()">Sign In</button>
+      </div>
+      <div class="flex items-center gap-3 my-5">
+        <div class="flex-1" style="height:1px;background:var(--line);"></div>
+        <span class="text-xs text-muted">OR</span>
+        <div class="flex-1" style="height:1px;background:var(--line);"></div>
+      </div>
+      <button class="btn btn-ghost w-full" onclick="FluxAuth.showSignUp()">Create an account</button>
+    </div>
+
+    <div id="auth-signup-panel" class="hidden">
+      <div class="flex col gap-3">
+        <input type="text" id="auth-username" class="input" placeholder="Username" aria-label="Username">
+        <input type="email" id="auth-email-up" class="input" placeholder="Email address" aria-label="Email">
+        <input type="password" id="auth-password-up" class="input" placeholder="Password (6+ chars)" aria-label="Password">
+        <button class="btn btn-blue w-full mt-2" onclick="FluxAuth.signUp()">Create Account</button>
+      </div>
+      <div class="flex items-center gap-3 my-5">
+        <div class="flex-1" style="height:1px;background:var(--line);"></div>
+        <span class="text-xs text-muted">OR</span>
+        <div class="flex-1" style="height:1px;background:var(--line);"></div>
+      </div>
+      <button class="btn btn-ghost w-full" onclick="FluxAuth.showSignIn()">Already have an account?</button>
+    </div>
+  </div>
+</div>
+
+<div id="app" class="hidden">
+  
+  <nav class="sidebar">
+    <div class="sidebar-logo">
+      <i class="fa-solid fa-bolt"></i> <span>Flux</span>
+    </div>
+
+    <div class="sidebar-nav">
+      <button class="nav-item active" id="nav-feed" onclick="FluxApp.switchView('feed')">
+        <i class="fa-solid fa-house nav-icon"></i> <span class="nav-label">Home</span>
+      </button>
+      <button class="nav-item relative" id="nav-chat" onclick="FluxApp.switchView('chat')">
+        <i class="fa-solid fa-comment-dots nav-icon"></i> <span class="nav-label">Messages</span>
+        <span class="badge-dot absolute hidden" id="nav-badge-chat" style="top:10px;right:16px;">0</span>
+      </button>
+      <button class="nav-item" id="nav-profile" onclick="FluxApp.switchView('profile')">
+        <i class="fa-regular fa-user nav-icon"></i> <span class="nav-label">Profile</span>
+      </button>
+      <button class="nav-item" id="nav-explore" onclick="FluxApp.switchView('explore')">
+        <i class="fa-solid fa-compass nav-icon"></i> <span class="nav-label">Explore</span>
+      </button>
+
+      <button class="btn btn-blue w-full mt-4" id="nav-new-post" onclick="FluxFeed.openComposer()">
+        <i class="fa-solid fa-pen-nib"></i> <span class="nav-label">Post</span>
+      </button>
+    </div>
+
+    <div class="sidebar-bottom" onclick="FluxProfile.loadOwn()">
+      <div class="avatar avatar-md presence online" id="sidebar-avatar"></div>
+      <div class="flex col flex-1 min-w-0 nav-label">
+        <span class="fw-6 text-sm truncate" id="sidebar-username">Loading...</span>
+        <span class="text-xs text-muted truncate" id="sidebar-handle">@...</span>
+      </div>
+      <button class="btn-icon nav-label shrink-0" onclick="event.stopPropagation(); FluxAuth.signOut()" title="Sign Out">
+        <i class="fa-solid fa-arrow-right-from-bracket"></i>
+      </button>
+    </div>
+  </nav>
+
+  <main class="main-panel">
+    
+    <div id="view-feed" class="view h-full flex col">
+      <header class="main-header">
+        <span class="fw-7 text-lg">Home</span>
+      </header>
+
+      <div class="p-4 border-b flex gap-3 items-start bg-surface">
+        <div class="avatar avatar-md shrink-0" id="feed-composer-avatar"></div>
+        <div class="flex col flex-1 gap-2">
+          <textarea id="post-input" class="input-ghost" placeholder="What's happening?" rows="2" oninput="this.style.height='auto';this.style.height=this.scrollHeight+'px'"></textarea>
+          <div id="post-media-preview" class="hidden relative mt-2">
+            <img id="post-media-img" class="w-full r-3" style="max-height:300px;object-fit:cover;" src="" alt="">
+            <button class="btn-icon absolute bg-black text-white" style="top:8px;right:8px;" onclick="FluxFeed.clearMedia('post')"><i class="fa-solid fa-xmark"></i></button>
+          </div>
+          <div class="flex justify-between items-center border-t py-2 mt-2">
+            <div class="flex gap-2">
+              <button class="btn-icon text-blue" title="Add Media" onclick="document.getElementById('post-media-input').click()"><i class="fa-solid fa-image"></i></button>
+              <input type="file" id="post-media-input" class="hidden" accept="image/*,video/*" onchange="FluxFeed.previewMedia(this, 'post')">
+            </div>
+            <button class="btn btn-blue btn-sm" onclick="FluxFeed.createPost(false)">Post</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="tab-bar shrink-0">
+        <button class="tab active" onclick="FluxFeed.setTab('for-you', this)">For You</button>
+        <button class="tab" onclick="FluxFeed.setTab('following', this)">Following</button>
+      </div>
+
+      <div id="feed-stream" class="main-scroll"></div>
+    </div>
+
+    <div id="view-chat" class="view hidden h-full">
+      <div class="chat-layout h-full">
+        <div class="chat-sidebar">
+          <div class="p-4 border-b flex items-center justify-between">
+            <span class="fw-7 text-lg">Messages</span>
+            <button class="btn-icon bg-surface" onclick="FluxChat.openNewDM()" title="New Message"><i class="fa-regular fa-pen-to-square"></i></button>
+          </div>
+          <div class="p-3">
+            <div class="search-wrap">
+              <i class="fa-solid fa-magnifying-glass search-icon"></i>
+              <input type="text" class="search-input" placeholder="Search DMs..." oninput="FluxChat.searchDMs(this.value)">
+            </div>
+          </div>
+          <div id="dm-list" class="flex col overflow-y-auto flex-1"></div>
+        </div>
+
+        <div class="chat-main">
+          <div id="chat-empty" class="flex col items-center justify-center h-full gap-4 text-muted">
+            <i class="fa-regular fa-comments text-faint" style="font-size: 64px;"></i>
+            <span class="fw-6 text-white text-lg">Your Messages</span>
+            <span class="text-sm">Select a conversation or start a new one.</span>
+            <button class="btn btn-blue mt-2" onclick="FluxChat.openNewDM()">New Message</button>
+          </div>
+
+          <div id="chat-active" class="hidden h-full flex col">
+            <header class="main-header border-b py-3">
+              <div class="flex items-center gap-3 cursor-pointer" onclick="FluxChat.viewPartnerProfile()">
+                <div class="avatar avatar-sm" id="chat-header-avatar"></div>
+                <div class="flex col">
+                  <span class="fw-6 text-base" id="chat-header-name"></span>
+                  <span class="text-xs text-muted" id="chat-header-status"></span>
+                </div>
+              </div>
+              <button class="btn-icon" title="Settings"><i class="fa-solid fa-circle-info"></i></button>
+            </header>
+
+            <div id="msg-stream" class="msg-stream"></div>
+
+            <div class="msg-input-area">
+              <div class="msg-input-box">
+                <button class="btn-icon shrink-0" onclick="document.getElementById('chat-file-input').click()"><i class="fa-solid fa-circle-plus"></i></button>
+                <input type="file" id="chat-file-input" class="hidden">
+                <textarea id="msg-input" placeholder="Message..." rows="1" oninput="this.style.height='auto';this.style.height=Math.min(this.scrollHeight,150)+'px'" onkeydown="if(event.key==='Enter'&&!event.shiftKey){event.preventDefault();FluxChat.sendMessage();}"></textarea>
+                <button class="btn-icon text-blue shrink-0" onclick="FluxChat.sendMessage()"><i class="fa-solid fa-paper-plane"></i></button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="view-profile" class="view hidden h-full flex col">
+      <header class="main-header flex items-center gap-4">
+        <button class="btn-icon" id="profile-back-btn" onclick="FluxProfile.goBack()" style="display:none;"><i class="fa-solid fa-arrow-left"></i></button>
+        <div class="flex col">
+          <span class="fw-7 text-lg" id="profile-view-name">Profile</span>
+          <span class="text-xs text-muted" id="profile-view-post-count"></span>
+        </div>
+      </header>
+      <div class="main-scroll" id="profile-scroll">
+        <div id="profile-content"></div>
+      </div>
+    </div>
+
+    <div id="view-explore" class="view hidden h-full flex col">
+      <header class="main-header">
+        <span class="fw-7 text-lg">Explore</span>
+      </header>
+      <div class="p-4 border-b">
+        <div class="search-wrap">
+          <i class="fa-solid fa-magnifying-glass search-icon"></i>
+          <input type="text" class="search-input py-3" placeholder="Search users or posts..." oninput="FluxExplore.search(this.value)">
+        </div>
+      </div>
+      <div id="explore-stream" class="main-scroll"></div>
+    </div>
+
+  </main>
+
+  <aside id="right-panel">
+    <div class="search-wrap mb-2">
+      <i class="fa-solid fa-magnifying-glass search-icon"></i>
+      <input type="text" class="search-input" placeholder="Search Flux">
+    </div>
+    <div class="card p-5 flex col gap-4">
+      <span class="fw-7 text-lg">Who to follow</span>
+      <div id="suggested-users" class="flex col gap-3"></div>
+    </div>
+    <div class="text-xs text-muted mt-auto">
+      <p>&copy; 2026 Flux Inc. Vanilla JS Powered.</p>
+    </div>
+  </aside>
+
+</div>
+
+<div id="composer-modal" class="modal-overlay hidden" onclick="if(event.target===this)FluxFeed.closeComposer()">
+  <div class="modal">
+    <div class="flex items-center justify-between mb-4">
+      <span class="fw-7 text-lg">New Post</span>
+      <button class="btn-icon" onclick="FluxFeed.closeComposer()"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="flex gap-3 items-start">
+      <div class="avatar avatar-md" id="modal-composer-avatar"></div>
+      <div class="flex col flex-1 gap-2">
+        <textarea id="modal-post-input" class="input-ghost" placeholder="What's on your mind?" rows="4"></textarea>
+        <div id="modal-reply-to" class="hidden text-sm text-muted p-2 bg-deep r-3 mb-2 border"></div>
+        <div id="modal-media-preview" class="hidden relative">
+          <img id="modal-media-img" class="w-full r-3" style="max-height:250px;object-fit:cover;" src="" alt="">
+          <button class="btn-icon absolute bg-black text-white" style="top:8px;right:8px;" onclick="FluxFeed.clearMedia('modal')"><i class="fa-solid fa-xmark"></i></button>
+        </div>
+        <div class="flex justify-between items-center border-t py-3 mt-2">
+          <div class="flex gap-2">
+            <button class="btn-icon text-blue" onclick="document.getElementById('modal-media-input').click()"><i class="fa-solid fa-image"></i></button>
+            <input type="file" id="modal-media-input" class="hidden" accept="image/*,video/*" onchange="FluxFeed.previewMedia(this, 'modal')">
+          </div>
+          <div class="flex gap-3 items-center">
+            <span class="text-sm text-muted mono" id="modal-char-count">280</span>
+            <button class="btn btn-blue" onclick="FluxFeed.createPost(true)">Post</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="edit-profile-modal" class="modal-overlay hidden" onclick="if(event.target===this)FluxProfile.closeEditModal()">
+  <div class="modal">
+    <div class="flex items-center justify-between mb-4">
+      <span class="fw-7 text-lg">Edit Profile</span>
+      <button class="btn-icon" onclick="FluxProfile.closeEditModal()"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="flex col gap-4">
+      <div class="flex col gap-1">
+        <label class="text-sm text-muted fw-6">Display Name</label>
+        <input type="text" id="edit-display-name" class="input">
+      </div>
+      <div class="flex col gap-1">
+        <label class="text-sm text-muted fw-6">Username</label>
+        <input type="text" id="edit-username" class="input">
+      </div>
+      <div class="flex col gap-1">
+        <label class="text-sm text-muted fw-6">Bio</label>
+        <textarea id="edit-bio" class="input" rows="3" style="resize:vertical;"></textarea>
+      </div>
+      <div class="flex col gap-1">
+        <label class="text-sm text-muted fw-6">Status</label>
+        <div class="flex gap-2">
+          <input type="text" id="edit-status-emoji" class="input" placeholder="Icon (emoji)" style="width:70px;text-align:center;">
+          <input type="text" id="edit-status-text" class="input flex-1" placeholder="What's happening?">
+        </div>
+      </div>
+      <div class="flex justify-end gap-3 mt-4">
+        <button class="btn btn-ghost" onclick="FluxProfile.closeEditModal()">Cancel</button>
+        <button class="btn btn-blue" onclick="FluxProfile.saveProfile()">Save Changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div id="new-dm-modal" class="modal-overlay hidden" onclick="if(event.target===this)FluxChat.closeNewDM()">
+  <div class="modal" style="max-width:440px;">
+    <div class="flex items-center justify-between mb-4">
+      <span class="fw-7 text-lg">New Message</span>
+      <button class="btn-icon" onclick="FluxChat.closeNewDM()"><i class="fa-solid fa-xmark"></i></button>
+    </div>
+    <div class="search-wrap mb-4">
+      <i class="fa-solid fa-magnifying-glass search-icon"></i>
+      <input type="text" class="search-input" placeholder="Search people..." oninput="FluxChat.searchUsers(this.value)">
+    </div>
+    <div id="user-search-results" class="flex col gap-2 max-h-[300px] overflow-y-auto"></div>
+  </div>
+</div>
+
+<div id="toast-container"></div>
+
+</body>
+</html>

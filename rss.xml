@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom">
+<channel>
+    <title>Makron</title>
+    <link>https://makron.app</link>
+    <description>The latest updates and articles from Makron.</description>
+    <language>en-us</language>
+    <lastBuildDate>Tue, 20 Oct 2026 13:33:25 -0000</lastBuildDate>
+    <atom:link href="https://makron.app/rss.xml" rel="self" type="application/rss+xml" />
+    
+        <item>
+            <title>Iphone 18 Pro Specs</title>
+            <link>https://makron.app/posts/apple-iphone-18/</link>
+            <description>What we know so far about the latest iphone set to be released very soon. Here are the technical specifications and appeals for this Apple Iphone 18 Pro series.</description>
+            <pubDate>Mon, 20 Apr 2026 00:00:00 -0000</pubDate>
+            <author>Tomodachi</author>
+            <guid isPermaLink="true">https://makron.app/posts/apple-iphone-18/</guid>
+        </item>
+        <item>
+            <title>AI Prompt Walkthrough for Vibe Coding</title>
+            <link>https://makron.app/posts/ai-prompt-tutorial-for-coding-websites/</link>
+            <description>Take a look at the universal workflow that works for any LLM with promising results per prompt.</description>
+            <pubDate>Mon, 13 Apr 2026 00:00:00 -0000</pubDate>
+            <author>Ethan</author>
+            <guid isPermaLink="true">https://makron.app/posts/ai-prompt-tutorial-for-coding-websites/</guid>
+        </item>
+        <item>
+            <title>Stop Feeling Depressed</title>
+            <link>https://makron.app/posts/stop-feeling-depressed/</link>
+            <description>Everyone has a price on their head. Here's how much your value is worth.</description>
+            <pubDate>Fri, 26 Sep 2025 00:00:00 -0000</pubDate>
+            <author>Samuel</author>
+            <guid isPermaLink="true">https://makron.app/posts/stop-feeling-depressed/</guid>
+        </item>
+</channel>
+</rss>

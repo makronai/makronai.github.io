@@ -1,0 +1,90 @@
+<div class="ait-root" id="ai-tool-root">
+
+  <div class="ait-tabs">
+    <button class="ait-tab ait-tab--active" data-tab="detect" onclick="aitSwitchTab('detect')">
+      Detector
+    </button>
+    <button class="ait-tab" data-tab="humanize" onclick="aitSwitchTab('humanize')">
+      Humanizer
+    </button>
+  </div>
+
+  <div class="ait-panel ait-panel--active" id="ait-panel-detect">
+    <div class="ait-split">
+      <div class="ait-editor-col">
+        <div class="ait-editor-header">
+          <span class="ait-label">Input Text</span>
+          <div class="ait-editor-actions">
+            <button class="ait-btn-ghost" onclick="aitLoadExample()">Load Example</button>
+            <button class="ait-btn-ghost" onclick="aitClearDetect()">Clear</button>
+          </div>
+        </div>
+        <textarea
+          id="ait-detect-input"
+          class="ait-textarea"
+          placeholder="Paste text to analyze for AI detection..."
+          oninput="aitUpdateCount()"
+        ></textarea>
+        <div class="ait-editor-footer">
+          <span class="ait-wordcount" id="ait-word-count">0 words</span>
+          <button class="nav-cta ait-btn-primary" id="ait-analyze-btn" onclick="aitRunPipeline()">
+            Analyze →
+          </button>
+        </div>
+      </div>
+
+      <div class="ait-sidebar" id="ait-sidebar">
+        <div class="ait-empty">
+          <p>Paste text and click <strong>Analyze</strong> to run.</p>
+        </div>
+      </div>
+    </div>
+    <div class="ait-phase-bar">
+      <span class="ait-phase-dot"></span>
+      <span id="ait-phase-text">Ready - awaiting input</span>
+    </div>
+  </div>
+
+  <div class="ait-panel" id="ait-panel-humanize">
+    <div class="ait-split ait-split--equal">
+      <div class="ait-editor-col">
+        <div class="ait-editor-header">
+          <span class="ait-label">AI Text Input</span>
+          <button class="ait-btn-ghost" onclick="aitImportFromDetector()">← From Detector</button>
+        </div>
+        <textarea
+          id="ait-humanize-input"
+          class="ait-textarea"
+          placeholder="Paste AI-generated text here to rewrite it via rule-based heuristics..."
+        ></textarea>
+        <div class="ait-editor-footer ait-editor-footer--controls">
+          <span class="ait-wordcount"></span>
+          <button class="nav-cta ait-btn-primary" id="ait-humanize-btn" onclick="aitRunHumanizer()">
+            Humanize →
+          </button>
+        </div>
+      </div>
+
+      <div class="ait-editor-col">
+        <div class="ait-editor-header">
+          <span class="ait-label">Humanized Output</span>
+          <div class="ait-editor-actions">
+            <button class="ait-btn-ghost" id="ait-diff-btn" onclick="aitToggleDiff()" style="display:none">Show Diff</button>
+            <button class="ait-btn-ghost" id="ait-copy-btn" onclick="aitCopyOutput()">Copy</button>
+          </div>
+        </div>
+        <div class="ait-output" id="ait-humanize-output">
+          <span class="ait-output-placeholder">Locally rewritten text will appear here...</span>
+        </div>
+        <div class="ait-editor-footer">
+          <span class="ait-wordcount" id="ait-h-stats"></span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<img src="https://tracker.makron.workers.dev/?token=ai-detector-humanizer"
+     width="1" height="1" style="display:none;" alt="dumb image"></img>
+<link rel="stylesheet" href="/ai-detector-humanizer/ai-tool.css">
+<script src="/ai-detector-humanizer/ai-tool.js" defer></script>

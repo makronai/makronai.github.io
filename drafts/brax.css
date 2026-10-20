@@ -1,0 +1,62 @@
+:root{--bg:#F5F5F5;--card:#FFFFFF;--muted:#666666;--accent:#2C3333;--danger:#ef4444;--lab-green:#10b981;--ghost:#CCCCCC;--grid-border:#CCCCCC;--text:#2C3333}
+*{box-sizing:border-box}
+body{margin:0 auto;padding-top:20px;font-family:system-ui,-apple-system,"Segoe UI",Roboto,Arial,sans-serif;background:var(--bg);color:var(--text);line-height:1.4}
+main{width:100%;max-width:none;margin:0;padding:0}
+header{margin-bottom:12px}
+h1{margin:0;font-size:1.6rem;font-weight:bold;color:var(--accent)}
+.muted{color:var(--muted);margin-top:4px;font-size:1rem}
+#search-area{display:flex;gap:12px;align-items:flex-start;margin-bottom:14px;flex-wrap:wrap}
+#search{flex:1;padding:10px 12px;border:2px solid #CCCCCC;background:white;color:var(--text);font-size:1rem}
+#refresh{padding:9px 14px;border:2px solid #2C3333;background:#2C3333;color:white;cursor:pointer;font-weight:bold}
+#results{margin-top:12px;display:flex;gap:12px;overflow-x:auto;padding-bottom:10px}
+.card{flex:0 0 260px;background:var(--card);border:2px solid #CCCCCC;padding:10px;cursor:pointer}
+.card:hover{background:#EEEEEE}
+.card h3{margin:0 0 6px 0;font-size:1.1rem;font-weight:bold}
+.card .meta{font-size:.86rem;color:var(--muted);margin-bottom:8px}
+.card .tiny{font-size:.78rem;color:var(--muted)}
+.card .right{display:flex;flex-direction:column;align-items:flex-end;gap:6px;font-size:.82rem;color:var(--muted)}
+.seats{display:flex;align-items:center;gap:8px}
+.seat-bar{flex:1;height:10px;background:#CCCCCC;border:1px solid #2C3333;overflow:hidden}
+.fill-green{background:#16a34a}
+.fill-yellow{background:#facc15}
+.fill-orange{background:#f97316}
+.fill-red{background:#ef4444}
+.fill-gray{background:#9ca3af}
+.seat-text{padding:2px 6px;border-radius:0;font-weight:600;font-size:.78rem;display:inline-block;border:2px solid transparent;color:#000000}
+.seat-text.fill-green{border-color:#16a34a}
+.seat-text.fill-yellow{border-color:#facc15}
+.seat-text.fill-orange{border-color:#f97316}
+.seat-text.fill-red{border-color:#ef4444}
+.seat-text.fill-gray{border-color:#9ca3af}
+.tiny{font-size:.78rem;color:var(--muted)}
+#timetable-wrap{margin-top:18px}
+#legend{display:flex;gap:12px;align-items:center;margin-bottom:8px}
+.legend-item{display:flex;gap:8px;align-items:center;color:var(--muted);font-size:.9rem}
+.pill{width:18px;height:12px;border:1px solid #2C3333;display:inline-block}
+.class-pill{background:#4f46e5}
+.lab-pill{background:#10b981}
+.ghost-pill{background:var(--ghost)}
+#timetable{background:var(--card);border:2px solid #CCCCCC;padding:12px}
+#days{display:grid;grid-template-columns:120px repeat(7,1fr);gap:0}
+.day-col{padding:6px 8px;border:1px solid #CCCCCC;text-align:center;background:#F5F5F5;font-weight:700}
+.day-header{font-weight:700}
+#grid-wrap{display:flex;gap:8px;margin-top:8px;position:relative}
+#time-gutter{width:120px;display:flex;flex-direction:column;gap:6px;padding-right:8px}
+.time-slot{height:56px;border-bottom:1px solid #CCCCCC;display:flex;align-items:center;padding-left:6px;color:var(--muted);font-size:.85rem}
+#grid{flex:1;position:relative;display:grid;grid-template-columns:repeat(7,1fr);gap:0;min-height:calc(56px * 7);border:2px solid #CCCCCC}
+.event-block{position:absolute;margin:4px;padding:6px;border:2px solid var(--accent);font-size:.9rem;color:white;z-index:5}
+.event-class{background:#4f46e5}
+.event-lab{background:#10b981}
+.event-ghost{opacity:.45}
+.event-conflict{background:#ef4444}
+.event-solid{border-width:4px}
+.event-title{font-weight:700}
+.event-meta{font-size:.8rem;color:rgba(255,255,255,.9);margin-top:4px}
+#cart-area{margin-top:18px;background:var(--card);padding:12px;border:2px solid #CCCCCC}
+#cart-list{display:flex;flex-direction:column;gap:8px;margin-top:8px}
+.cart-item{display:flex;justify-content:space-between;align-items:center;padding:8px;border:2px solid #CCCCCC;background:white}
+.btn{padding:8px 10px;border:2px solid #2C3333;background:white;color:#2C3333;cursor:pointer;font-weight:bold}
+.small{font-size:.82rem}
+.cart-info{display:flex;gap:20px;align-items:center;margin-top:6px}
+.exam-date b,.exam-time b{color:#2C3333;font-weight:700}
+footer{margin-top:18px;color:var(--muted);font-size:.82rem;text-align:center}

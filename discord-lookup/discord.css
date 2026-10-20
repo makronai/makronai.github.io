@@ -1,0 +1,297 @@
+:root {
+    --discord-blurple: #5865f2;
+    --discord-dark: #23272a;
+    --discord-card: #111214;
+}
+
+.controls {
+    width: fit-content; 
+    max-width: 400px;
+
+    margin-left: auto;
+    margin-right: auto;
+    
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.profile-container {
+    width: 340px;
+    background: var(--discord-card);
+    border-radius: 8px;
+    overflow: hidden;
+    position: relative;
+    display: none;
+    margin-top: 20px;
+    box-shadow: 0 8px 16px rgba(0,0,0,0.3);
+    transition: background 0.4s ease;
+}
+
+.banner {
+    width: 100%;
+    height: 120px;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+}
+
+.banner-overlay, .avatar-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0,0,0,0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: 0.2s;
+    cursor: pointer;
+    z-index: 3;
+}
+
+.banner:hover .banner-overlay, 
+.avatar-container:hover .avatar-overlay {
+    opacity: 1;
+}
+
+.view-btn {
+    background: white;
+    color: black;
+    padding: 5px 10px;
+    border-radius: 4px;
+    font-weight: bold;
+    font-size: 12px;
+}
+
+.avatar-container {
+    position: absolute;
+    top: 76px;
+    left: 16px;
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    border: 6px solid var(--discord-card);
+    background: var(--discord-card);
+    overflow: visible;
+}
+
+.avatar-img {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    position: relative;
+    z-index: 1;
+}
+
+.decoration-img {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    scale: 1.1;
+    pointer-events: none;
+    z-index: 3;
+}
+
+.profile-body {
+    padding: 50px 16px 16px;
+}
+
+.username {
+    font-size: 20px;
+    font-weight: bold;
+}
+
+#tag.bot {
+    color: #b5bac1;
+}
+
+#tag.bot::after {
+    content: attr(data-discriminator);
+    color: #72767d;
+    font-size: 0.9em;
+}
+
+.info-bit {
+    margin-top: 12px;
+    font-size: 12px;
+    color: #b5bac1;
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
+.info-val {
+    color: #dbdee1;
+    font-size: 14px;
+    text-transform: none;
+    margin-top: 4px;
+}
+
+.controls {
+    width: 340px;
+    text-align: center;
+}
+
+input {
+    width: 100%;
+    padding: 12px;
+    border-radius: 4px;
+    border: none;
+    background: #1e1f22;
+    color: white;
+    margin-bottom: 10px;
+    box-sizing: border-box;
+}
+
+.cbutton {
+    width: 100%;
+    padding: 12px;
+    background: var(--discord-blurple);
+    border: none;
+    color: white;
+    font-weight: bold;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+.cbutton:disabled {
+    background: #4f545c;
+    cursor: not-allowed;
+}
+
+.info-panel {
+    width: 340px;
+    margin-top: 40px;
+    background: #2b2d31;
+    padding: 15px;
+    border-radius: 8px;
+    font-size: 13px;
+    color: #dbdee1;
+    line-height: 1.5;
+}
+
+.cooldown-text {
+    color: #f04747;
+    font-weight: bold;
+    margin-top: 5px;
+    font-size: 12px;
+}
+
+#bioVal {
+    white-space: pre-wrap;
+    font-style: italic;
+    color: #dbdee1;
+}
+
+#badgesVal span {
+    background: #3ba55c;
+    color: white;
+    padding: 3px 9px;
+    border-radius: 12px;
+    font-size: 12px;
+    margin: 2px;
+    display: inline-block;
+}
+
+#clanVal img {
+    height: 20px;
+    vertical-align: middle;
+    margin-left: 6px;
+}
+
+#clanTagInline {
+    background: rgba(55, 55, 55, 0.35);
+    padding: 2px 8px;
+    border-radius: 4px;
+    font-size: 15px;
+}
+
+#connectionsVal {
+    font-size: 13px;
+}
+
+button[onclick^="copyToClipboard"] {
+    opacity: 0.6;
+    transition: 0.2s;
+}
+button[onclick^="copyToClipboard"]:hover {
+    opacity: 1;
+    transform: scale(1.1);
+}
+
+#bannerActionButtons button,
+#bannerActionButtonsBottom button {
+    background: rgba(0,0,0,0.6);
+    color: white;
+    border: none;
+    padding: 4px 10px;
+    font-size: 11px;
+    border-radius: 4px;
+    cursor: pointer;
+    white-space: nowrap;
+}
+#bannerActionButtons button:hover,
+#bannerActionButtonsBottom button:hover {
+    background: rgba(88,101,242,0.9);
+}
+
+#nameplateDisplay {
+    background: #2b2d31;
+    border-radius: 8px;
+    padding: 12px;
+    max-width: 140px;
+    margin: 0 auto;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+}
+
+#nameplateDisplay img {
+    border-radius: 6px;
+}
+
+.premium-lock {
+    position: relative;
+    overflow: hidden;
+    border-radius: 6px;
+    background: transparent;
+    margin-top: 4px;
+    cursor: pointer;
+}
+
+.premium-lock .info-val-text {
+    color: #dbdee1;
+    font-size: 14px;
+    filter: blur(5px);
+    transition: filter 0.25s ease;
+    user-select: none;
+    display: block;
+}
+
+.premium-lock::after {
+    content: '🔒 requires Premium access';
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.65);
+    color: #f04747;
+    font-weight: 600;
+    font-size: 13px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    transition: opacity 0.25s ease;
+    z-index: 2;
+}
+
+.premium-lock:hover::after,
+.premium-lock:active::after {
+    opacity: 1;
+}
+
+.premium-lock:hover .info-val-text {
+    filter: blur(6px) brightness(0.7);
+}
