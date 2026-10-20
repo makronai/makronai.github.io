@@ -1,7 +1,7 @@
 ----
 title: About
-description: Makron offers fast, simple tools for image, audio, and PDF conversion and more.
-keywords: makron, image converter, audio converter, pdf tools, makron web app
+description: Makron is a conglomerate equity firm interested in researching and producing AI-enabled digital products and services
+keywords: makron, makron intelligence, makron tech, makron global, makron app, makron.app, makron tools
 author: Makron
 ----
 

@@ -3,7 +3,7 @@
 > Home of the world's best free knowledge and entertainment. Equipped with multi-purpose toolkits for everyday tasks like converting images, audio, documents, editing PDFs, images, etc. alongside indie publishing pages, blog posts, corners just like the early internet vibes. Made for everyone, regardless of age, gender, nationality.
 
 ## Key Pages and Resources
-- [About](https://makron.app/about/): Makron offers fast, simple tools for image, audio, and PDF conversion and more.
+- [About](https://makron.app/about/): Makron is a conglomerate equity firm interested in researching and producing AI-enabled digital products and services
 - [Af3E8543 Ceb3 4F37 B992 F852645Eb827](https://makron.app/af3e8543-ceb3-4f37-b992-f852645eb827.html)
 - [Ai Detector Humanizer](https://makron.app/ai-detector-humanizer/): Check your text content for AI detection and also humanize it for free.
 - [Ai Prompt Tutorial For Coding Websites](https://makron.app/posts/ai-prompt-tutorial-for-coding-websites/): Take a look at the universal workflow that works for any LLM with promising results per prompt.
@@ -16,7 +16,7 @@
 - [Excite](https://makron.app/excite/): Excite is a social platform that prioritizes user concerns and treats every individual uniquely unlike other big tech corporations out there which steal and sell data. Features inspired by Facebook, Instagram, Twitter, Discord, Slack, WhatsApp, Telegram and Mastodon.
 - [Form](https://makron.app/services/form/): Need to hire an expert? Fill in this form to submit your project details easily.
 - [Image Tools](https://makron.app/image-tools/): Free browser-based image tools and converter with resizing and filters. PNG, JPG, and WEBP supported.
-- [Index](https://makron.app/): Makron is a conglomerate equity firm offering a wide range of web-based tools, posts, content, services and resources. Welcome to the website, visiting people!
+- [Index](https://makron.app/): Makron is a conglomerate equity firm interested in researching and producing AI-enabled digital products and services.
 - [Origindex](https://makron.app/video-tools/origindex.html): Compress, convert, mute, re-audio, and resize video files directly in your browser. No files are uploaded to any server.
 - [Pdf Tools](https://makron.app/pdf-tools/): Merge, split, watermark, and compress PDF files directly in your browser. No files are uploaded to any server.
 - [Posts](https://makron.app/posts/): View all the posts published by Makron members and guests
