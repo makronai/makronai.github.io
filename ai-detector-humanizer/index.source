@@ -3,7 +3,7 @@
   <div class="app-top-bar">
     <div>
       <h1 class="app-title">AI Detector &amp; Humanizer</h1>
-      <p class="app-subtitle">Private, client-side stylistic analysis and automatic rewriting engine.</p>
+      <p class="app-subtitle">[ Experimental ]</p>
     </div>
     <div class="app-actions">
       <button type="button" class="btn-ghost" id="theme-toggle-btn" aria-label="Toggle Theme">
@@ -94,7 +94,7 @@
 
       <div class="pane-footer">
         <span class="stat-text" id="human-word-count">0 words</span>
-        <span class="status-indicator" id="status-message">All calculations 100% client-side</span>
+        <span class="status-indicator" id="status-message"></span>
       </div>
     </section>
 
@@ -102,7 +102,7 @@
 
   <!-- Disclaimer Footer -->
   <p class="scientific-notice">
-    * Note: Percentage indicates an observable heuristic pattern score (syntactic uniformity, burstiness, and cliché frequency). Scores are for stylistic guidance and do not guarantee human or machine authorship.
+    * Note: Percentage indicates an observable heuristic pattern score and do not guarantee human or AI source.
   </p>
 </main>
 
