@@ -1,88 +1,110 @@
-<div class="ait-root" id="ai-tool-root">
+<main id="main-content" class="workbench-main">
+  <!-- Minimalist Title & Theme Toggle -->
+  <div class="app-top-bar">
+    <div>
+      <h1 class="app-title">AI Detector &amp; Humanizer</h1>
+      <p class="app-subtitle">Private, client-side stylistic analysis and automatic rewriting engine.</p>
+    </div>
+    <div class="app-actions">
+      <button type="button" class="btn-ghost" id="theme-toggle-btn" aria-label="Toggle Theme">
+        <span id="theme-icon" aria-hidden="true">🌓</span> <span id="theme-label">Theme</span>
+      </button>
+    </div>
+  </div>
 
-  <div class="ait-tabs">
-    <button class="ait-tab ait-tab--active" data-tab="detect" onclick="aitSwitchTab('detect')">
-      Detector
+  <!-- Mobile View Toggle Tabs (Hidden on Desktop) -->
+  <div class="mobile-tabs" role="tablist" aria-label="Mobile View Toggle">
+    <button type="button" class="mobile-tab mobile-tab--active" id="tab-btn-orig" role="tab" aria-selected="true" onclick="App.setMobileTab('orig')">
+      Original <span class="tab-score-badge" id="mobile-orig-score">—</span>
     </button>
-    <button class="ait-tab" data-tab="humanize" onclick="aitSwitchTab('humanize')">
-      Humanizer
+    <button type="button" class="mobile-tab" id="tab-btn-human" role="tab" aria-selected="false" onclick="App.setMobileTab('human')">
+      Humanized <span class="tab-score-badge" id="mobile-human-score">—</span>
     </button>
   </div>
 
-  <div class="ait-panel ait-panel--active" id="ait-panel-detect">
-    <div class="ait-split">
-      <div class="ait-editor-col">
-        <div class="ait-editor-header">
-          <span class="ait-label">Input Text</span>
-          <div class="ait-editor-actions">
-            <button class="ait-btn-ghost" onclick="aitLoadExample()">Load Example</button>
-            <button class="ait-btn-ghost" onclick="aitClearDetect()">Clear</button>
+  <!-- Main Dual-Pane Workbench -->
+  <div class="workbench-shell" id="workbench-shell">
+    
+    <!-- LEFT COLUMN: ORIGINAL TEXT -->
+    <section class="pane pane-original" id="pane-original">
+      <div class="pane-header">
+        <div class="pane-title-group">
+          <span class="pane-title">Original Text</span>
+          <div class="score-pill score-pill--empty" id="orig-score-pill" title="Heuristic AI pattern match score based on syntactic uniformity and buzzwords">
+            <span class="score-dot"></span>
+            <span id="orig-score-val">0% AI Score</span>
           </div>
         </div>
-        <textarea
-          id="ait-detect-input"
-          class="ait-textarea"
-          placeholder="Paste text to analyze for AI detection..."
-          oninput="aitUpdateCount()"
-        ></textarea>
-        <div class="ait-editor-footer">
-          <span class="ait-wordcount" id="ait-word-count">0 words</span>
-          <button class="nav-cta ait-btn-primary" id="ait-analyze-btn" onclick="aitRunPipeline()">
-            Analyze →
-          </button>
+        
+        <div class="pane-tools">
+          <label class="btn-ghost btn-file-label" title="Upload TXT, MD, PDF, DOC, or DOCX">
+            <span>Import Document</span>
+            <input type="file" id="file-uploader" accept=".txt,.md,.pdf,.doc,.docx" class="sr-only">
+          </label>
+          <button type="button" class="btn-ghost" id="load-sample-btn">Sample</button>
+          <button type="button" class="btn-ghost" id="clear-btn">Clear</button>
         </div>
       </div>
 
-      <div class="ait-sidebar" id="ait-sidebar">
-        <div class="ait-empty">
-          <p>Paste text and click <strong>Analyze</strong> to run.</p>
-        </div>
-      </div>
-    </div>
-    <div class="ait-phase-bar">
-      <span class="ait-phase-dot"></span>
-      <span id="ait-phase-text">Ready - awaiting input</span>
-    </div>
-  </div>
-
-  <div class="ait-panel" id="ait-panel-humanize">
-    <div class="ait-split ait-split--equal">
-      <div class="ait-editor-col">
-        <div class="ait-editor-header">
-          <span class="ait-label">AI Text Input</span>
-          <button class="ait-btn-ghost" onclick="aitImportFromDetector()">← From Detector</button>
-        </div>
-        <textarea
-          id="ait-humanize-input"
-          class="ait-textarea"
-          placeholder="Paste AI-generated text here to rewrite it via rule-based heuristics..."
-        ></textarea>
-        <div class="ait-editor-footer ait-editor-footer--controls">
-          <span class="ait-wordcount"></span>
-          <button class="nav-cta ait-btn-primary" id="ait-humanize-btn" onclick="aitRunHumanizer()">
-            Humanize →
-          </button>
-        </div>
+      <div class="textarea-wrapper" id="drop-zone">
+        <textarea 
+          id="input-original" 
+          class="workbench-textarea" 
+          placeholder="Paste text here or drag and drop files (.txt, .md, .pdf, .docx, .doc)..."
+          aria-label="Original Text Input"
+          spellcheck="true"></textarea>
+        <div class="drop-overlay" id="drop-overlay">Drop file to extract text</div>
       </div>
 
-      <div class="ait-editor-col">
-        <div class="ait-editor-header">
-          <span class="ait-label">Humanized Output</span>
-          <div class="ait-editor-actions">
-            <button class="ait-btn-ghost" id="ait-diff-btn" onclick="aitToggleDiff()" style="display:none">Show Diff</button>
-            <button class="ait-btn-ghost" id="ait-copy-btn" onclick="aitCopyOutput()">Copy</button>
+      <div class="pane-footer">
+        <span class="stat-text" id="orig-word-count">0 words &bull; 0 chars</span>
+        <button type="button" class="btn-primary" id="humanize-btn">
+          <span>Auto-Humanize &rarr;</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- RIGHT COLUMN: HUMANIZED TEXT -->
+    <section class="pane pane-humanized" id="pane-humanized">
+      <div class="pane-header">
+        <div class="pane-title-group">
+          <span class="pane-title">Humanized Result</span>
+          <div class="score-pill score-pill--empty" id="human-score-pill" title="AI Pattern Score after automatic simplification and cadence restructuring">
+            <span class="score-dot"></span>
+            <span id="human-score-val">—</span>
           </div>
         </div>
-        <div class="ait-output" id="ait-humanize-output">
-          <span class="ait-output-placeholder">Locally rewritten text will appear here...</span>
-        </div>
-        <div class="ait-editor-footer">
-          <span class="ait-wordcount" id="ait-h-stats"></span>
+
+        <div class="pane-tools">
+          <button type="button" class="btn-ghost" id="toggle-diff-btn">Show Diff</button>
+          <button type="button" class="btn-ghost" id="copy-btn">Copy</button>
+          <button type="button" class="btn-ghost" id="download-btn">Export</button>
         </div>
       </div>
-    </div>
+
+      <div class="textarea-wrapper">
+        <textarea 
+          id="output-humanized" 
+          class="workbench-textarea" 
+          placeholder="Humanized text will appear here automatically..."
+          aria-label="Humanized Text Output"
+          spellcheck="true"></textarea>
+        <div class="diff-view" id="diff-view" style="display: none;"></div>
+      </div>
+
+      <div class="pane-footer">
+        <span class="stat-text" id="human-word-count">0 words</span>
+        <span class="status-indicator" id="status-message">All calculations 100% client-side</span>
+      </div>
+    </section>
+
   </div>
-</div>
+
+  <!-- Disclaimer Footer -->
+  <p class="scientific-notice">
+    * Note: Percentage indicates an observable heuristic pattern score (syntactic uniformity, burstiness, and cliché frequency). Scores are for stylistic guidance and do not guarantee human or machine authorship.
+  </p>
+</main>
 
 <img src="https://tracker.makron.workers.dev/?token=ai-detector-humanizer"
      width="1" height="1" style="display:none;" alt="dumb image"></img>
