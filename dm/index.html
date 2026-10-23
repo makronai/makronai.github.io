@@ -71,7 +71,22 @@ a.pc:hover{transform:translateY(-4px)}
 .hg{grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}
 .hc{position:relative;overflow:hidden;min-height:150px;padding:20px;border-radius:26px;background:#fff;display:flex;flex-direction:column;justify-content:space-between;font-size:1.2rem;font-weight:800;box-shadow:0 18px 28px -14px rgba(90,62,224,.4),inset 0 2px 0 #fff,inset 0 -6px 12px rgba(150,130,230,.14);transition:transform .2s}
 .hc:hover{transform:translateY(-5px)}
-.hc i{width:58px;height:58px;background:var(--g);box-shadow:inset -6px -8px 12px rgba(0,0,0,.15),inset 6px 6px 12px rgba(255,255,255,.5)}
+ .hc i{width:58px;height:58px;background:var(--g);box-shadow:inset -6px -8px 12px rgba(0,0,0,.15),inset 6px 6px 12px rgba(255,255,255,.5)}
+/* Liquid-glass click ripples: overlays only, so the original layout never reflows. */
+.box{position:relative}
+.liquid-ripple{position:absolute;left:var(--rx);top:var(--ry);width:84px;height:84px;border-radius:50%;pointer-events:none;z-index:5;opacity:.94;transform:translate(-50%,-50%) scale(.12);border:1px solid rgba(255,255,255,.88);background:radial-gradient(circle,rgba(255,255,255,.32) 0%,rgba(184,224,255,.2) 24%,rgba(255,255,255,.08) 48%,transparent 72%);box-shadow:inset 0 0 13px rgba(255,255,255,.72),0 0 0 1px rgba(255,255,255,.18),0 0 22px rgba(156,196,255,.22);-webkit-backdrop-filter:blur(2px) saturate(1.7);backdrop-filter:blur(2px) saturate(1.7);filter:url(#liquidWarp);animation:liquidExpand .82s cubic-bezier(.12,.68,.25,1) forwards}
+.liquid-ripple::before,.liquid-ripple::after{content:"";position:absolute;inset:10%;border:1px solid rgba(255,255,255,.74);border-radius:48% 52% 43% 57%;box-shadow:inset 0 0 8px rgba(255,255,255,.35);animation:liquidRing .82s cubic-bezier(.12,.68,.25,1) forwards}
+.liquid-ripple::after{inset:23%;border-color:rgba(255,255,255,.48);animation-delay:35ms}
+@keyframes liquidExpand{0%{opacity:.94;transform:translate(-50%,-50%) scale(.12)}35%{opacity:.83;transform:translate(-50%,-50%) scale(1.35)}100%{opacity:0;transform:translate(-50%,-50%) scale(4.9)}}
+@keyframes liquidRing{0%{opacity:.9;transform:scale(.28) rotate(0deg)}45%{opacity:.72;transform:scale(.9) rotate(16deg)}100%{opacity:0;transform:scale(1.45) rotate(-12deg)}}
+/* A single, continuously reshaped inversion surface creates a water-like cursor wake. */
+.cursor-inversion-layer{position:fixed;inset:0;width:100vw;height:100vh;pointer-events:none!important;z-index:2147483646;background:rgba(255,255,255,.001);-webkit-backdrop-filter:invert(1) blur(.35px);backdrop-filter:invert(1) blur(.35px);clip-path:polygon(0 0,0 0,0 0);-webkit-clip-path:polygon(0 0,0 0,0 0);will-change:clip-path}
+.cursor-lens{position:fixed;left:0;top:0;width:104px;height:104px;margin:-52px 0 0 -52px;border-radius:50%;pointer-events:none!important;z-index:2147483647;opacity:0;transform:translate3d(-200px,-200px,0);will-change:transform,opacity;background:transparent;border:1px solid rgba(255,255,255,.9);box-shadow:0 0 0 1px rgba(108,76,241,.22),inset 0 0 18px rgba(255,255,255,.18),0 0 25px rgba(108,76,241,.18);transition:opacity .16s ease}
+.cursor-lens.is-visible{opacity:1}
+.cursor-lens::before{content:"";position:absolute;inset:7px;border:1px solid rgba(255,255,255,.42);border-radius:50%;box-shadow:inset 0 0 12px rgba(255,255,255,.12)}
+.fx-defs{position:absolute;width:0;height:0;overflow:hidden;pointer-events:none}
+@media(hover:none),(pointer:coarse){.cursor-inversion-layer,.cursor-lens{display:none!important}}
+@media(prefers-reduced-motion:reduce){.liquid-ripple,.liquid-ripple::before,.liquid-ripple::after{animation-duration:.01ms!important;animation-iteration-count:1!important}}
 @media(max-width:820px){
  .bento{height:auto;min-height:0;grid-template-columns:1fr 1fr;grid-template-rows:none;grid-auto-rows:minmax(128px,auto);grid-template-areas:"nm nm" "sm sm" "ig xx" "li gh" "cl pr"}
  .nm{min-height:320px}.sm{padding:22px}.ac{min-height:150px}
@@ -86,6 +101,10 @@ a.pc:hover{transform:translateY(-4px)}
   <div class="d q" style="--c:#94f2d0;width:80px;height:80px;left:6%;bottom:6%;animation-delay:-4s"></div>
   <div class="d tr" style="--c:#a085ff;width:100px;height:90px;right:6%;bottom:5%;animation-delay:-1s"></div>
 </div>
+
+<svg class="fx-defs" aria-hidden="true" focusable="false"><filter id="liquidWarp" x="-35%" y="-35%" width="170%" height="170%"><feTurbulence type="fractalNoise" baseFrequency=".018 .035" numOctaves="2" seed="12" result="liquidNoise"/><feDisplacementMap in="SourceGraphic" in2="liquidNoise" scale="13" xChannelSelector="R" yChannelSelector="G"/></filter></svg>
+<div class="cursor-inversion-layer" id="cursorInversion" aria-hidden="true"></div>
+<div class="cursor-lens" id="cursorLens" aria-hidden="true"></div>
 
 <main class="bento">
   <section class="t co nm" style="--i:0">
@@ -127,9 +146,12 @@ a.pc:hover{transform:translateY(-4px)}
 <script>
 const $=s=>document.querySelector(s);
 const esc=s=>String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
-const H=[["Upwork","https://www.upwork.com/freelancers/~018411d13626e76c4c?mp_source=share"],["Freelancer","https://www.freelancer.com/u/muxworks?sb=t"],["Guru","https://www.guru.com/freelancers/dewan-mukto"],["PeoplePerHour","https://www.peopleperhour.com/freelancer/technology-programming/dewan-mukto-software-developer-ai-engineer-zxnaawjw"],["Contra","https://contra.com/dewan_mukto_loc5qhzb?referralExperimentNid=DEFAULT_REFERRAL_PROGRAM&referrerUsername=dewan_mukto_loc5qhzb"]];
+const H=[["Upwork","https://www.upwork.com/freelancers/~018411d13626e76c4c?mp_source=share"],["Freelancer","https://www.freelancer.com/u/muxworks?sb=t"],["Guru","https://www.guru.com/freelancers/dewan-mukto"],["PeoplePerHour","https://www.peopleperhour.com/freelancer/technology-programming/dewan-mukto-software-developer-ai-engineer-zxnaawjw"],["Contra","https://contra.com/dewan_mukto_loc5qhzb?referralExperimentNid=DEFAULT_REFERRAL_PROGRAM&referrerUsername=dewan_mukto_loc5qhzb"],
+  ["Dribbble","https://dribbble.com/dmkto","linear-gradient(135deg,#c2185b,#ff2d8d)","width:70px;height:34px;border-radius:999px;transform:rotate(-28deg)"],
+  ["Figma","https://www.figma.com/@dwmk","linear-gradient(90deg,#f24e1e 0 20%,#ff7262 20% 40%,#a259ff 40% 60%,#1abcfe 60% 80%,#0acf83 80% 100%)","border-radius:50% 50% 50% 8%;transform:rotate(-12deg)"],
+  ["VSCO","https://dwmk.vsco.site/","linear-gradient(135deg,#171717,#625b54 52%,#e7dfd1)","clip-path:polygon(50% 0%,61% 34%,98% 35%,69% 57%,79% 91%,50% 71%,21% 91%,31% 57%,2% 35%,39% 34%);transform:rotate(14deg)"]];
 const shp=["border-radius:50%","clip-path:polygon(50% 0,100% 100%,0 100%)","clip-path:polygon(25% 5%,75% 5%,100% 50%,75% 95%,25% 95%,0 50%)","border-radius:22%;transform:rotate(20deg)","clip-path:polygon(50% 0,100% 50%,50% 100%,0 50%)"];
-$("#hg").innerHTML=H.map((p,i)=>`<a class="hc" href="${esc(p[1])}" target="_blank" rel="noopener"><i style="--g:var(--g${i%4+1});${shp[i]}"></i>${p[0]}</a>`).join("");
+$("#hg").innerHTML=H.map((p,i)=>{const gradient=p[2]||`var(--g${i%4+1})`;const shape=p[3]||shp[i];return `<a class="hc" href="${esc(p[1])}" target="_blank" rel="noopener"><i style="--g:${esc(gradient)};${shape}"></i>${esc(p[0])}</a>`}).join("");
 
 const P=[["MuxAI Hana","Virtual assistance automation SaaS with API integrations, a Three.js avatar, Web Speech API voice and self-hosted LLMs via an Ollama-Ngrok pipeline.","AI Tools","https://hana.makron.app"],["S-Slides","Quick snappy presentation tool","Productivity","https://sslides.vercel.app"],["S-Vibe","Anonymous instant (P2P) voice-video chat with screen sharing for watch parties","Communication","https://senvibe.vercel.app"],["S-Send","Anonymous instant (P2P) file sharing online","Utilities","https://ssend.vercel.app"],["MuxAI","Self-hosted customizable decentralized LLM platform with personas","AI Tools","https://muxai.vercel.app"],["Makron","Online tools, resources, media/file converters, etc.","Utilities","https://makronweb.vercel.app"],["Excite","Derivative social media platform based on Liaoverse","Communication","https://xze.vercel.app"],["Liaoverse","Mega social media platform that houses all the features of Facebook, Instagram, Twitter, WhatsApp, Discord and more!","Communication","https://liaoverse.vercel.app"],["Faculty of Survival","Online 2D survival game to celebrate World Teachers’ Day 2025.","Games","https://facultyofsurvival.vercel.app/"],["Acado - Academic Documents Online","Free, mobile-friendly online document editor for you to create, preview, and export your academic assignments easily. With built-in APA-7 format.","Utilities","https://acadolife.vercel.app"],["MizuCV - Online CV Builder","Create, update and export your CV from anywhere.","Utilities","https://mizucv.vercel.app"],["BRUSH","Upgraded derivative of BRAX","BRACU Student Tools","https://brushonline.vercel.app/"],["BRAX","A convenient way for students to compare between sections of courses in real-time with their current selection, and access multiple tools related to BRAC University all in one single suite.","BRACU Student Tools","https://braxapp.github.io/"],["Mux Social","Social platform without boundaries or bias","Communication","https://muxday.vercel.app"],["Disorder","Anonymous peer-to-peer chat and file sharing platform with no database, no persistent storage and no server.","Communication","https://dewanmukto.github.io/web/disorder/"],["Jargonify","Silly experiment with the Datamuse API for paraphrasing text using random synonyms.","AI Tools","https://dewanmukto.github.io/web/jargonify/"],["BRACU RS69 Routine","Schedule builder for the 69th Residential Semester","BRACU Student Tools","https://braxapp.github.io/rs-routine/"],["BRACU Course Search","Quick lookup for course info from the Connect SLMS","BRACU Student Tools","https://dewanmukto.github.io/web/brax/"],["Chess AI vs AI","AI vs AI chess battleground","AI Sandbox","https://dewanmukto.github.io/web/ai-chess"],["Maze Visualizer AI","Visualizer for basic pathfinding algorithms","Visualizer","https://dewanmukto.github.io/web/maze-pathfinder"],["Impossible TicTacToe AI","Unbeatable tictactoe AI using the minimax algorithm","AI Sandbox","https://dewanmukto.github.io/web/tictactoe"],["Sorting Visualizer","Visualizer for multiple sorting algorithms","Visualizer","https://dwmk.github.io/sorting-visualizer/"],["Wine Launcher","Ultra minimalist way to launch Windows software (.exe) from Linux.","Utilities","https://github.com/kdue/exe-launcher"],["HH","Hex/binary editor for any type of file","Utilities","https://github.com/kdue/raw-hex-editor"],["YASS","Custom shell within the terminal","Utilities","https://github.com/kdue/simple-shell-template"],["CGPA Calc","CGPA calculator for BRAC University, supporting PDF uploading and real-time GPA auto-calculation.","BRACU Student Tools","https://dewanmukto.github.io/web/bracu-cgpa-calculator"],["MAH Architects Inc.","Website built for MAH Architects Inc.","Client Projects","https://maharchitects.com"],["Mux Repeat","Automation recorder for keyboard and mouse input and can repeat them continuously.","Utilities","https://github.com/kdue/universal-macro-automation"],["Muktoverse","Multiplayer 3D interactive space for showcasing my works","Random","https://3d.dewanmukto.com/"],["Bookseller Website","Customer order management webapp for online booksellers and bookstores","Client Projects","https://github.com/kdue/bookseller-website"],["Netstate","Check internet speed, local and global IP addresses, etc.","Utilities","https://huanmux.vercel.app/netstate"],["Jam","Play/listen to YouTube music videos in peace, without any ads or distractions","Media Players","https://kdue.github.io/youtube-video-dimmer"],["Drone Zone","Simple survival game about Boids simulation and bees","Games","https://github.com/kdue/bee-survival-game"],["Wow","Raid-resistant peer-to-peer video chat and meetings platform","Communication","https://muxwow.vercel.app/"],["Paint","Simple and easy instant whiteboard designed to be lightweight","Productivity","https://dewanmukto.github.io/web/paint/"],["SecHero","Android app for checking device security integrity, app permissions, and diagnostic info.","Cybersecurity","https://dewanmukto.gitbook.io/phocheton/"],["Metrobus Tracker","Track metrobuses to decide the fastest route","Productivity","https://dewanmukto.github.io/web/metrobus-tracker"],["Romulus","A simple pseudo-chatbot that talks arrogantly","Random","https://dewanmukto.github.io/romulus-chatbot"],["BRACKET","(Unfinished) messaging platform","Communication","https://github.com/kdue/bracket-messenger"],["Zen-G","(Unfinished) zombie survival game. Icon is from Recoil by Martin Magni, Fancade.","Games","https://github.com/kdue/zeng"],["Wildest Dimensions","Visual novel-style game based on ITWD","Games","https://github.com/kdue/visual-novel-game"],["Dolly","Multi-modal and multipurpose Discord bot, inspired by MEE6, Dank Memer and many more","Bots","https://discord.com/oauth2/authorize?client_id=977262952354828308&permissions=1644971949559&scope=bot"],["Delta Telekom","Top-down 2D game for making a parody of a few online users on Discord.","Games","https://github.com/kdue/topdown-2d-game"],["Welcome to Bangladesh","Welcome to a wild and chaotic sandbox full of Bengali culture and content. Explore a city ridden with battles between the police and criminals as you try to survive and maintain your rank and prestige by conquering the city with your combat skills.","Games","https://www.roblox.com/games/13664220695/Welcome-to-Bangladesh"],["Goofy Gunners","Welcome to a chaotic world full of street activity where you can become a local king and dominate over your rivals or rule the skies with a flying car while showering your enemies with rockets from above!","Games","https://www.roblox.com/games/107542071734450/Goofy-Gunners"],["Goofy Obby","You’ve played lots of other obbies before, but none like this one! Step right in and get hit by a dozen obstacles and worse - responsibilities!","Games","https://www.roblox.com/games/76587171520946/Goofy-Obby"],["Broken.","This is a bizarre sandbox full of opportunities for testing your friends’ PvP skills, friendly trolling, roleplaying, grinding or simply goofing around 24/7. In this pocket-sized city, prepare to gear up for survival as the agents of the MBC take no mercy upon criminals!","Games","https://www.roblox.com/games/18129807606/Broken"],["Demon Hunting Paradise","A new game, coming soon. Currently in an early alpha access stage. Data may not be saved properly! Features may be missing.","Games","https://www.roblox.com/games/18375390394/Demon-Hunting-Paradise"],["Bangla Battlegrounds","Dominate the scenario with your martial arts and combat tactics, climbing up ranks and defeating your rivals.","Games","https://www.roblox.com/games/18321177918/Bangla-Battlegrounds"],["Photon.","An abstract experimental experience that transcends beyond human psychology.","Games","https://www.roblox.com/games/18305682277/Photon"],["Save Her","The moment you stop playing the game, she dies! Don’t stop; keep her alive for as long as you can. She might be a stranger to you, but she’s equally innocent. She wants to live, to see another bright day. Would you not want to see her smile?","Games","https://www.roblox.com/games/18535230648/Save-Her"],["MandelEx","Fractal visualizer in real-time.","Visualizer","https://github.com/kdue/mandelbrot-fractal-explorer"],["HueCube","Chrome extension for skipping YouTube ads gracefully","Utilities","https://github.com/kdue/youtube-ad-avoider"],["Serverwise","Message and event logging module for Discord.js bots","Bots","https://github.com/kdue/discord-bot-spyware"],["Guardian","Discord.py bot with safety and pranking features","Bots","https://discord.com/api/oauth2/authorize?client_id=856019083686051860&permissions=8&scope=bot"],["Pcryt","LFSR-based encryption in Base64","Cybersecurity","https://github.com/dwmk/pcryt"]];
 let cat="All";
@@ -140,6 +162,219 @@ drawF();drawP();
 
 document.querySelectorAll("[data-open]").forEach(b=>b.addEventListener("click",()=>document.getElementById(b.dataset.open).showModal()));
 document.querySelectorAll("dialog").forEach(d=>{d.addEventListener("click",e=>{if(e.target===d)d.close()});d.querySelector(".x").addEventListener("click",()=>d.close())});
+
+/* A short-lived, refracting liquid ripple on card and panel surfaces. */
+document.addEventListener("pointerdown",e=>{
+  if(e.button!==0 && e.pointerType!=="touch") return;
+  const surface=e.target.closest(".t,.pc,.hc,.box");
+  if(!surface) return;
+  const rect=surface.getBoundingClientRect();
+  const ripple=document.createElement("span");
+  ripple.className="liquid-ripple";
+  ripple.setAttribute("aria-hidden","true");
+  ripple.style.setProperty("--rx",`${e.clientX-rect.left}px`);
+  ripple.style.setProperty("--ry",`${e.clientY-rect.top}px`);
+  surface.appendChild(ripple);
+  window.setTimeout(()=>ripple.remove(),900);
+},{passive:true});
+
+/* Lagged cursor lens + one connected, age-tapered liquid wake. The clipped backdrop
+   surface sits above the page, so both foreground text and backgrounds are inverted. */
+(()=>{
+  const lens=$("#cursorLens");
+  const inversion=$("#cursorInversion");
+  const finePointer=window.matchMedia("(pointer:fine)").matches;
+  const reducedMotion=window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+  if(!lens||!inversion||!finePointer||reducedMotion) return;
+
+  const R=52;
+  const TAIL_WIDTH=34;
+  const MAX_AGE=560;
+  const MAX_POINTS=128;
+  const trail=[];
+  let targetX=-200,targetY=-200,currentX=targetX,currentY=targetY;
+  let frame=0,visible=false,lastSampleX=null,lastSampleY=null,lastAngle=0;
+
+  const cursorLayer=()=>document.querySelector("dialog[open]")||document.body;
+  const relocateFx=()=>{
+    const layer=cursorLayer();
+    const changed=inversion.parentElement!==layer||lens.parentElement!==layer;
+    if(inversion.parentElement!==layer) layer.appendChild(inversion);
+    if(lens.parentElement!==layer) layer.appendChild(lens);
+    // Keep the filter beneath its decorative rim in the same stacking context.
+    if(inversion.nextElementSibling!==lens) layer.insertBefore(lens,inversion.nextSibling);
+    // A page-to-dialog move changes the top-layer coordinate context; don't drag
+    // a stale trail across that boundary.
+    if(changed) trail.length=0;
+  };
+  const clamp=(v,a,b)=>Math.max(a,Math.min(b,v));
+  const polygon=(pts)=>{
+    const width=window.innerWidth,height=window.innerHeight;
+    if(!visible){
+      inversion.style.clipPath="polygon(0 0,0 0,0 0)";
+      inversion.style.webkitClipPath="polygon(0 0,0 0,0 0)";
+      return;
+    }
+    const now=performance.now();
+    while(trail.length && now-trail[0].t>MAX_AGE) trail.shift();
+    // Keep the wake narrow and taper it by age. Samples already underneath the lens
+    // are omitted so the lens stays round and the single ribbon joins it cleanly.
+    const history=trail.filter(p=>Math.hypot(p.x-currentX,p.y-currentY)>R*.94);
+    const centers=history.map(p=>({x:p.x,y:p.y,t:p.t,head:false}));
+    const head={x:currentX,y:currentY,t:now,head:true};
+    if(!centers.length){
+      const circle=[];
+      for(let k=0;k<48;k++){
+        const a=(Math.PI*2*k/48);
+        circle.push([currentX+Math.cos(a)*R,currentY+Math.sin(a)*R]);
+      }
+      const clip=`polygon(${circle.map(([x,y])=>`${clamp(x,-2,width+2).toFixed(1)}px ${clamp(y,-2,height+2).toFixed(1)}px`).join(",")})`;
+      inversion.style.clipPath=clip;
+      inversion.style.webkitClipPath=clip;
+      return;
+    }
+
+    // Estimate a tangent and normal along the older trail samples.
+    const tangents=[];
+    for(let i=0;i<centers.length;i++){
+      const a=centers[Math.max(0,i-1)];
+      const b=i===centers.length-1?head:centers[Math.min(centers.length-1,i+1)];
+      let dx=b.x-a.x,dy=b.y-a.y,len=Math.hypot(dx,dy);
+      if(len<.001){dx=Math.cos(lastAngle);dy=Math.sin(lastAngle);len=1;}
+      else if(i===centers.length-1) lastAngle=Math.atan2(dy,dx);
+      tangents.push({x:dx/len,y:dy/len,nx:-dy/len,ny:dx/len,angle:Math.atan2(dy,dx)});
+    }
+    const sideA=[],sideB=[],widths=[];
+    centers.forEach((p,i)=>{
+      const age=Math.max(0,now-p.t);
+      // Taper spatially from the oldest tip toward the lens, then fade by age.
+      const progress=centers.length===1?1:i/(centers.length-1);
+      const fluidWobble=1+.13*Math.sin(progress*10-now*.005)*Math.sin(progress*Math.PI);
+      const taper=TAIL_WIDTH*Math.pow(clamp(progress,0,1),.78)
+        *Math.pow(clamp(1-age/MAX_AGE,0,1),1.12)*fluidWobble;
+      const n=tangents[i];
+      widths.push(taper);
+      sideA.push([p.x+n.nx*taper,p.y+n.ny*taper]);
+      sideB.push([p.x-n.nx*taper,p.y-n.ny*taper]);
+    });
+
+    // Attach the ribbon to a small opening at the rear of the lens. The long arc
+    // around the remaining circumference keeps the entire cursor region inverted.
+    const last=centers[centers.length-1];
+    const tangent=tangents[tangents.length-1];
+    const joinWidth=clamp(widths[widths.length-1],.5,TAIL_WIDTH);
+    const joinDepth=Math.sqrt(Math.max(0,R*R-joinWidth*joinWidth));
+    const headA=[head.x-tangent.x*joinDepth+tangent.nx*joinWidth,
+                 head.y-tangent.y*joinDepth+tangent.ny*joinWidth];
+    const headB=[head.x-tangent.x*joinDepth-tangent.nx*joinWidth,
+                 head.y-tangent.y*joinDepth-tangent.ny*joinWidth];
+    const gap=Math.hypot(head.x-last.x,head.y-last.y);
+    const handle=clamp(gap*.38,6,34);
+    const cubic=(p0,p1,p2,p3,t)=>{
+      const u=1-t;
+      return [u*u*u*p0[0]+3*u*u*t*p1[0]+3*u*t*t*p2[0]+t*t*t*p3[0],
+              u*u*u*p0[1]+3*u*u*t*p1[1]+3*u*t*t*p2[1]+t*t*t*p3[1]];
+    };
+    const contour=[...sideA];
+    const a0=sideA[sideA.length-1];
+    const a1=[a0[0]+tangent.x*handle,a0[1]+tangent.y*handle];
+    const a2=[headA[0]-tangent.x*handle,headA[1]-tangent.y*handle];
+    for(let k=1;k<=10;k++) contour.push(cubic(a0,a1,a2,headA,k/10));
+
+    // Draw almost the complete circle, leaving only the rear opening for the tail.
+    const angle=tangent.angle;
+    const alpha=Math.asin(clamp(joinWidth/R,0,.98));
+    const arcStart=angle+Math.PI-alpha;
+    const arcSweep=Math.PI*2-2*alpha;
+    const arcSteps=48;
+    for(let k=1;k<=arcSteps;k++){
+      const a=arcStart-arcSweep*k/arcSteps;
+      contour.push([head.x+Math.cos(a)*R,head.y+Math.sin(a)*R]);
+    }
+
+    const b0=headB;
+    const b1=[b0[0]-tangent.x*handle,b0[1]-tangent.y*handle];
+    const b3=sideB[sideB.length-1];
+    const b2=[b3[0]+tangent.x*handle,b3[1]+tangent.y*handle];
+    for(let k=1;k<=10;k++) contour.push(cubic(b0,b1,b2,b3,k/10));
+    for(let i=sideB.length-2;i>=0;i--) contour.push(sideB[i]);
+    const points=contour.map(([x,y])=>`${clamp(x,-2,width+2).toFixed(1)}px ${clamp(y,-2,height+2).toFixed(1)}px`).join(",");
+    const clip=`polygon(${points})`;
+    inversion.style.clipPath=clip;
+    inversion.style.webkitClipPath=clip;
+  };
+  const show=()=>{
+    visible=true;
+    lens.classList.add("is-visible");
+    relocateFx();
+  };
+  const addTrailPoint=(now)=>{
+    const last=trail[trail.length-1];
+    const dx=last?currentX-last.x:Infinity,dy=last?currentY-last.y:Infinity;
+    // The lagged center is sampled densely enough for a fluid, unbroken ribbon.
+    if(!last||Math.hypot(dx,dy)>=2.6){
+      trail.push({x:currentX,y:currentY,t:now});
+      if(trail.length>MAX_POINTS) trail.splice(0,trail.length-MAX_POINTS);
+    }
+  };
+  const moveLens=()=>{
+    const now=performance.now();
+    currentX+=(targetX-currentX)*.19;
+    currentY+=(targetY-currentY)*.19;
+    if(Math.abs(targetX-currentX)<.12) currentX=targetX;
+    if(Math.abs(targetY-currentY)<.12) currentY=targetY;
+    lens.style.transform=`translate3d(${currentX}px,${currentY}px,0)`;
+    addTrailPoint(now);
+    polygon(trail);
+    const stillMoving=Math.abs(targetX-currentX)>.15||Math.abs(targetY-currentY)>.15;
+    const trailAlive=trail.length>0&&now-trail[0].t<MAX_AGE;
+    if(stillMoving||trailAlive){
+      frame=requestAnimationFrame(moveLens);
+    }else{
+      trail.length=0;
+      polygon(trail);
+      frame=0;
+    }
+  };
+  let hasStarted=false;
+  const start=(e)=>{
+    if(e.pointerType==="touch") return;
+    targetX=e.clientX;targetY=e.clientY;
+    if(!hasStarted){
+      // Initialize at the real pointer position, never at an off-screen placeholder.
+      currentX=targetX;currentY=targetY;hasStarted=true;
+      trail.length=0;
+      lens.style.transform=`translate3d(${currentX}px,${currentY}px,0)`;
+    }
+    show();
+    if(!frame) frame=requestAnimationFrame(moveLens);
+  };
+  document.addEventListener("pointermove",start,{passive:true});
+  document.addEventListener("pointerout",e=>{
+    if(!e.relatedTarget){
+      visible=false;hasStarted=false;
+      lens.classList.remove("is-visible");
+      trail.length=0;
+      inversion.style.clipPath="polygon(0 0,0 0,0 0)";
+      inversion.style.webkitClipPath="polygon(0 0,0 0,0 0)";
+      if(frame){cancelAnimationFrame(frame);frame=0;}
+    }
+  });
+  document.querySelectorAll("dialog").forEach(d=>{
+    d.addEventListener("close",()=>{
+      if(visible) relocateFx();
+    });
+    // Modal content is in the browser's top layer, so place the filter there too.
+    d.addEventListener("click",()=>{if(d.open&&visible)relocateFx();});
+  });
+  window.addEventListener("blur",()=>{
+    visible=false;hasStarted=false;lens.classList.remove("is-visible");trail.length=0;
+    inversion.style.clipPath="polygon(0 0,0 0,0 0)";
+    inversion.style.webkitClipPath="polygon(0 0,0 0,0 0)";
+    if(frame){cancelAnimationFrame(frame);frame=0;}
+  });
+  window.addEventListener("resize",()=>{if(visible){polygon(trail);}});
+})();
 </script>
 </body>
 </html>
