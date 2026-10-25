@@ -2,13 +2,13 @@
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url>
     <loc>https://makron.app/</loc>
-    <lastmod>2026-10-21T02:03:25+00:00</lastmod>
+    <lastmod>2026-10-25T20:45:41+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>1.0</priority>
   </url>
   <url>
     <loc>https://makron.app/about/</loc>
-    <lastmod>2026-10-21T16:38:25+00:00</lastmod>
+    <lastmod>2026-10-25T20:45:59+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -20,37 +20,43 @@
   </url>
   <url>
     <loc>https://makron.app/ai-detector-humanizer/</loc>
-    <lastmod>2026-10-21T16:38:25+00:00</lastmod>
+    <lastmod>2026-10-25T20:45:59+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://makron.app/audio-tools/</loc>
-    <lastmod>2026-10-21T16:38:25+00:00</lastmod>
+    <lastmod>2026-10-25T20:45:59+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://makron.app/base-calculator/</loc>
-    <lastmod>2026-10-21T16:38:25+00:00</lastmod>
+    <lastmod>2026-10-25T20:45:59+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://makron.app/contact/</loc>
-    <lastmod>2026-10-21T16:38:25+00:00</lastmod>
+    <lastmod>2026-10-25T20:45:59+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://makron.app/discord-lookup/</loc>
-    <lastmod>2026-10-21T16:38:25+00:00</lastmod>
+    <lastmod>2026-10-25T20:45:59+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.8</priority>
+  </url>
+  <url>
+    <loc>https://makron.app/dm/</loc>
+    <lastmod>2026-10-23T20:07:51+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://makron.app/dmca/</loc>
-    <lastmod>2026-10-21T16:38:25+00:00</lastmod>
+    <lastmod>2026-10-25T20:45:59+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
@@ -62,85 +68,85 @@
   </url>
   <url>
     <loc>https://makron.app/image-tools/</loc>
-    <lastmod>2026-10-21T16:38:25+00:00</lastmod>
+    <lastmod>2026-10-25T20:45:59+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://makron.app/pdf-tools/</loc>
-    <lastmod>2026-10-21T16:38:25+00:00</lastmod>
+    <lastmod>2026-10-25T20:45:59+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://makron.app/posts/</loc>
-    <lastmod>2026-10-21T16:38:25+00:00</lastmod>
+    <lastmod>2026-10-25T20:45:59+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://makron.app/posts/ai-prompt-tutorial-for-coding-websites/</loc>
-    <lastmod>2026-10-21T16:38:25+00:00</lastmod>
+    <lastmod>2026-10-25T20:45:59+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://makron.app/posts/apple-iphone-18/</loc>
-    <lastmod>2026-10-21T16:38:25+00:00</lastmod>
+    <lastmod>2026-10-25T20:45:59+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://makron.app/posts/stop-feeling-depressed/</loc>
-    <lastmod>2026-10-21T16:38:25+00:00</lastmod>
+    <lastmod>2026-10-25T20:45:59+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://makron.app/privacy/</loc>
-    <lastmod>2026-10-21T16:38:25+00:00</lastmod>
+    <lastmod>2026-10-25T20:45:59+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://makron.app/services/</loc>
-    <lastmod>2026-10-21T16:38:25+00:00</lastmod>
+    <lastmod>2026-10-25T20:45:59+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://makron.app/services/form/</loc>
-    <lastmod>2026-10-21T16:38:25+00:00</lastmod>
+    <lastmod>2026-10-25T20:45:59+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://makron.app/teleprompter/</loc>
-    <lastmod>2026-10-21T16:38:25+00:00</lastmod>
+    <lastmod>2026-10-25T20:45:59+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://makron.app/text-to-markdown/</loc>
-    <lastmod>2026-10-21T16:38:25+00:00</lastmod>
+    <lastmod>2026-10-25T20:45:59+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://makron.app/tos/</loc>
-    <lastmod>2026-10-21T16:38:25+00:00</lastmod>
+    <lastmod>2026-10-25T20:45:59+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://makron.app/trust/</loc>
-    <lastmod>2026-10-21T16:38:25+00:00</lastmod>
+    <lastmod>2026-10-25T20:45:59+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
   <url>
     <loc>https://makron.app/video-tools/</loc>
-    <lastmod>2026-10-21T16:38:25+00:00</lastmod>
+    <lastmod>2026-10-25T20:45:59+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.8</priority>
   </url>
