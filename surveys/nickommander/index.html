@@ -1,0 +1,661 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Nickommander - Ideation Survey</title>
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="/assets/img/nick.png">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <!-- React & MUI CDN -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://unpkg.com/@mui/material@5.15.15/umd/material-ui.development.js"></script>
+    <script src="https://unpkg.com/@emotion/react@11.11.4/umd/emotion-react.umd.min.js"></script>
+    <script src="https://unpkg.com/@emotion/styled@11.11.4/umd/emotion-styled.umd.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background-color: #eef2f7;
+            color: #0f172a;
+            font-family: 'Inter', sans-serif;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            cursor: none; /* Custom cursor enabled */
+        }
+        /* Custom Cursor */
+        .custom-cursor {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 20px;
+            height: 20px;
+            background: #ffffff;
+            border: 2.5px solid #0066ff;
+            border-radius: 6px;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            transition: transform 0.08s ease, width 0.2s ease, height 0.2s ease;
+            z-index: 99999;
+            box-shadow: 0 4px 12px rgba(0, 102, 255, 0.25);
+        }
+        body:active .custom-cursor {
+            transform: translate(-50%, -50%) scale(0.85);
+            background: #dbeafe;
+        }
+        .form-container {
+            transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.5s ease-in-out, max-height 0.6s ease-in-out;
+            overflow: hidden;
+            transform-origin: top;
+        }
+        .form-container.collapsed {
+            transform: scaleY(0) scaleX(0.95);
+            opacity: 0;
+            max-height: 0;
+            padding: 0;
+            margin: 0;
+            border: none;
+        }
+        .thank-you-container {
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0.3s;
+            display: none;
+        }
+        .thank-you-container.visible {
+            opacity: 1;
+            transform: translateY(0);
+            display: block;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .fade-in {
+            animation: fadeIn 0.4s ease-in-out forwards;
+        }
+        @keyframes blinkWarn {
+            0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.6); background-color: rgba(239, 68, 68, 0.04); }
+            50% { box-shadow: 0 0 0 12px rgba(239, 68, 68, 0); background-color: rgba(239, 68, 68, 0.12); }
+            100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); background-color: rgba(239, 68, 68, 0.04); }
+        }
+        .blink-error {
+            animation: blinkWarn 0.5s ease-in-out 4; /* 4 times * 0.5s = 2 seconds */
+            border-radius: 12px;
+            padding: 12px;
+            border: 1px solid rgba(239, 68, 68, 0.5);
+        }
+        /* Cyber Claymorphism card styles */
+        .cyber-clay-card {
+            background: #ffffff;
+            box-shadow: 16px 16px 32px #cbd5e1, -16px -16px 32px #ffffff, inset 0 1px 0 rgba(255, 255, 255, 0.8);
+            border: 1px solid rgba(0, 102, 255, 0.12);
+        }
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #eef2f7;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #0066ff;
+        }
+    </style>
+</head>
+<body>
+    <div className="custom-cursor" id="customCursor"></div>
+    <div id="root" style="width: 100%; max-width: 750px; padding: 24px; box-sizing: border-box;"></div>
+
+    <script type="text/babel">
+        const { 
+            ThemeProvider, createTheme, CssBaseline, 
+            Box, Paper, Typography, Button, TextField, 
+            Checkbox, Radio, RadioGroup, FormControlLabel, 
+            FormControl, FormLabel, FormGroup, Divider, Alert, Avatar 
+        } = MaterialUI;
+
+        const theme = createTheme({
+            palette: {
+                mode: 'light',
+                primary: {
+                    main: '#0066ff', // Bright blue
+                },
+                background: {
+                    default: '#eef2f7',
+                    paper: '#ffffff',
+                },
+                text: {
+                    primary: '#0f172a',
+                    secondary: '#475569',
+                }
+            },
+            typography: {
+                fontFamily: 'Inter, sans-serif',
+            },
+            shape: {
+                borderRadius: 12,
+            }
+        });
+
+        function SurveyApp() {
+            // Custom cursor movement handler
+            React.useEffect(() => {
+                const cursor = document.getElementById('customCursor');
+                const handleMouseMove = (e) => {
+                    if (cursor) {
+                        cursor.style.left = `${e.clientX}px`;
+                        cursor.style.top = `${e.clientY}px`;
+                    }
+                };
+                window.addEventListener('mousemove', handleMouseMove);
+                return () => window.removeEventListener('mousemove', handleMouseMove);
+            }, []);
+
+            const [q1, setQ1] = React.useState([]);
+            const [q1Other, setQ1Other] = React.useState('');
+            
+            const [q2, setQ2] = React.useState('');
+            
+            const [q3, setQ3] = React.useState('');
+            const [q3Other, setQ3Other] = React.useState('');
+            
+            const [q4, setQ4] = React.useState('');
+            
+            const [q5, setQ5] = React.useState('');
+            const [q5Other, setQ5Other] = React.useState('');
+            
+            const [q6, setQ6] = React.useState('');
+            const [q6Other, setQ6Other] = React.useState('');
+            
+            const [q7, setQ7] = React.useState('');
+            const [q7Name, setQ7Name] = React.useState('');
+            const [q7Institute, setQ7Institute] = React.useState('');
+
+            const [submitting, setSubmitting] = React.useState(false);
+            const [submitted, setSubmitted] = React.useState(false);
+            const [error, setError] = React.useState('');
+            const [blinkField, setBlinkField] = React.useState(null);
+
+            // Refs for question blocks
+            const q1Ref = React.useRef(null);
+            const q2Ref = React.useRef(null);
+            const q3Ref = React.useRef(null);
+            const q4Ref = React.useRef(null);
+            const q5Ref = React.useRef(null);
+            const q6Ref = React.useRef(null);
+            const q7Ref = React.useRef(null);
+
+            const triggerBlink = (ref, msg) => {
+                setError(msg);
+                setBlinkField(ref);
+                if (ref && ref.current) {
+                    ref.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    ref.current.classList.add('blink-error');
+                    setTimeout(() => {
+                        if (ref.current) {
+                            ref.current.classList.remove('blink-error');
+                        }
+                    }, 2000);
+                }
+            };
+
+            const handleQ1Change = (item) => {
+                if (q1.includes(item)) {
+                    setQ1(q1.filter(i => i !== item));
+                } else {
+                    setQ1([...q1, item]);
+                }
+            };
+
+            const handleSubmit = async (e) => {
+                e.preventDefault();
+                setError('');
+                setBlinkField(null);
+
+                // Validation with autoscroll and 2s blink
+                if (q1.length === 0) {
+                    triggerBlink(q1Ref, 'Please select at least one LLM in Question 1.');
+                    return;
+                }
+                if (!q2) {
+                    triggerBlink(q2Ref, 'Please answer Question 2.');
+                    return;
+                }
+
+                if (q2 !== "I don't use AI") {
+                    if (!q3) { triggerBlink(q3Ref, 'Please answer Question 3.'); return; }
+                    if (!q4.trim()) { triggerBlink(q4Ref, 'Please enter your field of study in Question 4.'); return; }
+                    if (!q5) { triggerBlink(q5Ref, 'Please answer Question 5.'); return; }
+                    if (!q6) { triggerBlink(q6Ref, 'Please answer Question 6.'); return; }
+                    if (!q7) { triggerBlink(q7Ref, 'Please answer Question 7.'); return; }
+                }
+
+                setSubmitting(true);
+
+                // Optional Metadata Collection with graceful "unknown" fallbacks
+                let metadata = {
+                    browser: navigator.userAgent || 'unknown',
+                    deviceModel: navigator.platform || 'unknown',
+                    language: navigator.language || 'unknown',
+                    screenResolution: (window.screen && window.screen.width) ? `${window.screen.width}x${window.screen.height}` : 'unknown',
+                    ipAddress: 'unknown',
+                    location: 'unknown',
+                    fingerprint: 'unknown'
+                };
+
+                try {
+                    const res = await fetch('https://ipapi.co/json/');
+                    if (res.ok) {
+                        const data = await res.json();
+                        metadata.ipAddress = data.ip || 'unknown';
+                        metadata.location = `${data.city || 'unknown'}, ${data.region || 'unknown'}, ${data.country_name || 'unknown'}`;
+                    }
+                } catch (err) {
+                    try {
+                        const ipRes = await fetch('https://api.ipify.org?format=json');
+                        if (ipRes.ok) {
+                            const ipData = await ipRes.json();
+                            metadata.ipAddress = ipData.ip || 'unknown';
+                        }
+                    } catch (e2) {}
+                }
+
+                try {
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    ctx.textBaseline = 'top';
+                    ctx.font = '14px Inter';
+                    ctx.fillText('Nickommander Survey Fingerprint', 2, 2);
+                    metadata.fingerprint = canvas.toDataURL().slice(-40) || 'unknown';
+                } catch (e3) {}
+
+                // Format answers for payload
+                const q1List = q1.includes('Other') ? [...q1.filter(i => i !== 'Other'), `Other: ${q1Other}`] : q1;
+                const q3Val = q3 === 'Other' ? `Other: ${q3Other}` : q3;
+                const q5Val = q5 === 'Other' ? `Other: ${q5Other}` : q5;
+                const q6Val = q6 === 'Other' ? `Other: ${q6Other}` : q6;
+
+                const payload = {
+                    embeds: [{
+                        title: "⚡ Nickommander Ideation Survey Submission",
+                        color: 0x0066ff,
+                        fields: [
+                            { name: "Q1: LLMs Familiar With", value: q1List.join(', ') || 'None', inline: false },
+                            { name: "Q2: AI Usage Frequency", value: q2 || 'Not answered', inline: true },
+                            { name: "Q3: Primary AI Use Case", value: q2 === "I don't use AI" ? 'N/A (Stopped early)' : (q3Val || 'N/A'), inline: true },
+                            { name: "Q4: Field of Study", value: q2 === "I don't use AI" ? 'N/A' : (q4 || 'N/A'), inline: true },
+                            { name: "Q5: Biggest Problem with AI", value: q2 === "I don't use AI" ? 'N/A' : (q5Val || 'N/A'), inline: false },
+                            { name: "Q6: Desired Free Feature", value: q2 === "I don't use AI" ? 'N/A' : (q6Val || 'N/A'), inline: false },
+                            { name: "Q7: Credit Inclusion", value: q2 === "I don't use AI" ? 'N/A' : (q7 === 'Yes' ? `Yes (Name: ${q7Name || 'unknown'}, Institute/Country: ${q7Institute || 'unknown'})` : 'No'), inline: false },
+                            { name: "Optional Metadata", value: `**Browser:** ${metadata.browser}\n**Device Model:** ${metadata.deviceModel}\n**IP Address:** ${metadata.ipAddress}\n**Location:** ${metadata.location}\n**Fingerprint:** \`${metadata.fingerprint}\``, inline: false }
+                        ],
+                        timestamp: new Date().toISOString()
+                    }]
+                };
+
+                // Dispatch to Discord Webhook
+                try {
+                    await fetch('https://discord.com/api/webhooks/1566106118063784122/McXi-L26SpHq_ggmEc8vu3lGbiOy7aKZbqHdAzjR_FOdIRGEVTmhophM-x0ndWb-1CLT', {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        mode: 'no-cors',
+                        body: JSON.stringify(payload)
+                    });
+                } catch (err) {
+                    console.error('Webhook dispatch error:', err);
+                }
+
+                setSubmitting(false);
+                setSubmitted(true);
+            };
+
+            return (
+                <Box sx={{ width: '100%', position: 'relative' }}>
+                    {/* Top Banner */}
+                    <Box sx={{ mb: 3, width: '100%', overflow: 'hidden', borderRadius: 3, boxShadow: '0 10px 25px rgba(0, 102, 255, 0.15)' }}>
+                        <img 
+                            src="/assets/img/nick-banner.png" 
+                            alt="Nickommander Banner" 
+                            style={{ width: '100%', height: 'auto', display: 'block', borderRadius: '12px' }} 
+                        />
+                    </Box>
+
+                    <Paper 
+                        elevation={0} 
+                        className={`form-container cyber-clay-card ${submitted ? 'collapsed' : ''}`}
+                        sx={{ p: { xs: 3, md: 5 }, borderRadius: 4 }}
+                    >
+                        <Box sx={{ display: 'flex', alignItems: 'center', mb: 3, gap: 2.5 }}>
+                            <Avatar 
+                                src="/assets/img/nick.png" 
+                                alt="Nickommander Logo"
+                                sx={{ 
+                                    width: 56, height: 56, 
+                                    border: '2px solid #0066ff',
+                                    boxShadow: '0 0 16px rgba(0,102,255,0.3)'
+                                }}
+                            />
+                            <Box>
+                                <Typography variant="h5" sx={{ fontWeight: 700, color: '#0f172a' }}>
+                                    Nickommander Ideation Survey
+                                </Typography>
+                                <Typography variant="body2" sx={{ color: '#475569' }}>
+                                    Contribute to shaping the future of AI platforms.
+                                </Typography>
+                            </Box>
+                        </Box>
+
+                        <Divider sx={{ mb: 4, borderColor: '#e2e8f0' }} />
+
+                        {error && (
+                            <Alert severity="error" sx={{ mb: 3, bgcolor: 'rgba(239, 68, 68, 0.1)', color: '#dc2626', border: '1px solid rgba(239, 68, 68, 0.2)' }}>
+                                {error}
+                            </Alert>
+                        )}
+
+                        <form onSubmit={handleSubmit}>
+                            {/* Q1 */}
+                            <div ref={q1Ref} style={{ marginBottom: '32px', transition: 'all 0.3s ease' }}>
+                                <FormControl component="fieldset" sx={{ width: '100%' }}>
+                                    <FormLabel component="legend" sx={{ fontWeight: 600, color: '#0f172a', mb: 2, fontSize: '1rem' }}>
+                                        Q1. Which of the following AI LLMs are you familiar with? <Typography component="span" sx={{ color: '#0066ff', fontSize: '0.85rem' }}>(Multi-select)</Typography>
+                                    </FormLabel>
+                                    <FormGroup>
+                                        {['ChatGPT', 'Gemini', 'Grok', 'Claude', 'Mistral', 'DeepSeek', 'Llama', 'Muse', 'Kimi', 'Other'].map((item) => (
+                                            <FormControlLabel
+                                                key={item}
+                                                control={
+                                                    <Checkbox 
+                                                        checked={q1.includes(item)}
+                                                        onChange={() => handleQ1Change(item)}
+                                                        sx={{ color: '#94a3b8', '&.Mui-checked': { color: '#0066ff' } }}
+                                                    />
+                                                }
+                                                label={<Typography sx={{ color: '#334155' }}>{item}</Typography>}
+                                            />
+                                        ))}
+                                    </FormGroup>
+                                    {q1.includes('Other') && (
+                                        <TextField
+                                            fullWidth
+                                            size="small"
+                                            placeholder="Please specify other LLMs..."
+                                            value={q1Other}
+                                            onChange={(e) => setQ1Other(e.target.value)}
+                                            sx={{ mt: 2, '& .MuiOutlinedInput-root': { bgcolor: '#f8fafc' } }}
+                                            className="fade-in"
+                                        />
+                                    )}
+                                </FormControl>
+                            </div>
+
+                            {/* Q2 */}
+                            <div ref={q2Ref} style={{ marginBottom: '32px', transition: 'all 0.3s ease' }}>
+                                <FormControl component="fieldset" sx={{ width: '100%' }}>
+                                    <FormLabel component="legend" sx={{ fontWeight: 600, color: '#0f172a', mb: 2, fontSize: '1rem' }}>
+                                        Q2. How frequently do you use AI? <Typography component="span" sx={{ color: '#0066ff', fontSize: '0.85rem' }}>(Single-choice)</Typography>
+                                    </FormLabel>
+                                    <RadioGroup value={q2} onChange={(e) => setQ2(e.target.value)}>
+                                        {[
+                                            'Many times in a day',
+                                            'Several times a week',
+                                            'Few times in a month',
+                                            "I don't use AI"
+                                        ].map((opt) => (
+                                            <FormControlLabel
+                                                key={opt}
+                                                value={opt}
+                                                control={<Radio sx={{ color: '#94a3b8', '&.Mui-checked': { color: '#0066ff' } }} />}
+                                                label={<Typography sx={{ color: '#334155' }}>{opt}</Typography>}
+                                            />
+                                        ))}
+                                    </RadioGroup>
+                                    {q2 === "I don't use AI" && (
+                                        <Typography variant="body2" sx={{ color: '#0066ff', mt: 1.5, fontStyle: 'italic' }} className="fade-in">
+                                            ℹ️ Selecting this will end the questionnaire here. You can submit your response below.
+                                        </Typography>
+                                    )}
+                                </FormControl>
+                            </div>
+
+                            {/* Conditional Q3-Q7 if Q2 != "I don't use AI" */}
+                            {q2 !== "I don't use AI" && q2 !== '' && (
+                                <Box className="fade-in">
+                                    {/* Q3 */}
+                                    <div ref={q3Ref} style={{ marginBottom: '32px', transition: 'all 0.3s ease' }}>
+                                        <FormControl component="fieldset" sx={{ width: '100%' }}>
+                                            <FormLabel component="legend" sx={{ fontWeight: 600, color: '#0f172a', mb: 2, fontSize: '1rem' }}>
+                                                Q3. What do you use AI mainly for? <Typography component="span" sx={{ color: '#0066ff', fontSize: '0.85rem' }}>(Most important reason)</Typography>
+                                            </FormLabel>
+                                            <RadioGroup value={q3} onChange={(e) => setQ3(e.target.value)}>
+                                                {[
+                                                    'Chatting (Advice, Opinion, Dating)',
+                                                    'Analysis (Comparison, Web Search)',
+                                                    'Academics (Assignments, Docs)',
+                                                    'Projects (Coding, Presentations)',
+                                                    'Content (Images, Videos, Music)',
+                                                    'Other'
+                                                ].map((opt) => (
+                                                    <FormControlLabel
+                                                        key={opt}
+                                                        value={opt}
+                                                        control={<Radio sx={{ color: '#94a3b8', '&.Mui-checked': { color: '#0066ff' } }} />}
+                                                        label={<Typography sx={{ color: '#334155' }}>{opt}</Typography>}
+                                                    />
+                                                ))}
+                                            </RadioGroup>
+                                            {q3 === 'Other' && (
+                                                <TextField
+                                                    fullWidth
+                                                    size="small"
+                                                    placeholder="Please specify your primary use case..."
+                                                    value={q3Other}
+                                                    onChange={(e) => setQ3Other(e.target.value)}
+                                                    sx={{ mt: 2, '& .MuiOutlinedInput-root': { bgcolor: '#f8fafc' } }}
+                                                    className="fade-in"
+                                                />
+                                            )}
+                                        </FormControl>
+                                    </div>
+
+                                    {/* Q4 */}
+                                    <div ref={q4Ref} style={{ marginBottom: '32px', transition: 'all 0.3s ease' }}>
+                                        <FormControl sx={{ width: '100%' }}>
+                                            <FormLabel sx={{ fontWeight: 600, color: '#0f172a', mb: 2, fontSize: '1rem' }}>
+                                                Q4. What is your field of study?
+                                            </FormLabel>
+                                            <TextField
+                                                fullWidth
+                                                size="small"
+                                                placeholder="e.g. Computer Science, Fine Arts, Medicine..."
+                                                value={q4}
+                                                onChange={(e) => setQ4(e.target.value)}
+                                                sx={{ '& .MuiOutlinedInput-root': { bgcolor: '#f8fafc' } }}
+                                            />
+                                        </FormControl>
+                                    </div>
+
+                                    {/* Q5 */}
+                                    <div ref={q5Ref} style={{ marginBottom: '32px', transition: 'all 0.3s ease' }}>
+                                        <FormControl component="fieldset" sx={{ width: '100%' }}>
+                                            <FormLabel component="legend" sx={{ fontWeight: 600, color: '#0f172a', mb: 2, fontSize: '1rem' }}>
+                                                Q5. What is the biggest problem you face about AI?
+                                            </FormLabel>
+                                            <RadioGroup value={q5} onChange={(e) => setQ5(e.target.value)}>
+                                                {[
+                                                    'Limitations of free plans',
+                                                    'Running out of tokens/limits',
+                                                    'Censorship/guardrails',
+                                                    'Social prejudice/stigma',
+                                                    'Account bans',
+                                                    'Fear of being hacked',
+                                                    "I don't have any problems (liar!)",
+                                                    'Language barriers (not enough performance in my native language)',
+                                                    'Other'
+                                                ].map((opt) => (
+                                                    <FormControlLabel
+                                                        key={opt}
+                                                        value={opt}
+                                                        control={<Radio sx={{ color: '#94a3b8', '&.Mui-checked': { color: '#0066ff' } }} />}
+                                                        label={<Typography sx={{ color: '#334155' }}>{opt}</Typography>}
+                                                    />
+                                                ))}
+                                            </RadioGroup>
+                                            {q5 === 'Other' && (
+                                                <TextField
+                                                    fullWidth
+                                                    size="small"
+                                                    placeholder="Please specify your main problem..."
+                                                    value={q5Other}
+                                                    onChange={(e) => setQ5Other(e.target.value)}
+                                                    sx={{ mt: 2, '& .MuiOutlinedInput-root': { bgcolor: '#f8fafc' } }}
+                                                    className="fade-in"
+                                                />
+                                            )}
+                                        </FormControl>
+                                    </div>
+
+                                    {/* Q6 */}
+                                    <div ref={q6Ref} style={{ marginBottom: '32px', transition: 'all 0.3s ease' }}>
+                                        <FormControl component="fieldset" sx={{ width: '100%' }}>
+                                            <FormLabel component="legend" sx={{ fontWeight: 600, color: '#0f172a', mb: 2, fontSize: '1rem' }}>
+                                                Q6. If you had to choose a new AI platform that allows totally free access for one specific feature, which one should it be?
+                                            </FormLabel>
+                                            <RadioGroup value={q6} onChange={(e) => setQ6(e.target.value)}>
+                                                {[
+                                                    'Unlimited image generation',
+                                                    'Unlimited video generation',
+                                                    'Unlimited file uploads (for analysis and academics)',
+                                                    'Unrestricted uncensored answers',
+                                                    'Letting some AI control other AIs',
+                                                    'Other'
+                                                ].map((opt) => (
+                                                    <FormControlLabel
+                                                        key={opt}
+                                                        value={opt}
+                                                        control={<Radio sx={{ color: '#94a3b8', '&.Mui-checked': { color: '#0066ff' } }} />}
+                                                        label={<Typography sx={{ color: '#334155' }}>{opt}</Typography>}
+                                                    />
+                                                ))}
+                                            </RadioGroup>
+                                            {q6 === 'Other' && (
+                                                <TextField
+                                                    fullWidth
+                                                    size="small"
+                                                    placeholder="Please specify feature..."
+                                                    value={q6Other}
+                                                    onChange={(e) => setQ6Other(e.target.value)}
+                                                    sx={{ mt: 2, '& .MuiOutlinedInput-root': { bgcolor: '#f8fafc' } }}
+                                                    className="fade-in"
+                                                />
+                                            )}
+                                        </FormControl>
+                                    </div>
+
+                                    {/* Q7 */}
+                                    <div ref={q7Ref} style={{ marginBottom: '32px', transition: 'all 0.3s ease' }}>
+                                        <FormControl component="fieldset" sx={{ width: '100%' }}>
+                                            <FormLabel component="legend" sx={{ fontWeight: 600, color: '#0f172a', mb: 2, fontSize: '1rem' }}>
+                                                Q7. Do you want your name to be included in the list of credits for contributing to Nickommander's launch?
+                                            </FormLabel>
+                                            <RadioGroup value={q7} onChange={(e) => setQ7(e.target.value)}>
+                                                <FormControlLabel
+                                                    value="Yes"
+                                                    control={<Radio sx={{ color: '#94a3b8', '&.Mui-checked': { color: '#0066ff' } }} />}
+                                                    label={<Typography sx={{ color: '#334155' }}>Yes</Typography>}
+                                                />
+                                                <FormControlLabel
+                                                    value="No"
+                                                    control={<Radio sx={{ color: '#94a3b8', '&.Mui-checked': { color: '#0066ff' } }} />}
+                                                    label={<Typography sx={{ color: '#334155' }}>No</Typography>}
+                                                />
+                                            </RadioGroup>
+                                            {q7 === 'Yes' && (
+                                                <Box sx={{ mt: 2, display: 'flex', flexDirection: 'column', gap: 2 }} className="fade-in">
+                                                    <TextField
+                                                        fullWidth
+                                                        size="small"
+                                                        label="Your Name to Mention"
+                                                        value={q7Name}
+                                                        onChange={(e) => setQ7Name(e.target.value)}
+                                                        sx={{ '& .MuiOutlinedInput-root': { bgcolor: '#f8fafc' } }}
+                                                    />
+                                                    <TextField
+                                                        fullWidth
+                                                        size="small"
+                                                        label="Institute / Country"
+                                                        value={q7Institute}
+                                                        onChange={(e) => setQ7Institute(e.target.value)}
+                                                        sx={{ '& .MuiOutlinedInput-root': { bgcolor: '#f8fafc' } }}
+                                                    />
+                                                </Box>
+                                            )}
+                                        </FormControl>
+                                    </div>
+                                </Box>
+                            )}
+
+                            <Button 
+                                type="submit" 
+                                variant="contained" 
+                                size="large" 
+                                disabled={submitting}
+                                sx={{ 
+                                    width: '100%', 
+                                    py: 1.5, 
+                                    fontWeight: 700, 
+                                    fontSize: '1rem',
+                                    bgcolor: '#0066ff',
+                                    color: '#ffffff',
+                                    '&:hover': { bgcolor: '#0052cc' },
+                                    boxShadow: '0 8px 20px rgba(0,102,255,0.3)'
+                                }}
+                            >
+                                {submitting ? 'Transmitting Response...' : 'Submit Response'}
+                            </Button>
+                        </form>
+                    </Paper>
+
+                    <Box className={`thank-you-container ${submitted ? 'visible' : ''}`} sx={{ textAlign: 'center', p: 4 }}>
+                        <Paper elevation={0} className="cyber-clay-card" sx={{ p: 5, borderRadius: 4 }}>
+                            <Box 
+                                sx={{ 
+                                    width: 64, height: 64, borderRadius: '50%', 
+                                    bgcolor: 'rgba(0,102,255,0.1)', color: '#0066ff', 
+                                    display: 'flex', alignItems: 'center', justifyContent: 'center', 
+                                    fontSize: '2rem', mx: 'auto', mb: 3, border: '2px solid #0066ff'
+                                }}
+                            >
+                                ✓
+                            </Box>
+                            <Typography variant="h5" sx={{ fontWeight: 700, mb: 2, color: '#0f172a' }}>
+                                Response Recorded
+                            </Typography>
+                            <Typography variant="body1" sx={{ color: '#475569', lineHeight: 1.6 }}>
+                                Your response has been recorded. Thank you for contributing to the ideation phase of Nickommander.
+                            </Typography>
+                        </Paper>
+                    </Box>
+                </Box>
+            );
+        }
+
+        ReactDOM.render(
+            <ThemeProvider theme={theme}>
+                <CssBaseline />
+                <SurveyApp />
+            </ThemeProvider>,
+            document.getElementById('root')
+        );
+    </script>
+</body>
+</html>
