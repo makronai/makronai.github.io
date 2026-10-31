@@ -26,29 +26,49 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            cursor: none; /* Custom cursor enabled */
         }
-        /* Custom Cursor */
+        /* Custom cursor: enabled only for precise pointer devices by the JS below. */
+        /* Minimal arrowhead cursor: a pointed shape with no trailing stem or cursor trail. */
         .custom-cursor {
+            --cursor-x: -100px;
+            --cursor-y: -100px;
             position: fixed;
             top: 0;
             left: 0;
-            width: 20px;
-            height: 20px;
-            background: #ffffff;
-            border: 2.5px solid #0066ff;
-            border-radius: 6px;
+            width: 25px;
+            height: 29px;
             pointer-events: none;
-            transform: translate(-50%, -50%);
-            transition: transform 0.08s ease, width 0.2s ease, height 0.2s ease;
+            opacity: 0;
+            visibility: hidden;
+            background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 26 30'%3E%3Cpath d='M2 2 L23 13.5 L12.5 16.5 L8.5 28 Z' fill='%23ffffff' stroke='%230066ff' stroke-width='2' stroke-linejoin='round'/%3E%3C/svg%3E") left top / contain no-repeat;
+            transform: translate3d(var(--cursor-x), var(--cursor-y), 0);
+            transform-origin: 12% 12%;
+            transition: transform 150ms cubic-bezier(0.2, 0.8, 0.2, 1),
+                        filter 180ms ease,
+                        opacity 120ms ease, visibility 0s linear 120ms;
             z-index: 99999;
-            box-shadow: 0 4px 12px rgba(0, 102, 255, 0.25);
+            filter: drop-shadow(0 3px 5px rgba(0, 102, 255, 0.24));
+            will-change: transform, filter;
         }
-        body:active .custom-cursor {
-            transform: translate(-50%, -50%) scale(0.85);
-            background: #dbeafe;
+        .custom-cursor.is-visible {
+            opacity: 1;
+            visibility: visible;
+            transition-delay: 0s;
+        }
+        .custom-cursor.is-hovering {
+            transform: translate3d(var(--cursor-x), var(--cursor-y), 0) scale(1.12);
+            filter: drop-shadow(0 4px 8px rgba(0, 102, 255, 0.34));
+        }
+        .custom-cursor.is-pressed {
+            transform: translate3d(var(--cursor-x), var(--cursor-y), 0) scale(0.9);
+            filter: drop-shadow(0 2px 3px rgba(0, 102, 255, 0.2));
+        }
+        body.custom-cursor-enabled,
+        body.custom-cursor-enabled * {
+            cursor: none !important;
         }
         .form-container {
+            max-height: 5000px;
             transition: transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.5s ease-in-out, max-height 0.6s ease-in-out;
             overflow: hidden;
             transform-origin: top;
@@ -62,15 +82,21 @@
             border: none;
         }
         .thank-you-container {
+            max-height: 0;
+            overflow: hidden;
             opacity: 0;
+            visibility: hidden;
+            pointer-events: none;
             transform: translateY(20px);
-            transition: all 0.6s cubic-bezier(0.4, 0, 0.2, 1) 0.3s;
-            display: none;
+            transition: max-height 0.6s ease, opacity 0.6s ease, transform 0.6s cubic-bezier(0.4, 0, 0.2, 1), visibility 0s linear 0.6s;
         }
         .thank-you-container.visible {
+            max-height: 1000px;
             opacity: 1;
+            visibility: visible;
+            pointer-events: auto;
             transform: translateY(0);
-            display: block;
+            transition-delay: 0.3s, 0.3s, 0.3s, 0s;
         }
         @keyframes fadeIn {
             from { opacity: 0; transform: translateY(10px); }
@@ -80,15 +106,18 @@
             animation: fadeIn 0.4s ease-in-out forwards;
         }
         @keyframes blinkWarn {
-            0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.6); background-color: rgba(239, 68, 68, 0.04); }
-            50% { box-shadow: 0 0 0 12px rgba(239, 68, 68, 0); background-color: rgba(239, 68, 68, 0.12); }
-            100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); background-color: rgba(239, 68, 68, 0.04); }
+            0%, 100% {
+                background-color: rgba(239, 68, 68, 0.025);
+                box-shadow: 0 0 0 0 rgba(239, 68, 68, 0);
+            }
+            50% {
+                background-color: rgba(239, 68, 68, 0.075);
+                box-shadow: 0 0 0 5px rgba(239, 68, 68, 0.035);
+            }
         }
         .blink-error {
-            animation: blinkWarn 0.5s ease-in-out 4; /* 4 times * 0.5s = 2 seconds */
+            animation: blinkWarn 1s ease-in-out 2; /* Two gentle pulses over 2 seconds. */
             border-radius: 12px;
-            padding: 12px;
-            border: 1px solid rgba(239, 68, 68, 0.5);
         }
         /* Cyber Claymorphism card styles */
         .cyber-clay-card {
@@ -109,10 +138,104 @@
         ::-webkit-scrollbar-thumb:hover {
             background: #0066ff;
         }
+
+        /* Subtle cyber-futuristic surface and interaction polish; palette and layout remain unchanged. */
+        body {
+            position: relative;
+            isolation: isolate;
+            scroll-behavior: smooth;
+        }
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            pointer-events: none;
+            background-image:
+                linear-gradient(rgba(0, 102, 255, 0.022) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 102, 255, 0.022) 1px, transparent 1px),
+                radial-gradient(circle at 50% 0%, rgba(0, 102, 255, 0.055), transparent 55%);
+            background-size: 34px 34px, 34px 34px, auto;
+        }
+        #root {
+            position: relative;
+            z-index: 1;
+        }
+        .cyber-clay-card {
+            position: relative;
+            isolation: isolate;
+            transition: box-shadow 260ms ease, border-color 260ms ease, transform 260ms ease;
+        }
+        .cyber-clay-card::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 12%;
+            right: 12%;
+            height: 1px;
+            pointer-events: none;
+            background: linear-gradient(90deg, transparent, rgba(0, 102, 255, 0.42), transparent);
+        }
+        .cyber-clay-card:hover {
+            border-color: rgba(0, 102, 255, 0.2);
+            box-shadow: 18px 18px 36px rgba(203, 213, 225, 0.92),
+                        -16px -16px 32px #ffffff,
+                        inset 0 1px 0 rgba(255, 255, 255, 0.9),
+                        0 0 24px rgba(0, 102, 255, 0.055);
+        }
+        .MuiFormControlLabel-root {
+            border-radius: 10px;
+            transition: background-color 180ms ease, transform 180ms ease;
+        }
+        .MuiFormControlLabel-root:hover {
+            background-color: rgba(0, 102, 255, 0.035);
+            transform: translateX(2px);
+        }
+        .MuiFormControlLabel-root:focus-within {
+            background-color: rgba(0, 102, 255, 0.045);
+        }
+        .MuiButtonBase-root.Mui-focusVisible {
+            outline: 2px solid rgba(0, 102, 255, 0.55);
+            outline-offset: 2px;
+        }
+        .MuiOutlinedInput-root {
+            transition: box-shadow 180ms ease, background-color 180ms ease;
+        }
+        .MuiOutlinedInput-root:hover .MuiOutlinedInput-notchedOutline {
+            border-color: rgba(0, 102, 255, 0.55);
+        }
+        .MuiOutlinedInput-root.Mui-focused {
+            box-shadow: 0 0 0 4px rgba(0, 102, 255, 0.075);
+        }
+        .MuiButton-root {
+            transition: transform 180ms ease, box-shadow 180ms ease, background-color 180ms ease !important;
+        }
+        .MuiButton-root:not(.Mui-disabled):hover {
+            transform: translateY(-1px);
+        }
+        .MuiButton-root:not(.Mui-disabled):active {
+            transform: translateY(0) scale(0.99);
+        }
+        .fade-in {
+            animation: fadeIn 0.4s cubic-bezier(0.2, 0.8, 0.2, 1) forwards;
+        }
+        @media (hover: none), (pointer: coarse) {
+            .custom-cursor { display: none; }
+            .MuiFormControlLabel-root:hover { background-color: transparent; transform: none; }
+            .cyber-clay-card:hover { transform: none; }
+        }
+        @media (prefers-reduced-motion: reduce) {
+            *, *::before, *::after {
+                scroll-behavior: auto !important;
+                animation-duration: 0.01ms !important;
+                animation-iteration-count: 1 !important;
+                transition-duration: 0.01ms !important;
+            }
+        }
     </style>
 </head>
 <body>
-    <div className="custom-cursor" id="customCursor"></div>
+    <div class="custom-cursor" id="customCursor" aria-hidden="true"></div>
     <div id="root" style="width: 100%; max-width: 750px; padding: 24px; box-sizing: border-box;"></div>
 
     <script type="text/babel">
@@ -147,17 +270,58 @@
         });
 
         function SurveyApp() {
-            // Custom cursor movement handler
+            // Smooth custom cursor for mouse/pen devices; native cursors remain on touch devices.
             React.useEffect(() => {
                 const cursor = document.getElementById('customCursor');
-                const handleMouseMove = (e) => {
-                    if (cursor) {
-                        cursor.style.left = `${e.clientX}px`;
-                        cursor.style.top = `${e.clientY}px`;
-                    }
+                const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+                const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+                if (!cursor || !finePointer || reducedMotion) return undefined;
+
+                let pointerX = -100;
+                let pointerY = -100;
+                let animationFrame = 0;
+
+                const renderPosition = () => {
+                    cursor.style.setProperty('--cursor-x', `${pointerX}px`);
+                    cursor.style.setProperty('--cursor-y', `${pointerY}px`);
+                    animationFrame = 0;
                 };
-                window.addEventListener('mousemove', handleMouseMove);
-                return () => window.removeEventListener('mousemove', handleMouseMove);
+
+                const handlePointerMove = (event) => {
+                    if (event.pointerType === 'touch') return;
+                    pointerX = event.clientX;
+                    pointerY = event.clientY;
+                    cursor.classList.add('is-visible');
+
+                    const target = event.target instanceof Element ? event.target : null;
+                    const interactiveTarget = target && target.closest('a, button, label, input, textarea, select, [role="button"], .MuiButtonBase-root, .MuiInputBase-root');
+                    cursor.classList.toggle('is-hovering', Boolean(interactiveTarget));
+
+                    if (!animationFrame) animationFrame = window.requestAnimationFrame(renderPosition);
+                };
+
+                const handlePointerDown = () => cursor.classList.add('is-pressed');
+                const handlePointerUp = () => cursor.classList.remove('is-pressed');
+                const handlePointerLeave = () => cursor.classList.remove('is-visible', 'is-hovering', 'is-pressed');
+
+                document.body.classList.add('custom-cursor-enabled');
+                window.addEventListener('pointermove', handlePointerMove, { passive: true });
+                window.addEventListener('pointerdown', handlePointerDown, { passive: true });
+                window.addEventListener('pointerup', handlePointerUp, { passive: true });
+                window.addEventListener('pointercancel', handlePointerUp, { passive: true });
+                document.addEventListener('mouseleave', handlePointerLeave);
+                window.addEventListener('blur', handlePointerLeave);
+
+                return () => {
+                    window.removeEventListener('pointermove', handlePointerMove);
+                    window.removeEventListener('pointerdown', handlePointerDown);
+                    window.removeEventListener('pointerup', handlePointerUp);
+                    window.removeEventListener('pointercancel', handlePointerUp);
+                    document.removeEventListener('mouseleave', handlePointerLeave);
+                    window.removeEventListener('blur', handlePointerLeave);
+                    document.body.classList.remove('custom-cursor-enabled');
+                    if (animationFrame) window.cancelAnimationFrame(animationFrame);
+                };
             }, []);
 
             const [q1, setQ1] = React.useState([]);
@@ -183,7 +347,7 @@
             const [submitting, setSubmitting] = React.useState(false);
             const [submitted, setSubmitted] = React.useState(false);
             const [error, setError] = React.useState('');
-            const [blinkField, setBlinkField] = React.useState(null);
+            const blinkTimeoutRef = React.useRef(null);
 
             // Refs for question blocks
             const q1Ref = React.useRef(null);
@@ -196,17 +360,33 @@
 
             const triggerBlink = (ref, msg) => {
                 setError(msg);
-                setBlinkField(ref);
-                if (ref && ref.current) {
-                    ref.current.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    ref.current.classList.add('blink-error');
-                    setTimeout(() => {
-                        if (ref.current) {
-                            ref.current.classList.remove('blink-error');
-                        }
-                    }, 2000);
+
+                if (blinkTimeoutRef.current) {
+                    window.clearTimeout(blinkTimeoutRef.current);
+                    blinkTimeoutRef.current = null;
                 }
+
+                const section = ref && ref.current;
+                if (!section) return;
+
+                // Remove and reflow the class so repeated invalid submissions restart the full 2s pulse.
+                section.classList.remove('blink-error');
+                void section.offsetWidth;
+
+                section.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                section.classList.add('blink-error');
+
+                blinkTimeoutRef.current = window.setTimeout(() => {
+                    if (ref.current) ref.current.classList.remove('blink-error');
+                    blinkTimeoutRef.current = null;
+                }, 2000);
             };
+
+            React.useEffect(() => {
+                return () => {
+                    if (blinkTimeoutRef.current) window.clearTimeout(blinkTimeoutRef.current);
+                };
+            }, []);
 
             const handleQ1Change = (item) => {
                 if (q1.includes(item)) {
@@ -219,11 +399,14 @@
             const handleSubmit = async (e) => {
                 e.preventDefault();
                 setError('');
-                setBlinkField(null);
 
-                // Validation with autoscroll and 2s blink
+                // Validate in survey order; each failure scrolls to and gently highlights its section.
                 if (q1.length === 0) {
                     triggerBlink(q1Ref, 'Please select at least one LLM in Question 1.');
+                    return;
+                }
+                if (q1.includes('Other') && !q1Other.trim()) {
+                    triggerBlink(q1Ref, 'Please specify the other LLM in Question 1.');
                     return;
                 }
                 if (!q2) {
@@ -231,12 +414,17 @@
                     return;
                 }
 
+                // Selecting "I don't use AI" intentionally ends the survey after Question 2.
                 if (q2 !== "I don't use AI") {
                     if (!q3) { triggerBlink(q3Ref, 'Please answer Question 3.'); return; }
+                    if (q3 === 'Other' && !q3Other.trim()) { triggerBlink(q3Ref, 'Please specify your primary use case in Question 3.'); return; }
                     if (!q4.trim()) { triggerBlink(q4Ref, 'Please enter your field of study in Question 4.'); return; }
                     if (!q5) { triggerBlink(q5Ref, 'Please answer Question 5.'); return; }
+                    if (q5 === 'Other' && !q5Other.trim()) { triggerBlink(q5Ref, 'Please specify your answer in Question 5.'); return; }
                     if (!q6) { triggerBlink(q6Ref, 'Please answer Question 6.'); return; }
+                    if (q6 === 'Other' && !q6Other.trim()) { triggerBlink(q6Ref, 'Please specify the feature in Question 6.'); return; }
                     if (!q7) { triggerBlink(q7Ref, 'Please answer Question 7.'); return; }
+                    if (q7 === 'Yes' && !q7Name.trim()) { triggerBlink(q7Ref, 'Please enter the name you want included in Question 7.'); return; }
                 }
 
                 setSubmitting(true);
@@ -364,7 +552,7 @@
 
                         <form onSubmit={handleSubmit}>
                             {/* Q1 */}
-                            <div ref={q1Ref} style={{ marginBottom: '32px', transition: 'all 0.3s ease' }}>
+                            <div ref={q1Ref} style={{ marginBottom: '32px', transition: 'all 0.3s ease', scrollMarginTop: '28px' }}>
                                 <FormControl component="fieldset" sx={{ width: '100%' }}>
                                     <FormLabel component="legend" sx={{ fontWeight: 600, color: '#0f172a', mb: 2, fontSize: '1rem' }}>
                                         Q1. Which of the following AI LLMs are you familiar with? <Typography component="span" sx={{ color: '#0066ff', fontSize: '0.85rem' }}>(Multi-select)</Typography>
@@ -399,7 +587,7 @@
                             </div>
 
                             {/* Q2 */}
-                            <div ref={q2Ref} style={{ marginBottom: '32px', transition: 'all 0.3s ease' }}>
+                            <div ref={q2Ref} style={{ marginBottom: '32px', transition: 'all 0.3s ease', scrollMarginTop: '28px' }}>
                                 <FormControl component="fieldset" sx={{ width: '100%' }}>
                                     <FormLabel component="legend" sx={{ fontWeight: 600, color: '#0f172a', mb: 2, fontSize: '1rem' }}>
                                         Q2. How frequently do you use AI? <Typography component="span" sx={{ color: '#0066ff', fontSize: '0.85rem' }}>(Single-choice)</Typography>
@@ -431,7 +619,7 @@
                             {q2 !== "I don't use AI" && q2 !== '' && (
                                 <Box className="fade-in">
                                     {/* Q3 */}
-                                    <div ref={q3Ref} style={{ marginBottom: '32px', transition: 'all 0.3s ease' }}>
+                                    <div ref={q3Ref} style={{ marginBottom: '32px', transition: 'all 0.3s ease', scrollMarginTop: '28px' }}>
                                         <FormControl component="fieldset" sx={{ width: '100%' }}>
                                             <FormLabel component="legend" sx={{ fontWeight: 600, color: '#0f172a', mb: 2, fontSize: '1rem' }}>
                                                 Q3. What do you use AI mainly for? <Typography component="span" sx={{ color: '#0066ff', fontSize: '0.85rem' }}>(Most important reason)</Typography>
@@ -468,7 +656,7 @@
                                     </div>
 
                                     {/* Q4 */}
-                                    <div ref={q4Ref} style={{ marginBottom: '32px', transition: 'all 0.3s ease' }}>
+                                    <div ref={q4Ref} style={{ marginBottom: '32px', transition: 'all 0.3s ease', scrollMarginTop: '28px' }}>
                                         <FormControl sx={{ width: '100%' }}>
                                             <FormLabel sx={{ fontWeight: 600, color: '#0f172a', mb: 2, fontSize: '1rem' }}>
                                                 Q4. What is your field of study?
@@ -485,7 +673,7 @@
                                     </div>
 
                                     {/* Q5 */}
-                                    <div ref={q5Ref} style={{ marginBottom: '32px', transition: 'all 0.3s ease' }}>
+                                    <div ref={q5Ref} style={{ marginBottom: '32px', transition: 'all 0.3s ease', scrollMarginTop: '28px' }}>
                                         <FormControl component="fieldset" sx={{ width: '100%' }}>
                                             <FormLabel component="legend" sx={{ fontWeight: 600, color: '#0f172a', mb: 2, fontSize: '1rem' }}>
                                                 Q5. What is the biggest problem you face about AI?
@@ -525,7 +713,7 @@
                                     </div>
 
                                     {/* Q6 */}
-                                    <div ref={q6Ref} style={{ marginBottom: '32px', transition: 'all 0.3s ease' }}>
+                                    <div ref={q6Ref} style={{ marginBottom: '32px', transition: 'all 0.3s ease', scrollMarginTop: '28px' }}>
                                         <FormControl component="fieldset" sx={{ width: '100%' }}>
                                             <FormLabel component="legend" sx={{ fontWeight: 600, color: '#0f172a', mb: 2, fontSize: '1rem' }}>
                                                 Q6. If you had to choose a new AI platform that allows totally free access for one specific feature, which one should it be?
@@ -562,7 +750,7 @@
                                     </div>
 
                                     {/* Q7 */}
-                                    <div ref={q7Ref} style={{ marginBottom: '32px', transition: 'all 0.3s ease' }}>
+                                    <div ref={q7Ref} style={{ marginBottom: '32px', transition: 'all 0.3s ease', scrollMarginTop: '28px' }}>
                                         <FormControl component="fieldset" sx={{ width: '100%' }}>
                                             <FormLabel component="legend" sx={{ fontWeight: 600, color: '#0f172a', mb: 2, fontSize: '1rem' }}>
                                                 Q7. Do you want your name to be included in the list of credits for contributing to Nickommander's launch?
