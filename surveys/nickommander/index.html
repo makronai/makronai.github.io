@@ -398,112 +398,137 @@
 
             const handleSubmit = async (e) => {
                 e.preventDefault();
+                if (submitting || submitted) return;
                 setError('');
 
-                // Validate in survey order; each failure scrolls to and gently highlights its section.
-                if (q1.length === 0) {
-                    triggerBlink(q1Ref, 'Please select at least one LLM in Question 1.');
-                    return;
-                }
-                if (q1.includes('Other') && !q1Other.trim()) {
-                    triggerBlink(q1Ref, 'Please specify the other LLM in Question 1.');
-                    return;
-                }
-                if (!q2) {
-                    triggerBlink(q2Ref, 'Please answer Question 2.');
-                    return;
+                // Validate every required field on the respondent's active route.
+                // The early-exit route contains Q1 and Q2 only.
+                const checks = [
+                    { valid: q1.length > 0, ref: q1Ref, message: 'Please select at least one LLM in Question 1.' },
+                    { valid: !q1.includes('Other') || Boolean(q1Other.trim()), ref: q1Ref, message: 'Please specify the other LLM in Question 1.' },
+                    { valid: Boolean(q2), ref: q2Ref, message: 'Please answer Question 2.' }
+                ];
+
+                if (q2 && q2 !== "I don't use AI") {
+                    checks.push(
+                        { valid: Boolean(q3), ref: q3Ref, message: 'Please answer Question 3.' },
+                        { valid: q3 !== 'Other' || Boolean(q3Other.trim()), ref: q3Ref, message: 'Please specify your primary use case in Question 3.' },
+                        { valid: Boolean(q4.trim()), ref: q4Ref, message: 'Please enter your field of study in Question 4.' },
+                        { valid: Boolean(q5), ref: q5Ref, message: 'Please answer Question 5.' },
+                        { valid: q5 !== 'Other' || Boolean(q5Other.trim()), ref: q5Ref, message: 'Please specify your answer in Question 5.' },
+                        { valid: Boolean(q6), ref: q6Ref, message: 'Please answer Question 6.' },
+                        { valid: q6 !== 'Other' || Boolean(q6Other.trim()), ref: q6Ref, message: 'Please specify the feature in Question 6.' },
+                        { valid: Boolean(q7), ref: q7Ref, message: 'Please answer Question 7.' },
+                        { valid: q7 !== 'Yes' || Boolean(q7Name.trim()), ref: q7Ref, message: 'Please enter the name you want included in Question 7.' }
+                    );
                 }
 
-                // Selecting "I don't use AI" intentionally ends the survey after Question 2.
-                if (q2 !== "I don't use AI") {
-                    if (!q3) { triggerBlink(q3Ref, 'Please answer Question 3.'); return; }
-                    if (q3 === 'Other' && !q3Other.trim()) { triggerBlink(q3Ref, 'Please specify your primary use case in Question 3.'); return; }
-                    if (!q4.trim()) { triggerBlink(q4Ref, 'Please enter your field of study in Question 4.'); return; }
-                    if (!q5) { triggerBlink(q5Ref, 'Please answer Question 5.'); return; }
-                    if (q5 === 'Other' && !q5Other.trim()) { triggerBlink(q5Ref, 'Please specify your answer in Question 5.'); return; }
-                    if (!q6) { triggerBlink(q6Ref, 'Please answer Question 6.'); return; }
-                    if (q6 === 'Other' && !q6Other.trim()) { triggerBlink(q6Ref, 'Please specify the feature in Question 6.'); return; }
-                    if (!q7) { triggerBlink(q7Ref, 'Please answer Question 7.'); return; }
-                    if (q7 === 'Yes' && !q7Name.trim()) { triggerBlink(q7Ref, 'Please enter the name you want included in Question 7.'); return; }
+                const firstInvalid = checks.find(check => !check.valid);
+                if (firstInvalid) {
+                    triggerBlink(firstInvalid.ref, firstInvalid.message);
+                    return;
                 }
 
                 setSubmitting(true);
-
-                // Optional Metadata Collection with graceful "unknown" fallbacks
-                let metadata = {
-                    browser: navigator.userAgent || 'unknown',
-                    deviceModel: navigator.platform || 'unknown',
-                    language: navigator.language || 'unknown',
-                    screenResolution: (window.screen && window.screen.width) ? `${window.screen.width}x${window.screen.height}` : 'unknown',
-                    ipAddress: 'unknown',
-                    location: 'unknown',
-                    fingerprint: 'unknown'
-                };
-
                 try {
-                    const res = await fetch('https://ipapi.co/json/');
-                    if (res.ok) {
-                        const data = await res.json();
-                        metadata.ipAddress = data.ip || 'unknown';
-                        metadata.location = `${data.city || 'unknown'}, ${data.region || 'unknown'}, ${data.country_name || 'unknown'}`;
-                    }
-                } catch (err) {
+                    // Optional metadata collection with time limits and graceful fallbacks.
+                    let metadata = {
+                        browser: navigator.userAgent || 'unknown',
+                        deviceModel: navigator.platform || 'unknown',
+                        language: navigator.language || 'unknown',
+                        screenResolution: (window.screen && window.screen.width) ? `${window.screen.width}x${window.screen.height}` : 'unknown',
+                        ipAddress: 'unknown',
+                        location: 'unknown',
+                        fingerprint: 'unknown'
+                    };
+
                     try {
-                        const ipRes = await fetch('https://api.ipify.org?format=json');
-                        if (ipRes.ok) {
-                            const ipData = await ipRes.json();
-                            metadata.ipAddress = ipData.ip || 'unknown';
+                        const controller = new AbortController();
+                        const timeoutId = window.setTimeout(() => controller.abort(), 4500);
+                        try {
+                            const res = await fetch('https://ipapi.co/json/', { signal: controller.signal });
+                            if (res.ok) {
+                                const data = await res.json();
+                                metadata.ipAddress = data.ip || 'unknown';
+                                metadata.location = `${data.city || 'unknown'}, ${data.region || 'unknown'}, ${data.country_name || 'unknown'}`;
+                            }
+                        } finally {
+                            window.clearTimeout(timeoutId);
                         }
-                    } catch (e2) {}
-                }
+                    } catch (err) {
+                        try {
+                            const controller = new AbortController();
+                            const timeoutId = window.setTimeout(() => controller.abort(), 3000);
+                            try {
+                                const ipRes = await fetch('https://api.ipify.org?format=json', { signal: controller.signal });
+                                if (ipRes.ok) {
+                                    const ipData = await ipRes.json();
+                                    metadata.ipAddress = ipData.ip || 'unknown';
+                                }
+                            } finally {
+                                window.clearTimeout(timeoutId);
+                            }
+                        } catch (e2) { /* Metadata is optional. */ }
+                    }
 
-                try {
-                    const canvas = document.createElement('canvas');
-                    const ctx = canvas.getContext('2d');
-                    ctx.textBaseline = 'top';
-                    ctx.font = '14px Inter';
-                    ctx.fillText('Nickommander Survey Fingerprint', 2, 2);
-                    metadata.fingerprint = canvas.toDataURL().slice(-40) || 'unknown';
-                } catch (e3) {}
+                    try {
+                        const canvas = document.createElement('canvas');
+                        const ctx = canvas.getContext('2d');
+                        if (ctx) {
+                            ctx.textBaseline = 'top';
+                            ctx.font = '14px Inter';
+                            ctx.fillText('Nickommander Survey Fingerprint', 2, 2);
+                            metadata.fingerprint = canvas.toDataURL().slice(-40) || 'unknown';
+                        }
+                    } catch (e3) { /* Metadata is optional. */ }
 
-                // Format answers for payload
-                const q1List = q1.includes('Other') ? [...q1.filter(i => i !== 'Other'), `Other: ${q1Other}`] : q1;
-                const q3Val = q3 === 'Other' ? `Other: ${q3Other}` : q3;
-                const q5Val = q5 === 'Other' ? `Other: ${q5Other}` : q5;
-                const q6Val = q6 === 'Other' ? `Other: ${q6Other}` : q6;
+                    const q1List = q1.includes('Other') ? [...q1.filter(i => i !== 'Other'), `Other: ${q1Other.trim()}`] : q1;
+                    const q3Val = q3 === 'Other' ? `Other: ${q3Other.trim()}` : q3;
+                    const q5Val = q5 === 'Other' ? `Other: ${q5Other.trim()}` : q5;
+                    const q6Val = q6 === 'Other' ? `Other: ${q6Other.trim()}` : q6;
+                    const earlyExit = q2 === "I don't use AI";
 
-                const payload = {
-                    embeds: [{
-                        title: "⚡ Nickommander Ideation Survey Submission",
-                        color: 0x0066ff,
-                        fields: [
-                            { name: "Q1: LLMs Familiar With", value: q1List.join(', ') || 'None', inline: false },
-                            { name: "Q2: AI Usage Frequency", value: q2 || 'Not answered', inline: true },
-                            { name: "Q3: Primary AI Use Case", value: q2 === "I don't use AI" ? 'N/A (Stopped early)' : (q3Val || 'N/A'), inline: true },
-                            { name: "Q4: Field of Study", value: q2 === "I don't use AI" ? 'N/A' : (q4 || 'N/A'), inline: true },
-                            { name: "Q5: Biggest Problem with AI", value: q2 === "I don't use AI" ? 'N/A' : (q5Val || 'N/A'), inline: false },
-                            { name: "Q6: Desired Free Feature", value: q2 === "I don't use AI" ? 'N/A' : (q6Val || 'N/A'), inline: false },
-                            { name: "Q7: Credit Inclusion", value: q2 === "I don't use AI" ? 'N/A' : (q7 === 'Yes' ? `Yes (Name: ${q7Name || 'unknown'}, Institute/Country: ${q7Institute || 'unknown'})` : 'No'), inline: false },
-                            { name: "Optional Metadata", value: `**Browser:** ${metadata.browser}\n**Device Model:** ${metadata.deviceModel}\n**IP Address:** ${metadata.ipAddress}\n**Location:** ${metadata.location}\n**Fingerprint:** \`${metadata.fingerprint}\``, inline: false }
-                        ],
-                        timestamp: new Date().toISOString()
-                    }]
-                };
+                    const payload = {
+                        allowed_mentions: { parse: [] },
+                        embeds: [{
+                            title: '⚡ Nickommander Ideation Survey Submission',
+                            color: 0x0066ff,
+                            fields: [
+                                { name: 'Q1: LLMs Familiar With', value: q1List.join(', ') || 'None', inline: false },
+                                { name: 'Q2: AI Usage Frequency', value: q2 || 'Not answered', inline: true },
+                                { name: 'Q3: Primary AI Use Case', value: earlyExit ? 'N/A (Stopped early)' : (q3Val || 'N/A'), inline: true },
+                                { name: 'Q4: Field of Study', value: earlyExit ? 'N/A' : (q4 || 'N/A'), inline: true },
+                                { name: 'Q5: Biggest Problem with AI', value: earlyExit ? 'N/A' : (q5Val || 'N/A'), inline: false },
+                                { name: 'Q6: Desired Free Feature', value: earlyExit ? 'N/A' : (q6Val || 'N/A'), inline: false },
+                                { name: 'Q7: Credit Inclusion', value: earlyExit ? 'N/A' : (q7 === 'Yes' ? `Yes (Name: ${q7Name.trim()}, Institute/Country: ${q7Institute.trim() || 'unknown'})` : 'No'), inline: false },
+                                { name: 'Optional Metadata', value: `**Browser:** ${metadata.browser}\n**Device Model:** ${metadata.deviceModel}\n**IP Address:** ${metadata.ipAddress}\n**Location:** ${metadata.location}\n**Fingerprint:** \`${metadata.fingerprint}\``, inline: false }
+                            ],
+                            timestamp: new Date().toISOString()
+                        }]
+                    };
 
-                // Dispatch to Discord Webhook
-                try {
-                    await fetch('https://discord.com/api/webhooks/1566106118063784122/McXi-L26SpHq_ggmEc8vu3lGbiOy7aKZbqHdAzjR_FOdIRGEVTmhophM-x0ndWb-1CLT', {
+                    // Discord supports payload_json in multipart/form-data. FormData sets
+                    // its own boundary; do not manually set Content-Type. no-cors keeps
+                    // browser CORS preflight from blocking this static-page submission.
+                    const formData = new FormData();
+                    formData.append('payload_json', JSON.stringify(payload));
+                    const webhookUrl = 'https://discord.com/api/webhooks/1566106118063784122/McXi-L26SpHq_ggmEc8vu3lGbiOy7aKZbqHdAzjR_FOdIRGEVTmhophM-x0ndWb-1CLT?wait=true';
+
+                    await fetch(webhookUrl, {
                         method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
                         mode: 'no-cors',
-                        body: JSON.stringify(payload)
+                        body: formData
                     });
+
+                    // A no-cors response is opaque: fetch resolving means the request was
+                    // dispatched, but the browser cannot inspect Discord's HTTP status.
+                    setSubmitted(true);
                 } catch (err) {
                     console.error('Webhook dispatch error:', err);
+                    setError('We could not send your response. Please check your connection and try again.');
+                } finally {
+                    setSubmitting(false);
                 }
-
-                setSubmitting(false);
-                setSubmitted(true);
             };
 
             return (
